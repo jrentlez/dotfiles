@@ -1,0 +1,14 @@
+# funny commant to remove packages
+alias yeet='paru -Rns'
+
+# remove orhans
+alias yeeorph='yeet $(paru -Qtdq)'
+
+# quick deletion for folders
+alias del='rm -r'
+
+# less with syntax highlighting
+alias lsyn='LESSOPEN='\''| /usr/bin/src-hilite-lesspipe.sh %s'\'' LESS='\'' -R '\'' less'
+
+# enable high-res images in the terminal (requires kitty)
+alias icat='kitty +kitten icat'

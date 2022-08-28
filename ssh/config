@@ -1,0 +1,20 @@
+# Gitlab.com
+Host zeltner.philippklein.me
+	HostName zeltner.philippklein.me
+	User user
+
+Host gitlab.com
+	PreferredAuthentications publickey
+	IdentityFile ~/.ssh/keys/id_ed25519
+
+# FAU
+Host fau
+	HostName cipterm0.cip.cs.fau.de
+	PreferredAuthentications publickey
+	IdentityFile ~/.ssh/keys/id_ed25519
+	User xy76tyce
+
+#raspi
+Host raspi
+	HostName 192.168.2.106
+	User pi

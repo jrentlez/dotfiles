@@ -1,0 +1,6 @@
+links:
+  tmux.conf: ~/.config/tmux/tmux.conf
+  CATPPUCCIN_HACK_TO_HAVE_MY_OWN_COLORS: ~/.config/tmux/plugins/tmux/catppuccin-macchiato.tmuxtheme 
+
+installs:
+  cmd: git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm && sudo pacman -S --needed tmux

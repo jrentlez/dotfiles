@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+
+paru
+flatpak update
+flatpak remove --unused
+
