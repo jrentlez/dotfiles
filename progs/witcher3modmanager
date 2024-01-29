@@ -1,0 +1,3 @@
+#!/bin/sh
+cd "$HOME"/Code/witcher3/The-Witcher-3-Mod-manager/
+pipenv run python main.py

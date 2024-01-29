@@ -12,3 +12,9 @@ alias lsyn='LESSOPEN='\''| /usr/bin/src-hilite-lesspipe.sh %s'\'' LESS='\'' -R '
 
 # enable high-res images in the terminal (requires kitty)
 alias icat='kitty +kitten icat'
+
+# better pacdiff
+alias pacdiff='DIFFPROG="nvim -d" pacdiff -b -3 -s'
+
+# open file in editor
+alias ed='$EDITOR'

@@ -1,5 +1,21 @@
+[core]
+	pager = delta
+
 [user]
 	email = jonas.zeltner@posteo.de
 	name = Jonas Zeltner
+
 [init]
 	defaultBranch = main
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+
+[merge]
+	conflictstyle = diff3
+
+[diff]
+	colorMoved = default

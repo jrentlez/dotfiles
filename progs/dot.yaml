@@ -1,2 +1,4 @@
 links:
-  fullup: ~/.local/bin/fullup
+  fullup: ~/.bin/fullup
+  witcher3modmanager: ~/.bin/witcher3modmanager
+  witcher3scriptmerger: ~/.bin/witcher3scriptmerger

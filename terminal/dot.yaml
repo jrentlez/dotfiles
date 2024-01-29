@@ -1,0 +1,7 @@
+links:
+  kitty: ~/.config/kitty/
+  kitty/nvimcfg: ~/.bin/nvimcfg
+  wezterm: ~/.config/wezterm
+
+installs:
+  cmd: sudo pacman -S --needed kitty

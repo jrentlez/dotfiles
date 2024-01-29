@@ -1,3 +1,0 @@
-links:
-  custom: ~/.config/nvim/lua/custom
-  dark_modern.lua: ~/.local/share/nvim/lazy/base46/lua/base46/themes/dark_modern.lua
