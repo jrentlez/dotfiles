@@ -1,7 +1,5 @@
 links:
-  kitty: ~/.config/kitty/
-  kitty/nvimcfg: ~/.bin/nvimcfg
   wezterm: ~/.config/wezterm
-
-installs:
-  cmd: sudo pacman -S --needed kitty
+  nushell: ~/.config/nushell
+  starship/starship.toml: ~/.config/starship.toml
+  bat: ~/.config/bat

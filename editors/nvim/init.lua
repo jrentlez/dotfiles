@@ -1,42 +1,30 @@
--- [[ Options ]]
-require('options').set_basic()
-
--- [[ Keymaps ]]
-local keymaps = require 'keymaps'
-keymaps.add(keymaps.basic)
-
--- [[ Install `lazy.nvim` plugin manager ]]
---    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
-local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not vim.loop.fs_stat(lazypath) then
-  local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-  vim.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
+-- Disable icons in tty
+if vim.fn.getenv("XDG_SESSION_TYPE") == "tty" then
+	vim.g.have_nerd_font = false
+else
+	vim.g.have_nerd_font = true
 end
-vim.opt.rtp:prepend(lazypath)
 
--- [[ Plugins ]]
-require('lazy').setup({ { import = 'plugins' } }, {})
+-- Install mini.nvim
+local path_package = vim.fn.stdpath("data") .. "/site"
+local mini_path = path_package .. "/pack/deps/start/mini.nvim"
+if not vim.uv.fs_stat(mini_path) then
+	vim.cmd('echo "Installing `mini.nvim`" | redraw')
+	local clone_cmd = {
+		"git",
+		"clone",
+		"--filter=blob:none",
+		"https://github.com/echasnovski/mini.nvim",
+		mini_path,
+	}
+	local out = vim.fn.system(clone_cmd)
+	if vim.v.shell_error ~= 0 then
+		error("Error cloning mini.nvim\n" .. out)
+	end
+	vim.cmd("packadd mini.nvim | helptags ALL")
+end
 
--- [[ Basic Autocommands ]]
---  See `:help lua-guide-autocommands`
-
--- Highlight when yanking (copying) text
---  Try it with `yap` in normal mode
---  See `:help vim.highlight.on_yank()`
-vim.api.nvim_create_autocmd('TextYankPost', {
-  desc = 'Highlight when yanking (copying) text',
-  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
-  callback = function()
-    vim.highlight.on_yank()
-  end,
-})
-
--- [[ Commands ]]
--- Update kickstart
-local kickstart_commit = 'f86f18f27afeef1952272e212bef886e58ffd04c'
-vim.api.nvim_create_user_command('Kickstart', function()
-  require('util').update(kickstart_commit)
-end, { desc = 'Update the underlying kickstart' })
-
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
+-- Plugin manager
+require("mini.deps").setup({ path = { package = path_package } })
+require("util")
+require("plugins")

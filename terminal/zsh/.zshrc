@@ -60,10 +60,15 @@ else
     export EDITOR='nvim'
 fi
 
+#npm global extensions go here
+export npm_config_prefix="$HOME/.local/share/npm"
+
 # Extend path to
-export PATH=$PATH:$HOME/.bin/		            # user executables
-export PATH="$PATH:$HOME/.cargo/bin"	            # cargo packages
-export PATH="$HOME/.local/share/bob/nvim-bin:$PATH" # bob neovim
+export PATH="$PATH:$HOME/.bin/"				# user executables
+export PATH="$PATH:$HOME/.local/bin"			# user executables
+export PATH="$PATH:$HOME/.cargo/bin"			# cargo packages
+export PATH="$PATH:$HOME/.local/share/npm/bin"		# npm global packages
+export PATH="$PATH:$HOME/.deno/bin/"			# deno
 
 # Enable sccache
 export RUSTC_WRAPPER=/usr/bin/sccache
@@ -71,3 +76,4 @@ export RUSTC_WRAPPER=/usr/bin/sccache
 # Shell integrations
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
+

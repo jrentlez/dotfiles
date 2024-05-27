@@ -7,16 +7,15 @@ if wezterm.config_builder then
 	config = wezterm.config_builder()
 end
 
---------* Make it not slow *--------
+-----* Make it not slow *-----
 config.front_end = "WebGpu"
 
---------* Maximize window on startup *--------
+-----* Maximize window on startup *-----
 local initial_scale = 2.5
 config.initial_rows = math.ceil(initial_scale * 24)
 config.initial_cols = math.ceil(initial_scale * 80)
 
---------* UI *--------
--- Colorcheme
+-----* Colorcheme *-----
 local cat = wezterm.color.get_builtin_schemes()["Catppuccin Mocha"]
 cat.background = "#000000"
 cat.tab_bar.background = "#040404"
@@ -27,18 +26,23 @@ config.color_schemes = {
 }
 config.color_scheme = "Blackppuccin"
 
--- Font
-config.font = wezterm.font("FiraCode Nerd Font")
-config.font_size = 13
+-----* Font *-----
+config.font = wezterm.font_with_fallback({
+	"IosevkaTerm Nerd Font",
+	"Sarasa Term",
+})
+config.font_size = 17
 config.term = "wezterm"
 config.window_decorations = "RESIZE"
 
--- Tabs
+-----* Tabs *-----
 config.hide_tab_bar_if_only_one_tab = true
--- config.tab_bar_at_bottom = true
 config.use_fancy_tab_bar = false
 
---------* Keys *--------
+-----* Shell *----
+config.default_prog = { "/usr/bin/nu" }
+
+-----* Keys *-----
 local function is_inside_vim(pane)
 	local tty = pane:get_tty_name()
 	if tty == nil then
@@ -56,11 +60,9 @@ local function is_inside_vim(pane)
 
 	return success
 end
-
 local function is_outside_vim(pane)
 	return not is_inside_vim(pane)
 end
-
 local function bind_if(cond, key, mods, action)
 	local function callback(win, pane)
 		if cond(pane) then
@@ -111,3 +113,5 @@ config.keys = {
 }
 
 return config
+
+-- vim: foldlevel=0

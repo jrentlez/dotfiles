@@ -1,20 +1,18 @@
-# funny commant to remove packages
-alias yeet='paru -Rns'
+# use aliases in sudo
+alias sudo='sudo '
 
+# shorter pacman alias
+alias pac='pacman'
+# funny command to remove packages
+alias yeet='pacman -Rns'
 # remove orhans
-alias yeeorph='yeet $(paru -Qtdq)'
+alias yeeorph='yeet $(pacman -Qtdq)'
 
-# quick deletion for folders
-alias del='rm -r'
-
-# less with syntax highlighting
-alias lsyn='LESSOPEN='\''| /usr/bin/src-hilite-lesspipe.sh %s'\'' LESS='\'' -R '\'' less'
-
-# enable high-res images in the terminal (requires kitty)
-alias icat='kitty +kitten icat'
 
 # better pacdiff
 alias pacdiff='DIFFPROG="nvim -d" pacdiff -b -3 -s'
 
 # open file in editor
 alias ed='$EDITOR'
+# open all files with changes in a git repository
+alias diffed='$EDITOR $(git diff --name-only --relative)'

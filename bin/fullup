@@ -1,0 +1,23 @@
+#!/usr/bin/env nu
+
+print "\e[2m---* System packages *---\e[0m"
+sudo pacman -Syu
+
+print "\n\e[2m---* AUR packages *---\e[0m"
+paru -Sua
+
+print "\n\e[2m---* Flatpak *---\e[0m"
+flatpak update
+flatpak remove --unused
+flatpak remove --delete-data
+
+print "\n\e[2m---* Rust *---\e[0m"
+rustup update
+
+print "\n\e[2m---* Dotfiles *---\e[0m"
+let dotdir = $env.HOME | path join ".dotfiles"
+git -C $dotdir fetch -p | if ($in | is-empty) {
+	git -C $dotdir rev-list --count HEAD..@{u} | into int | if ($in > 0) {"Your dotfiles are behind upstream!"} else {"No remote changes"}
+} else {$in}
+
+

@@ -1,6 +1,3 @@
 links:
   .zshrc: ~/.zshrc
   .zshalias: ~/.zshalias
-
-installs: false
-

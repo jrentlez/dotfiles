@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-LUA_CMD="print(vim.fn.stdpath('config')) vim.cmd([[:q]])";
-GET_DIR_ARGS=("--headless" "+lua $LUA_CMD");
-NVIM_CFG_DIR=$(nvim "${GET_DIR_ARGS[@]}" 3>&1 1>&2 2>&3 3>&-);
-LUA_CMD="vim.api.nvim_set_current_dir(\"$NVIM_CFG_DIR\")";
-kitten @ launch --type=tab zsh -c "cd $NVIM_CFG_DIR && nvim '+lua $LUA_CMD'";
