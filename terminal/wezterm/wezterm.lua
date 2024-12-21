@@ -82,16 +82,6 @@ config.keys = {
 		action = wezterm.action.SplitHorizontal,
 	},
 	{
-		key = "LeftArrow",
-		mods = "CTRL|SHIFT",
-		action = wezterm.action.ActivateTabRelative(-1),
-	},
-	{
-		key = "RightArrow",
-		mods = "CTRL|SHIFT",
-		action = wezterm.action.ActivateTabRelative(1),
-	},
-	{
 		key = "E",
 		mods = "CTRL|SHIFT",
 		action = wezterm.action.PromptInputLine({
@@ -113,5 +103,3 @@ config.keys = {
 }
 
 return config
-
--- vim: foldlevel=0

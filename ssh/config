@@ -24,6 +24,3 @@ Host raspi
 	HostName 192.168.2.106
 	User pi
 
-Host *.cip.cs.fau.de
-    User xy76tyce
-    IdentityFile /home/jonas/.ssh/stubs

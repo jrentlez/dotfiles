@@ -1,13 +1,6 @@
--- Disable icons in tty
-if vim.fn.getenv("XDG_SESSION_TYPE") == "tty" then
-	vim.g.have_nerd_font = false
-else
-	vim.g.have_nerd_font = true
-end
-
 -- Install mini.nvim
-local path_package = vim.fn.stdpath("data") .. "/site"
-local mini_path = path_package .. "/pack/deps/start/mini.nvim"
+local path_package = vim.fs.joinpath(vim.fn.stdpath("data"), "/site")
+local mini_path = vim.fs.joinpath(path_package, "/pack/deps/start/mini.nvim")
 if not vim.uv.fs_stat(mini_path) then
 	vim.cmd('echo "Installing `mini.nvim`" | redraw')
 	local clone_cmd = {
@@ -26,5 +19,6 @@ end
 
 -- Plugin manager
 require("mini.deps").setup({ path = { package = path_package } })
-require("util")
-require("plugins")
+
+-- Enable project local configuration
+vim.o.exrc = true

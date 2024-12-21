@@ -1,0 +1,17 @@
+command = nu
+
+font-family = Iosevka Term
+font-size = 17
+
+theme = dark:NvimDark,light:NvimLight
+cursor-color = #D28A52
+
+window-theme = ghostty
+
+window-padding-balance = true
+
+maximize = true
+
+keybind = ctrl+shift+l=new_split:right
+keybind = ctrl+shift+o=toggle_tab_overview
+

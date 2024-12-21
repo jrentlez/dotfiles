@@ -1,23 +1,36 @@
-#!/usr/bin/env nu
+#!/usr/bin/env bash
 
-print "\e[2m---* System packages *---\e[0m"
-sudo pacman -Syu
+first=true
 
-print "\n\e[2m---* AUR packages *---\e[0m"
-paru -Sua
+function section() {
+	if [ $first = true ]; then
+		first=false
+		printf "\e[2m---* %s *---\e[0m\n" "$1"
+	else
+		printf "\n\e[2m---* %s *---\e[0m\n" "$1"
+	fi
+}
 
-print "\n\e[2m---* Flatpak *---\e[0m"
-flatpak update
-flatpak remove --unused
-flatpak remove --delete-data
+section "System & AUR packages"
+paru -Syu --noconfirm
+if [ -f /tmp/NVIM_COMMIT ]; then
+	xdg-open "https://github.com/neovim/neovim/compare/$(cat /tmp/NVIM_COMMIT)...HEAD"
+	sudo rm /tmp/NVIM_COMMIT
+fi
 
-print "\n\e[2m---* Rust *---\e[0m"
+section Flatpak
+flatpak update -y
+flatpak remove --unused -y
+flatpak remove --delete-data -y
+
+section Rust
 rustup update
 
-print "\n\e[2m---* Dotfiles *---\e[0m"
-let dotdir = $env.HOME | path join ".dotfiles"
-git -C $dotdir fetch -p | if ($in | is-empty) {
-	git -C $dotdir rev-list --count HEAD..@{u} | into int | if ($in > 0) {"Your dotfiles are behind upstream!"} else {"No remote changes"}
-} else {$in}
+section Dotfiles
+git -C "$HOME/.dotfiles" pull
 
-
+section "Nushell prompt"
+(
+	cd "$HOME/.config/nushell/prompt/" || return
+	cargo install --path .
+)

@@ -1,2 +1,3 @@
 links:
   nvim: ~/.config/nvim
+  nvim-save-head.hook: /etc/pacman.d/hooks/nvim-save-head.hook

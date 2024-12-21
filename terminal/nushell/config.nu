@@ -1,72 +1,38 @@
-# version = "0.99.1"
+# version = "0.103"
 
-$env.config = {
-    show_banner: false
+$env.config.show_banner = false
+$env.config.datetime_format.normal = '%a, %d %b %Y %H:%M:%S %z'
+$env.config.datetime_format.table = '%d/%m/%y %I:%M:%S%p'
+$env.config.edit_mode = "vi"
+$env.config.cursor_shape.vi_insert = "line"
+$env.config.cursor_shape.vi_normal = "block"
+$env.config.use_kitty_protocol = true
+$env.config.highlight_resolved_externals = true
 
-    table: {
-        index_mode: auto
-    }
+$env.config.color_config.bool = "default"
+$env.config.color_config.int = "default"
+$env.config.color_config.filesize = "default"
+$env.config.color_config.duration = "default"
+$env.config.color_config.date = "default"
+$env.config.color_config.range = "default"
+$env.config.color_config.float = "default"
+$env.config.color_config.nothing = "default"
+$env.config.color_config.binary = "default"
+$env.config.color_config.cell-path = "default"
+$env.config.color_config.string = "default"
 
-    error_style: "fancy" # "fancy" or "plain" for screen reader-friendly error messages
-
-    datetime_format: {
-        normal: '%a, %d %b %Y %H:%M:%S %z'    # shows up in displays of variables or other datetime's outside of tables
-        table: '%d/%m/%y %I:%M:%S%p'          # generally shows up in tabular outputs such as ls. commenting this out will change it to the default human readable datetime format
-    }
-
-    completions: {
-        partial: false    # set this to false to prevent partial filling of the prompt
-        algorithm: "fuzzy"    # prefix or fuzzy
-    }
-
-    cursor_shape: {
-        emacs: line # block, underscore, line, blink_block, blink_underscore, blink_line, inherit to skip setting cursor shape (line is the default)
-        vi_insert: line # block, underscore, line, blink_block, blink_underscore, blink_line, inherit
-        vi_normal: block # block, underscore, line, blink_block, blink_underscore, blink_line, inherit
-    }
-
-    footer_mode: always # always, never, number_of_rows, auto
-    float_precision: 2
-    edit_mode: vi
-    shell_integration: {
-        # osc2 abbreviates the path if in the home_dir, sets the tab/window title, shows the running command in the tab/window title
-        osc2: true
-        # osc7 is a way to communicate the path to the terminal, this is helpful for spawning new tabs in the same directory
-        osc7: true
-        # osc8 is also implemented as the deprecated setting ls.show_clickable_links, it shows clickable links in ls output if your terminal supports it. show_clickable_links is deprecated in favor of osc8
-        osc8: true
-        # osc9_9 is from ConEmu and is starting to get wider support. It's similar to osc7 in that it communicates the path to the terminal
-        osc9_9: true
-        # osc133 is several escapes invented by Final Term which include the supported ones below.
-        # 133;A - Mark prompt start
-        # 133;B - Mark prompt end
-        # 133;C - Mark pre-execution
-        # 133;D;exit - Mark execution finished with exit code
-        # This is used to enable terminals to know where the prompt is, the command is, where the command finishes, and where the output of the command is
-        osc133: true
-        # osc633 is closely related to osc133 but only exists in visual studio code (vscode) and supports their shell integration features
-        # 633;A - Mark prompt start
-        # 633;B - Mark prompt end
-        # 633;C - Mark pre-execution
-        # 633;D;exit - Mark execution finished with exit code
-        # 633;E - Explicitly set the command line with an optional nonce
-        # 633;P;Cwd=<path> - Mark the current working directory and communicate it to the terminal
-        # and also helps with the run recent menu in vscode
-        osc633: true
-        # reset_application_mode is escape \x1b[?1l and was added to help ssh work better
-        reset_application_mode: true
-    }
-    render_right_prompt_on_last_line: true # true or false to enable or disable right prompt to be rendered on last line of the prompt.
-    use_kitty_protocol: true # enables keyboard enhancement protocol implemented by kitty console, only if your terminal support this.
-    highlight_resolved_externals: true # true enables highlighting of external commands in the repl resolved by which.
-    recursion_limit: 50
-}
+$env.config.color_config.separator = "default_dimmed"
+$env.config.color_config.record = "default_dimmed"
+$env.config.color_config.list = "default_dimmed"
+$env.config.color_config.block = "default_dimmed"
+$env.config.color_config.block = "default_dimmed"
+$env.config.color_config.hints = "light_gray_dimmed"
 
 alias yeet = pacman -Rns
-alias pacdiff = with-env {DIFFPROG: "nvim -d"} {pacdiff -b -3 -s}
+alias pacdiff = with-env {DIFFPROG: "nvim -d"} {^pacdiff -b -3 -s}
 
-alias ed = nvim		# FIXME: This should execute $env.EDITOR, but nushell then doesn't do auto completion
-alias diffed = ed ...(git diff --name-only --relative | lines)
+alias te = nvim		# FIXME: This should execute $env.EDITOR, but nushell then doesn't do auto completion
+alias diffed = te ...(git diff --name-only --relative | lines)
 
 alias nu-ls = ls		# Backup nushell's builtin `ls`
 
@@ -78,8 +44,13 @@ def ls [
 	if $all {if ($pattern | is-empty) {nu-ls -a} else {nu-ls ...$pattern -a}} else {if ($pattern | is-empty) {nu-ls} else {nu-ls ...$pattern}} | sort-by type name -i | grid --color --icons
 }
 
+# Update the prompt command
+def update-prompt []: nothing -> nothing {
+	cd ($env.HOME | path join .config nushell prompt)
+	^cargo install --path .
+}
+
 alias lt = eza --icons --tree
 
-use ~/.cache/starship/init.nu
 source ~/.cache/carapace/init.nu
 source ~/.cache/zoxide/init.nu
