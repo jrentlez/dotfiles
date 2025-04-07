@@ -1,4 +1,4 @@
-use git2::{Branch, BranchType, Commit, ErrorCode, Repository};
+use git2::{Branch, BranchType, Commit, ErrorCode, Repository, StatusOptions};
 
 use crate::color;
 
@@ -32,7 +32,14 @@ fn read_head(repo: &Repository) -> Head<'_> {
 }
 
 fn git_status(repo: &Repository) -> String {
-    let stats = repo.statuses(None).expect("Can get statuses");
+    let mut opts = StatusOptions::new();
+    opts.include_untracked(true)
+        .recurse_untracked_dirs(true)
+        .renames_index_to_workdir(true)
+        .renames_from_rewrites(true)
+        .renames_head_to_index(true);
+
+    let stats = repo.statuses(Some(&mut opts)).expect("Can get statuses");
     let stat = match stats
         .into_iter()
         .map(|stat| stat.status())
