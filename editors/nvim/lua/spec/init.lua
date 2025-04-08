@@ -15,6 +15,7 @@ local tools_spec = {
 		"tinymist",
 		"vtsls",
 		"jsonls",
+		"yamlls",
 		"zls",
 		"basedpyright",
 		"ruff",
