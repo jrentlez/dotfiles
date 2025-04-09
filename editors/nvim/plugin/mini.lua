@@ -35,34 +35,46 @@ now(function()
 			})
 			require("mini.icons").tweak_lsp_kind()
 
+			local use_icons = vim.env.HAS_NERD_FONT and true or false
 			require("mini.statusline").setup({
-				use_icons = vim.env.HAS_NERD_FONT and true or false,
+				use_icons = use_icons,
+				content = {
+					active = function()
+						local mode, mode_hl = MiniStatusline.section_mode({ trunc_width = 120 })
+						local git = MiniStatusline.section_git({ trunc_width = 40 })
+						local diff = MiniStatusline.section_diff({ trunc_width = 75 })
+						local diagnostics = MiniStatusline.section_diagnostics({ trunc_width = 75 })
+						local lsp = MiniStatusline.section_lsp({ trunc_width = 75 })
+						local filename = MiniStatusline.section_filename({ trunc_width = 140 })
+						local fileinfo = MiniStatusline.section_fileinfo({ trunc_width = 120 })
+						local location = MiniStatusline.section_location({ trunc_width = 75 })
+						local search = MiniStatusline.section_searchcount({ trunc_width = 75 })
+
+						local bufcount = vim.iter(vim.api.nvim_list_bufs())
+							:filter(function(bufnr)
+								return vim.api.nvim_buf_is_valid(bufnr) and vim.bo[bufnr].buflisted
+							end)
+							:fold(0, function(count, _)
+								return count + 1
+							end)
+						local buffers = bufcount > 1 and (use_icons and " " or "BUF") .. bufcount or ""
+
+						-- Usage of `MiniStatusline.combine_groups()` ensures highlighting and
+						-- correct padding with spaces between groups (accounts for 'missing'
+						-- sections, etc.)
+						return MiniStatusline.combine_groups({
+							{ hl = mode_hl, strings = { mode } },
+							{ hl = "MiniStatuslineDevinfo", strings = { git, diff, diagnostics, lsp } },
+							"%<", -- Mark general truncate point
+							{ hl = "MiniStatuslineFilename", strings = { buffers, filename } },
+							"%=", -- End left alignment
+							{ hl = "MiniStatuslineFileinfo", strings = { fileinfo } },
+							{ hl = mode_hl, strings = { search, location } },
+						})
+					end,
+				},
 			})
-
-			require("mini.tabline").setup()
 		end,
-	})
-
-	vim.api.nvim_create_autocmd("BufEnter", {
-		callback = vim.schedule_wrap(function()
-			local n_listed_bufs = 0
-			for _, buf_id in ipairs(vim.api.nvim_list_bufs()) do
-				if vim.fn.buflisted(buf_id) == 1 then
-					n_listed_bufs = n_listed_bufs + 1
-				end
-			end
-
-			local listed = vim.iter(vim.api.nvim_list_bufs())
-				:filter(function(bufnr)
-					return vim.bo[bufnr].buflisted
-				end)
-				:fold(0, function(count)
-					return count + 1
-				end)
-
-			vim.o.showtabline = listed > 1 and 2 or 0
-		end),
-		desc = "Update tabline based on the number of listed buffers",
 	})
 end)
 
