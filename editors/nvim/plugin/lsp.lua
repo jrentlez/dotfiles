@@ -10,7 +10,7 @@ now(function()
 			"williamboman/mason.nvim",
 		},
 	})
-	add({ source = "jvalue/jayvee.nvim", checkout = "nightly", monitor = "nightly" })
+	add("jvalue/jayvee.nvim")
 
 	vim.api.nvim_create_autocmd("LspAttach", {
 		group = vim.api.nvim_create_augroup("default-lsp-attach", { clear = true }),
