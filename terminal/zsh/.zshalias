@@ -13,6 +13,8 @@ alias yeeorph='yeet $(pacman -Qtdq)'
 alias pacdiff='DIFFPROG="nvim -d" pacdiff -b -3 -s'
 
 # open file in editor
-alias ed='$EDITOR'
+alias te='$EDITOR'
 # open all files with changes in a git repository
 alias diffed='$EDITOR $(git diff --name-only --relative)'
+
+alias vim="nvim --noplugin"
