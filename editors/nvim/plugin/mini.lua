@@ -8,72 +8,47 @@ now(function()
 
 	require("mini.files").setup()
 
+	vim.o.undofile = true
+	-- Enable all filetype plugins
+	vim.cmd("filetype plugin indent on")
+
 	vim.api.nvim_create_autocmd("UIEnter", {
 		desc = "UI modules from mini.nvim",
 		group = vim.api.nvim_create_augroup("mini-ui-modules", { clear = true }),
 		callback = function()
-			require("mini.basics").setup({
-				options = {
-					extra_ui = true,
-				},
-			})
-
-			-- [[ Additional options ]]
-
-			vim.o.relativenumber = true
-			vim.o.updatetime = 250
-			vim.o.timeoutlen = 300
-			vim.o.inccommand = "split"
-			vim.o.scrolloff = 10
-			vim.o.wrap = true
+			vim.o.breakindent = true
 			vim.o.conceallevel = 2
+			vim.o.cursorline = true
+			vim.o.formatoptions = "qjl1"
+			vim.o.ignorecase = true
+			vim.o.inccommand = "split"
+			vim.o.incsearch = true
+			vim.o.infercase = true
+			vim.o.linebreak = true
+			vim.o.list = true
+			vim.o.listchars = "tab:> ,extends:…,precedes:…,nbsp:␣"
+			vim.o.mouse = "a"
+			vim.o.number = true
+			vim.o.relativenumber = true
+			vim.o.scrolloff = 10
+			vim.o.smartcase = true
+			vim.o.smartindent = true
+			vim.o.splitbelow = true
+			vim.o.splitright = true
+			vim.o.timeoutlen = 300
+			vim.o.updatetime = 250
+			vim.o.virtualedit = "block"
+			vim.o.wrap = false
+			vim.o.wrap = false
+			vim.opt.shortmess:append("cC")
 
-			-- [[ Additional keymaps ]]
+			vim.keymap.set({ "n", "x" }, "j", [[v:count == 0 ? 'gj' : 'j']], { expr = true })
+			vim.keymap.set({ "n", "x" }, "k", [[v:count == 0 ? 'gk' : 'k']], { expr = true })
 
 			require("mini.icons").setup({
 				style = vim.env.HAS_NERD_FONT and "glyph" or "ascii",
 			})
 			require("mini.icons").tweak_lsp_kind()
-
-			local use_icons = vim.env.HAS_NERD_FONT and true or false
-			require("mini.statusline").setup({
-				use_icons = use_icons,
-				content = {
-					active = function()
-						local mode, mode_hl = MiniStatusline.section_mode({ trunc_width = 120 })
-						local git = MiniStatusline.section_git({ trunc_width = 40 })
-						local diff = MiniStatusline.section_diff({ trunc_width = 75 })
-						local diagnostics = MiniStatusline.section_diagnostics({ trunc_width = 75 })
-						local lsp = MiniStatusline.section_lsp({ trunc_width = 75 })
-						local filename = MiniStatusline.section_filename({ trunc_width = 140 })
-						local fileinfo = MiniStatusline.section_fileinfo({ trunc_width = 120 })
-						local location = MiniStatusline.section_location({ trunc_width = 75 })
-						local search = MiniStatusline.section_searchcount({ trunc_width = 75 })
-
-						local bufcount = vim.iter(vim.api.nvim_list_bufs())
-							:filter(function(bufnr)
-								return vim.api.nvim_buf_is_valid(bufnr) and vim.bo[bufnr].buflisted
-							end)
-							:fold(0, function(count, _)
-								return count + 1
-							end)
-						local buffers = bufcount > 1 and (use_icons and " " or "BUF") .. bufcount or ""
-
-						-- Usage of `MiniStatusline.combine_groups()` ensures highlighting and
-						-- correct padding with spaces between groups (accounts for 'missing'
-						-- sections, etc.)
-						return MiniStatusline.combine_groups({
-							{ hl = mode_hl, strings = { mode } },
-							{ hl = "MiniStatuslineDevinfo", strings = { git, diff, diagnostics, lsp } },
-							"%<", -- Mark general truncate point
-							{ hl = "MiniStatuslineFilename", strings = { buffers, filename } },
-							"%=", -- End left alignment
-							{ hl = "MiniStatuslineFileinfo", strings = { fileinfo } },
-							{ hl = mode_hl, strings = { search, location } },
-						})
-					end,
-				},
-			})
 		end,
 	})
 end)
@@ -85,6 +60,14 @@ later(function()
 
 	vim.diagnostic.config({
 		virtual_text = { source = "if_many" },
+	})
+
+	vim.api.nvim_create_autocmd("TextYankPost", {
+		group = vim.api.nvim_create_augroup("hl_on_yank", { clear = true }),
+		callback = function()
+			vim.hl.on_yank()
+		end,
+		desc = "Highlight yanked text",
 	})
 
 	-- Keymaps -------------------------------------------------------------
@@ -118,6 +101,7 @@ later(function()
 				vim.diagnostic.config({ virtual_text = { source = "if_many" }, virtual_lines = false })
 				return true
 			end,
+			desc = "Go back to the old config when leaving the line",
 		})
 	end, "Enable virtual lines")
 

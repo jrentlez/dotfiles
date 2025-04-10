@@ -22,3 +22,6 @@ require("mini.deps").setup({ path = { package = path_package } })
 
 -- Enable project local configuration
 vim.o.exrc = true
+
+-- Use space as the one and only true Leader key
+vim.g.mapleader = " "
