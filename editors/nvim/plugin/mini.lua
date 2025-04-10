@@ -8,43 +8,10 @@ now(function()
 
 	require("mini.files").setup()
 
-	vim.o.undofile = true
-	-- Enable all filetype plugins
-	vim.cmd("filetype plugin indent on")
-
 	vim.api.nvim_create_autocmd("UIEnter", {
 		desc = "UI modules from mini.nvim",
 		group = vim.api.nvim_create_augroup("mini-ui-modules", { clear = true }),
 		callback = function()
-			vim.o.breakindent = true
-			vim.o.conceallevel = 2
-			vim.o.cursorline = true
-			vim.o.formatoptions = "qjl1"
-			vim.o.ignorecase = true
-			vim.o.inccommand = "split"
-			vim.o.incsearch = true
-			vim.o.infercase = true
-			vim.o.linebreak = true
-			vim.o.list = true
-			vim.o.listchars = "tab:> ,extends:…,precedes:…,nbsp:␣"
-			vim.o.mouse = "a"
-			vim.o.number = true
-			vim.o.relativenumber = true
-			vim.o.scrolloff = 10
-			vim.o.smartcase = true
-			vim.o.smartindent = true
-			vim.o.splitbelow = true
-			vim.o.splitright = true
-			vim.o.timeoutlen = 300
-			vim.o.updatetime = 250
-			vim.o.virtualedit = "block"
-			vim.o.wrap = false
-			vim.o.wrap = false
-			vim.opt.shortmess:append("cC")
-
-			vim.keymap.set({ "n", "x" }, "j", [[v:count == 0 ? 'gj' : 'j']], { expr = true })
-			vim.keymap.set({ "n", "x" }, "k", [[v:count == 0 ? 'gk' : 'k']], { expr = true })
-
 			require("mini.icons").setup({
 				style = vim.env.HAS_NERD_FONT and "glyph" or "ascii",
 			})
@@ -54,61 +21,17 @@ now(function()
 end)
 
 later(function()
-	vim.o.clipboard = "unnamedplus"
-
-	vim.cmd.colorscheme("default")
-
-	vim.diagnostic.config({
-		virtual_text = { source = "if_many" },
-	})
-
-	vim.api.nvim_create_autocmd("TextYankPost", {
-		group = vim.api.nvim_create_augroup("hl_on_yank", { clear = true }),
-		callback = function()
-			vim.hl.on_yank()
-		end,
-		desc = "Highlight yanked text",
-	})
-
 	-- Keymaps -------------------------------------------------------------
 
 	local function nmap(lhs, rhs, desc)
 		vim.keymap.set("n", lhs, rhs, { desc = desc })
 	end
 
+	-- mini.files ----------------------------------------------------------
+
 	nmap("<leader>f", function()
 		MiniFiles.open(vim.api.nvim_buf_get_name(0))
 	end, "Open file explorer")
-
-	nmap("<Esc>", "<cmd>nohlsearch<cr>", "Clear highlights on search when pressing <Esc> in normal mode (:h hlsearch)")
-
-	nmap("<leader>q", vim.diagnostic.setloclist, "Open diagnostic loclist")
-
-	nmap("<leader>e", function()
-		vim.diagnostic.config({
-			virtual_lines = { current_line = true },
-			virtual_text = false,
-		})
-		local line = vim.api.nvim_win_get_cursor(0)[1]
-		vim.api.nvim_create_autocmd("CursorMoved", {
-			group = vim.api.nvim_create_augroup("line-diagnostics", { clear = true }),
-			callback = function()
-				local newline = vim.api.nvim_win_get_cursor(0)[1]
-				if newline == line then
-					return false
-				end
-
-				vim.diagnostic.config({ virtual_text = { source = "if_many" }, virtual_lines = false })
-				return true
-			end,
-			desc = "Go back to the old config when leaving the line",
-		})
-	end, "Enable virtual lines")
-
-	nmap("gb", "<cmd>bnext<cr>", "Go to next buffer")
-	nmap("gB", "<cmd>bprevious<cr>", "Go to pevious buffer")
-
-	vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
 	-- mini.bufremove ------------------------------------------------------
 
