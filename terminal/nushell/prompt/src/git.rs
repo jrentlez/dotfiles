@@ -76,7 +76,7 @@ fn git_status(repo: &Repository) -> String {
 }
 
 fn has_stash(repo: &Repository) -> bool {
-    let stash_reflog = match repo.reflog("GIT_REFS_STASH_FILE") {
+    let stash_reflog = match repo.reflog("refs/stash") {
         Ok(reflog) => reflog,
         Err(_) => return false,
     };
