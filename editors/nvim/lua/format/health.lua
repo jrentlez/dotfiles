@@ -8,7 +8,7 @@ local function check_buffer(bufnr)
 	local buf_name = vim.api.nvim_buf_get_name(bufnr)
 	buf_name = buf_name == "" and "[No Name]" or (vim.fs.relpath(assert(vim.uv.cwd()), buf_name) or buf_name)
 
-	local fmt_autocmd_id = vim.b[bufnr].lsp_format_on_save_autocmd --[[@as integer | nil]]
+	local fmt_autocmd_id = vim.b[bufnr].lsp_format_on_save_autocmd --[[@as integer?]]
 	if not fmt_autocmd_id then
 		vim.health.warn(
 			("No format-on-save autocommand for '%s'"):format(buf_name),
@@ -21,7 +21,7 @@ local function check_buffer(bufnr)
 
 	vim.health.start(("LSP formatter(s) for '%s'"):format(buf_name))
 
-	local server_name = vim.b[bufnr].lspfmt --[[@as string | nil]]
+	local server_name = vim.b[bufnr].lspfmt --[[@as string?]]
 	if server_name and server_name == "" then
 		vim.health.info("Formatting on save disabled (vim.b.lspfmt = '')")
 		return
@@ -48,6 +48,8 @@ local function check_buffer(bufnr)
 					("'%s' may not support '%s'"):format(server_name, vim.lsp.protocol.Methods.textDocument_formatting),
 				}
 			)
+		else
+			vim.health.warn("No LSP with formatting capabilities attached to buffer")
 		end
 		return
 	end
