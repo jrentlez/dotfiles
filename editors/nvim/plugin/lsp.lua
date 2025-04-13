@@ -6,7 +6,7 @@ now(function()
 	add({
 		source = "williamboman/mason-lspconfig.nvim",
 		depends = {
-			"TheRealLorenz/nvim-lspconfig",
+			"neovim/nvim-lspconfig",
 			"williamboman/mason.nvim",
 		},
 	})
