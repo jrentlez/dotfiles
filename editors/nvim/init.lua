@@ -69,27 +69,20 @@ nmap("<Esc>", "<cmd>nohlsearch<cr>", "Clear highlights on search when pressing <
 
 nmap("<leader>q", vim.diagnostic.setloclist, "Open diagnostic loclist")
 
+---@type vim.diagnostic.Opts?
+local config_backup = nil
 nmap("<leader>e", function()
-	local old = vim.diagnostic.config()
-	vim.diagnostic.config({
-		virtual_lines = { current_line = true },
-		virtual_text = false,
-	})
-	local line = vim.api.nvim_win_get_cursor(0)[1]
-	vim.api.nvim_create_autocmd("CursorMoved", {
-		group = vim.api.nvim_create_augroup("line-diagnostics", { clear = true }),
-		callback = function()
-			local newline = vim.api.nvim_win_get_cursor(0)[1]
-			if newline == line then
-				return false
-			end
-
-			vim.diagnostic.config(old)
-			return true
-		end,
-		desc = "Go back to the old config when leaving the line",
-	})
-end, "Enable virtual lines")
+	if config_backup then
+		vim.diagnostic.config(config_backup)
+		config_backup = nil
+	else
+		config_backup = assert(vim.diagnostic.config())
+		vim.diagnostic.config({
+			virtual_lines = { current_line = true },
+			virtual_text = false,
+		})
+	end
+end, "Toggle line diagnostics with virtual lines")
 
 nmap("gb", "<cmd>bnext<cr>", "Go to next buffer")
 nmap("gB", "<cmd>bprevious<cr>", "Go to pevious buffer")
