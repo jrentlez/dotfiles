@@ -67,7 +67,7 @@ end
 
 nmap("<Esc>", "<cmd>nohlsearch<cr>", "Clear highlights on search when pressing <Esc> in normal mode (:h hlsearch)")
 
-nmap("<leader>q", vim.diagnostic.setloclist, "Open diagnostic loclist")
+nmap("<leader>q", vim.diagnostic.setqflist, "Open diagnostic quickfixlist")
 
 ---@type vim.diagnostic.Opts?
 local config_backup = nil
