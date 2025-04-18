@@ -34,6 +34,7 @@ alias pacdiff = with-env {DIFFPROG: "nvim -d"} {^pacdiff -b -3 -s}
 alias te = nvim		# FIXME: This should execute $env.EDITOR, but nushell then doesn't do auto completion
 alias diffed = te ...(git diff --name-only --relative | lines)
 alias vim = nvim --noplugin
+alias fg = job unfreeze
 
 alias nu-ls = ls		# Backup nushell's builtin `ls`
 
