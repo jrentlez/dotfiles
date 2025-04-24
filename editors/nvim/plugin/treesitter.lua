@@ -2,7 +2,7 @@
 
 local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 
--- Finish treesitter setup for a buffer
+--- Finish treesitter setup for a buffer
 ---@param buf integer buffer
 ---@param lang string treesitter language
 local function finish_setup(buf, lang)
@@ -63,7 +63,6 @@ now(function()
 
 	vim.api.nvim_create_autocmd("FileType", {
 		group = vim.api.nvim_create_augroup("NvimTreesitter-custom-setup", { clear = true }),
-		---@param args {match: string, buf: integer} `match` is the filetype and `buf` the buffer for the autocmd
 		callback = function(args)
 			setup_treesitter(args.buf, args.match)
 		end,
