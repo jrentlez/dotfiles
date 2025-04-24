@@ -10,8 +10,8 @@ if not vim.uv.fs_stat(mini_path) then
 		"https://github.com/echasnovski/mini.nvim",
 		mini_path,
 	}
-	local out = vim.fn.system(clone_cmd)
-	if vim.v.shell_error ~= 0 then
+	local out = vim.system(clone_cmd):wait()
+	if out.code ~= 0 then
 		error("Error cloning mini.nvim\n" .. out)
 	end
 	vim.cmd("packadd mini.nvim | helptags ALL")
