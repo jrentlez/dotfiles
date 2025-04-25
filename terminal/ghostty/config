@@ -1,5 +1,6 @@
 command = nu
 
+font-family = Adwaita Mono
 font-size = 18
 
 window-theme = ghostty
