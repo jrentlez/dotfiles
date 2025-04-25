@@ -93,6 +93,11 @@ now(function()
 				vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
 			end
 
+			-- Enable document color
+			if client:supports_method(vim.lsp.protocol.Methods.document_color) then
+				vim.lsp.document_color.enable(true, event.buf)
+			end
+
 			-- Enable codelens
 			if client:supports_method(vim.lsp.protocol.Methods.textDocument_codeLens, event.buf) then
 				vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave", "BufWritePost" }, {
