@@ -23,5 +23,10 @@
 	allowedSignersFile = ~/.ssh/allowed_signers
 [commit]
 	gpgsign = true
+	verbose = true
 [tag]
 	gpgsign = true
+[rebase]
+	missingCommitsCheck = warn
+[log]
+	abbrevCommit = true
