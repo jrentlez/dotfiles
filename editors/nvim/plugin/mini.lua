@@ -79,10 +79,6 @@ later(function()
 
 	require("mini.pairs").setup()
 
-	-- mini.indentscope ----------------------------------------------------
-
-	require("mini.indentscope").setup()
-
 	-- mini.diff -----------------------------------------------------------
 
 	require("mini.diff").setup({
