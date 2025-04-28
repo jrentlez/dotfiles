@@ -35,7 +35,7 @@ now(function()
 			end
 
 			-- Keymaps
-			local pnmap = function(lhs, scope, desc)
+			local function pnmap(lhs, scope, desc)
 				vim.keymap.set("n", lhs, function()
 					require("mini.extra").pickers.lsp({ scope = scope }, {})
 				end, { desc = desc, buffer = event.buf })
@@ -60,14 +60,6 @@ now(function()
 			end
 			if client:supports_method(vim.lsp.protocol.Methods.workspace_symbol, event.buf) then
 				pnmap("grw", "workspace_symbol", "vim.lsp.buf.workspace_sybmol()")
-			end
-			if client:supports_method(vim.lsp.protocol.Methods.textDocument_signatureHelp, event.buf) then
-				vim.keymap.set(
-					"i",
-					"<C-k>",
-					vim.lsp.buf.signature_help,
-					{ desc = "vim.lsp.buf.signature_help()", buffer = event.buf }
-				)
 			end
 
 			local lsp_augroup = vim.api.nvim_create_augroup("custom-lsp-autocmds", { clear = false })
@@ -122,7 +114,7 @@ now(function()
 					group = lsp_augroup,
 					callback = function(args)
 						local server_name = vim.b[args.buf].lspfmt
-						if server_name and server_name == "" then
+						if server_name == "" then
 							return
 						end
 						vim.lsp.buf.format({ bufnr = args.buf, name = server_name })
@@ -132,47 +124,11 @@ now(function()
 		desc = "LSP configuration",
 	})
 
-	vim.api.nvim_create_autocmd("LspDetach", {
-		group = vim.api.nvim_create_augroup("default-lsp-detach", { clear = true }),
-		callback = function(detach)
-			local lsp_augroup = vim.api.nvim_create_augroup("custom-lsp-autocmds", { clear = false })
-			vim.lsp.buf.clear_references()
-			vim.api.nvim_clear_autocmds({
-				group = lsp_augroup,
-				buffer = detach.buf,
-			})
-			vim.b[detach.buf].lsp_format_on_save_autocmd = nil
-			vim.lsp.inlay_hint.enable(false, { bufnr = detach.buf })
-
-			-- Remove keymaps
-			local keymaps = vim.api.nvim_buf_get_keymap(detach.buf, "n")
-			local delmap = function(lhs)
-				for _, keymap in ipairs(keymaps) do
-					if keymap.lhs == lhs then
-						vim.keymap.del("n", lhs, { buffer = detach.buf })
-						return
-					end
-				end
-			end
-
-			delmap("gD") -- WARN: Deletes preexisting keymap
-			delmap("gd") -- WARN: Deletes preexisting keymap
-			delmap("grt")
-			delmap("grs")
-			delmap("gri")
-			delmap("grr")
-			delmap("grw")
-			delmap("grl")
-		end,
-		desc = "Cleanup lsp-configuration",
-	})
-
 	---@diagnostic disable-next-line: missing-fields
 	require("mason").setup({
 		PATH = "append",
 	})
 
 	vim.lsp.config("*", require("spec").lsp_default_config)
-
 	vim.lsp.enable(require("spec"):specified_and_installed_lsps())
 end)
