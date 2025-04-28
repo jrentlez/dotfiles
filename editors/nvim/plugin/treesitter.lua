@@ -1,6 +1,6 @@
 ---@module "mini.deps"
 
-local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
+local add, now = MiniDeps.add, MiniDeps.now
 
 --- Finish treesitter setup for a buffer
 ---@param buf integer buffer
@@ -10,30 +10,20 @@ local function finish_setup(buf, lang)
 	vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 end
 
--- Setup treesitter for a buffer
+--- Setup treesitter for a buffer
 ---@param buf integer buffer
 ---@param ft string? explicitly set filetype
 local function setup_treesitter(buf, ft)
-	ft = ft or vim.api.nvim_get_option_value("ft", { buf = buf })
+	ft = ft or vim.bo[buf].filetype
+
 	local lang = vim.treesitter.language.get_lang(ft) or ft
-	if lang == "jayvee" then
+	if lang == "jayvee" or vim.list_contains(require("nvim-treesitter.config").installed_parsers(), lang) then
 		finish_setup(buf, lang)
+	elseif vim.list_contains(require("nvim-treesitter.config").get_available(), lang) then
+		require("nvim-treesitter.install").install({ lang }, nil, function()
+			finish_setup(buf, lang)
+		end)
 	end
-
-	local available = vim.list_contains(require("nvim-treesitter.config").get_available(), lang)
-	if not available then
-		return
-	end
-
-	local installed = vim.list_contains(require("nvim-treesitter.config").installed_parsers(), lang)
-	if installed then
-		finish_setup(buf, lang)
-		return
-	end
-
-	require("nvim-treesitter.install").install({ lang }, nil, function()
-		finish_setup(buf, lang)
-	end)
 end
 
 now(function()
