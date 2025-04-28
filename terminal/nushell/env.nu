@@ -1,6 +1,6 @@
 # version = "0.103"
 
-$env.PROMPT_COMMAND = {|| ^prompt (job list | length) }
+$env.PROMPT_COMMAND = {|| ^prompt (job list | length) $env.LAST_EXIT_CODE }
 $env.PROMPT_COMMAND_RIGHT = ""
 
 $env.ENV_CONVERSIONS = {
