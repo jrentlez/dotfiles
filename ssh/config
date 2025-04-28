@@ -1,8 +1,3 @@
-# gitlab.com
-Host zeltner.philippklein.me
-	HostName zeltner.philippklein.me
-	User user
-
 Host gitlab.com
 	PreferredAuthentications publickey
 	IdentityFile ~/.ssh/id_ed25519
@@ -18,9 +13,3 @@ Host fau
 	PreferredAuthentications publickey
 	IdentityFile ~/.ssh/id_ed25519
 	User xy76tyce
-
-#raspi
-Host raspi
-	HostName 192.168.2.106
-	User pi
-
