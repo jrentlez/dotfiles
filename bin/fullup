@@ -29,8 +29,8 @@ rustup update
 section Dotfiles
 git -C "$HOME/.dotfiles" pull
 
-section "Nushell prompt"
+section "Prompt"
 (
-	cd "$HOME/.config/nushell/prompt/" || return
+	cd "$HOME/.dotfiles/terminal/prompt" || return
 	cargo install --path .
 )
