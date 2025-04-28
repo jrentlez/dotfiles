@@ -4,7 +4,7 @@
 ---@field lsp_inhibit fun(server_name: string) Do not start this (enabled) LSP
 ---@field lsp_default_config vim.lsp.Config The default configuration for all LSPs. Should be passed to `vim.lsp.config()`
 ---@field other_tools string[] List of non-lsp tools that mason should install
----@field tool_is_installed fun(tool_name: string): false | "mason" | "system" | "in-process" Check if a tool is installed, and if so through what method
+---@field tool_installation_status fun(tool_name: string): nil | "install-via-mason" | "installed-mason" | "installed-system" | "installed-in-process" Check if a tool is installed, and if so through what method or if it needs to be installed with mason
 ---@field all_specified_tools fun(self): string[] List all LSPs that are either installed through mason or specified in the `lsps` field
 ---@field specified_and_installed_lsps fun(self): string[] List all LSPs that are either installed through mason or specified in the `lsps` field
 local tools_spec = {
@@ -79,27 +79,24 @@ function tools_spec.lsp_inhibit(server_name)
 	} --[[@as vim.lsp.Config]])
 end
 
-function tools_spec.tool_is_installed(tool_name)
-	--WARN: this assumes there are no name conflicts between server names and other tool names
-	if
-		require("mason-registry").is_installed(
-			require("mason-lspconfig").get_mappings().lspconfig_to_mason[tool_name] or tool_name
-		)
-	then
-		return "mason"
-	elseif vim.fn.executable(tool_name) == 1 then
-		return "system"
-	end
+function tools_spec.tool_installation_status(tool_name)
+	local mason_name = require("mason-lspconfig").get_mappings().lspconfig_to_mason[tool_name] or tool_name
 
-	local lspconfig = vim.lsp.config[tool_name] --[[@as vim.lsp.Config|nil]]
-	if not lspconfig then
-		return false
-	elseif type(lspconfig.cmd) == "function" then
-		return "in-process"
-	elseif vim.fn.executable(lspconfig.cmd[1]) == 1 then
-		return "system"
+	if require("mason-registry").is_installed(mason_name) then
+		return "installed-mason"
+	elseif vim.fn.executable(tool_name) == 1 then
+		return "installed-system"
 	else
-		return false
+		local lspconfig = vim.lsp.config[tool_name] --[[@as vim.lsp.Config|nil]]
+		if lspconfig then
+			if type(lspconfig.cmd) == "function" then
+				return "installed-in-process"
+			elseif vim.fn.executable(lspconfig.cmd[1]) == 1 then
+				return "installed-system"
+			end
+		end
+
+		return require("mason-registry").has_package(mason_name) and "install-via-mason" or nil
 	end
 end
 
