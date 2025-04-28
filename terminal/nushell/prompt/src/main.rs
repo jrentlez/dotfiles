@@ -43,7 +43,7 @@ fn userhost() -> Option<String> {
     } else if is_root {
         Some(color::RED.to_string() + " " + &userhost)
     } else {
-        Some(" ".to_string() + &userhost)
+        Some(" ".to_string() + color::YELLOW + &userhost)
     }
 }
 
