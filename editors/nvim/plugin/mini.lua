@@ -3,21 +3,21 @@
 local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 
 now(function()
+	-- mini.notify ---------------------------------------------------------
+
 	require("mini.notify").setup()
 	vim.notify = MiniNotify.make_notify()
 
+	-- mini.files ----------------------------------------------------------
+
 	require("mini.files").setup()
 
-	vim.api.nvim_create_autocmd("UIEnter", {
-		desc = "UI modules from mini.nvim",
-		group = vim.api.nvim_create_augroup("mini-ui-modules", { clear = true }),
-		callback = function()
-			require("mini.icons").setup({
-				style = vim.env.HAS_NERD_FONT and "glyph" or "ascii",
-			})
-			require("mini.icons").tweak_lsp_kind()
-		end,
+	-- mini.icons ----------------------------------------------------------
+
+	require("mini.icons").setup({
+		style = vim.env.HAS_NERD_FONT and "glyph" or "ascii",
 	})
+	require("mini.icons").tweak_lsp_kind()
 end)
 
 later(function()
