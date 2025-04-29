@@ -26,10 +26,8 @@ vim.o.exrc = true
 -- Use space as the one and only true leader key
 vim.g.mapleader = " "
 
--- Use terminal to copy/paste if using ssh
-if vim.env.SSH_CONNECTION or vim.env.SSH_CLIENT or vim.env.SSH_TTY then
-	vim.g.clipboard = "osc52"
-end
+-- Use the terminal to copy/paste
+vim.g.clipboard = "osc52"
 
 -- Options ---------------------------------------------------------------------
 

@@ -13,3 +13,6 @@ gtk-titlebar-hide-when-maximized = true
 
 keybind = ctrl+shift+l=new_split:right
 
+clipboard-read = allow
+clipboard-write = allow
+
