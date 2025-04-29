@@ -28,7 +28,7 @@ $env.EDITOR = 'nvim'
 $env.MANPAGER = r#'sh -c 'sed -u -e "s/\\x1B\[[0-9;]*m//g; s/.\\x08//g" | bat -p -lman''#
 
 let additional_bin_paths = [".bin", ".local/bin", ".cargo/bin", ".go/bin", ".local/share/npm/bin"];
-$env.PATH = $env.PATH | append ($additional_bin_paths | each {|p| $env.HOME | path join $p}) | uniq
+$env.PATH = $env.PATH | prepend ($additional_bin_paths | each {|p| $env.HOME | path join $p}) | uniq
 $env.npm_config_prefix = $env.HOME | path join ".local/share/npm"
 
 $env.VIRTUAL_ENV_DISABLE_PROMPT = true
