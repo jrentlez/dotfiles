@@ -1,4 +1,4 @@
-# version = "0.103"
+# version = "0.104"
 
 $env.config.show_banner = false
 $env.config.datetime_format.normal = '%a, %d %b %Y %H:%M:%S %z'
@@ -31,12 +31,12 @@ $env.config.color_config.hints = "light_gray_dimmed"
 alias yeet = pacman -Rns
 alias pacdiff = with-env {DIFFPROG: "nvim -d"} {^pacdiff -b -3 -s}
 
-alias te = nvim		# FIXME: This should execute $env.EDITOR, but nushell then doesn't do auto completion
+alias te = nvim  # FIXME: This should execute $env.EDITOR, but nushell then doesn't do auto completion
 alias diffed = te ...(git diff --name-only --relative | lines)
 alias vim = nvim --noplugin
 alias fg = job unfreeze
 
-alias nu-ls = ls		# Backup nushell's builtin `ls`
+alias nu-ls = ls  # Backup nushell's builtin `ls`
 
 # Wrap nushell's `ls` to print a grid with icons
 def ls [

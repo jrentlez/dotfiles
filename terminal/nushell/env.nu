@@ -1,18 +1,10 @@
-# version = "0.103"
+# version = "0.104"
 
 $env.PROMPT_COMMAND = {|| ^prompt (job list | length) $env.LAST_EXIT_CODE }
 $env.PROMPT_COMMAND_RIGHT = ""
 
-$env.ENV_CONVERSIONS = {
-    "PATH": {
-        from_string: { |s| $s | split row (char esep) | path expand --no-symlink }
-        to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
-    }
-    "Path": {
-        from_string: { |s| $s | split row (char esep) | path expand --no-symlink }
-        to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
-    }
-}
+use std/config env-conversions
+$env.ENV_CONVERSIONS = env-conversions
 
 # Directories to search for scripts when calling source or use
 $env.NU_LIB_DIRS = $env.NU_LIB_DIRS | append [
