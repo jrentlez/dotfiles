@@ -1,8 +1,8 @@
 ---@module "mini.deps"
 
-local add, now = MiniDeps.add, MiniDeps.now
+local add, later = MiniDeps.add, MiniDeps.later
 
-now(function()
+later(function()
 	add({
 		source = "williamboman/mason-lspconfig.nvim",
 		depends = {
