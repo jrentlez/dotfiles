@@ -4,10 +4,10 @@
 ---@field lsp_inhibit fun(server_name: string) Do not start this (enabled) LSP
 ---@field lsp_default_config vim.lsp.Config The default configuration for all LSPs. Should be passed to `vim.lsp.config()`
 ---@field other_tools string[] List of non-lsp tools that mason should install
+---@field all_specified_tools fun(self): string[] List all tools named in the spec
 ---@field tool_installation_status fun(tool_name: string): nil | "install-via-mason" | "installed-mason" | "installed-system" | "installed-in-process" Check if a tool is installed, and if so through what method or if it needs to be installed with mason
----@field all_specified_tools fun(self): string[] List all LSPs that are either installed through mason or specified in the `lsps` field
 ---@field specified_and_installed_lsps fun(self): string[] List all LSPs that are either installed through mason or specified in the `lsps` field
-local tools_spec = {
+local ToolSpec = {
 	lsps = {
 		"eslint",
 		"clangd",
@@ -53,12 +53,12 @@ local tools_spec = {
 	},
 }
 
-function tools_spec:all_specified_tools()
+function ToolSpec:all_specified_tools()
 	local tools = vim.deepcopy(self.lsps)
 	return vim.list_extend(tools, self.other_tools)
 end
 
-function tools_spec:specified_and_installed_lsps()
+function ToolSpec:specified_and_installed_lsps()
 	local lsps = {}
 	vim.iter(self.lsps):each(function(server_name)
 		lsps[server_name] = true
@@ -69,7 +69,7 @@ function tools_spec:specified_and_installed_lsps()
 	return vim.tbl_keys(lsps)
 end
 
-function tools_spec.lsp_inhibit(server_name)
+function ToolSpec.lsp_inhibit(server_name)
 	vim.lsp.config(server_name, {
 		workspace_required = true,
 		root_dir = function(_, cb)
@@ -79,7 +79,7 @@ function tools_spec.lsp_inhibit(server_name)
 	} --[[@as vim.lsp.Config]])
 end
 
-function tools_spec.tool_installation_status(tool_name)
+function ToolSpec.tool_installation_status(tool_name)
 	local mason_name = require("mason-lspconfig").get_mappings().lspconfig_to_mason[tool_name] or tool_name
 
 	if require("mason-registry").is_installed(mason_name) then
@@ -100,4 +100,4 @@ function tools_spec.tool_installation_status(tool_name)
 	end
 end
 
-return tools_spec
+return ToolSpec
