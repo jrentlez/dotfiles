@@ -107,3 +107,5 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	end,
 	desc = "Highlight yanked text",
 })
+
+require("vim._extui").enable({})
