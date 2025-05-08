@@ -1,26 +1,41 @@
 local M = {}
 
 function M.check()
-	vim.health.start("Check all specified tools are installed")
+	vim.health.start("Check all specified packages are installed")
 
-	local installed_tools = require("mason-registry").get_installed_package_names() --[[@as string[] ]]
-	local aliases = require("mason-lspconfig").get_mappings().lspconfig_to_package
-	vim.iter(require("spec").mason):each(function(tool_name)
-		local mason_name = aliases[tool_name] or tool_name
-		if vim.list_contains(installed_tools, mason_name) then
-			vim.health.ok(("'%s' installed via mason"):format(tool_name))
-		elseif require("mason-registry").has_package(tool_name) then
-			vim.health.error(
-				("'%s' was not automatically installed via mason"):format(tool_name),
-				"Make sure the automatic installation process in '/plugin/mason-tool-installer' works"
-			)
-		else
-			vim.health.warn(
-				("It seems '%s' is not available via mason"):format(tool_name),
-				"If the tool is an LSP installed on your system, you need to specify it in the `system_lsps` list, not `mason`"
-			)
+	local installed_pkgs = require("mason-registry").get_installed_packages() --[[@as Package[] ]]
+	vim.iter(require("spec").mason):each(
+		---@param pkg_name string
+		function(pkg_name)
+			if
+				vim.iter(installed_pkgs):any(
+					---@param pkg Package
+					function(pkg)
+						return pkg.name == pkg_name or vim.list_contains(pkg:get_aliases(), pkg_name)
+					end
+				)
+			then
+				vim.health.ok(("'%s' installed via mason"):format(pkg_name))
+			elseif
+				vim.iter(require("mason-registry").get_all_packages()):any(
+					---@param pkg Package
+					function(pkg)
+						return pkg.name == pkg_name or vim.list_contains(pkg:get_aliases(), pkg_name)
+					end
+				)
+			then
+				vim.health.error(
+					("'%s' was not automatically installed via mason"):format(pkg_name),
+					"Make sure the automatic installation process in '/plugin/mason-tool-installer' works"
+				)
+			else
+				vim.health.warn(
+					("It seems '%s' is not available via mason"):format(pkg_name),
+					"If the package is an LSP installed on your system, you need to specify it in the `system_lsps` list, not `mason`"
+				)
+			end
 		end
-	end)
+	)
 
 	vim.iter(require("spec").system_lsps):each(function(server_name)
 		local lspconfig = assert(vim.lsp.config[server_name])
@@ -55,9 +70,9 @@ function M.check()
 		:totable() --[[@as string[] ]]
 
 	if vim.tbl_isempty(unspecified_installed) then
-		vim.health.info("All installed tools can be found in the spec")
+		vim.health.info("All installed packages can be found in the spec")
 	else
-		vim.health.warn("Some installed tools are not mentioned in the spec", unspecified_installed)
+		vim.health.warn("Some installed packages are not mentioned in the spec", unspecified_installed)
 	end
 end
 return M
