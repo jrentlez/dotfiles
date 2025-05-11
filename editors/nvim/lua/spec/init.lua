@@ -26,6 +26,7 @@ local ToolSpec = {
 	system_lsps = {
 		"clangd",
 		"rust_analyzer",
+		"glsl_analyzer",
 		"nushell",
 		"jayvee_ls",
 		"stylua3p_ls",
