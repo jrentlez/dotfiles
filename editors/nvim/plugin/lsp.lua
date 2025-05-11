@@ -4,10 +4,11 @@ local add, later = MiniDeps.add, MiniDeps.later
 
 later(function()
 	add({
-		source = "mason-org/mason-lspconfig.nvim",
+		source = "WhoIsSethDaniel/mason-tool-installer.nvim",
 		depends = {
 			"neovim/nvim-lspconfig",
 			"mason-org/mason.nvim",
+			"mason-org/mason-lspconfig.nvim",
 		},
 	})
 	add("jvalue/jayvee.nvim")
@@ -124,11 +125,14 @@ later(function()
 		desc = "LSP configuration",
 	})
 
+	vim.lsp.config("*", require("spec").lsp_default_config)
+
+	vim.lsp.enable(require("spec").system_lsps)
+
 	require("mason").setup({
 		PATH = "append",
 	})
-
-	vim.lsp.config("*", require("spec").lsp_default_config)
+	require("mason-tool-installer").setup({ ensure_installed = require("spec").mason, auto_update = true })
+	vim.cmd("MasonToolsUpdate")
 	require("mason-lspconfig").setup()
-	vim.lsp.enable(require("spec").system_lsps)
 end)

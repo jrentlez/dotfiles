@@ -26,7 +26,7 @@ function M.check()
 			then
 				vim.health.error(
 					("'%s' was not automatically installed via mason"):format(pkg_name),
-					"Make sure the automatic installation process in '/plugin/mason-tool-installer' works"
+					"Make sure the automatic installation process in `/plugin/lsp.lua` works"
 				)
 			else
 				vim.health.warn(
