@@ -35,7 +35,6 @@ vim.o.breakindent = true
 vim.o.clipboard = "unnamedplus"
 vim.o.conceallevel = 2
 vim.o.cursorline = true
-vim.o.formatoptions = "qjl1"
 vim.o.ignorecase = true
 vim.o.inccommand = "split"
 vim.o.incsearch = true
