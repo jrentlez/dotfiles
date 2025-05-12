@@ -106,4 +106,14 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	desc = "Highlight yanked text",
 })
 
+vim.api.nvim_create_autocmd("BufRead", {
+	group = vim.api.nvim_create_augroup("ro_nomodifiable", { clear = true }),
+	callback = function(args)
+		if vim.bo[args.buf].readonly then
+			vim.bo[args.buf].modifiable = false
+		end
+	end,
+	desc = "Make readonly buffers nomodifiable",
+})
+
 require("vim._extui").enable({})
