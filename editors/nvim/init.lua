@@ -56,7 +56,6 @@ vim.o.undofile = true
 vim.o.updatetime = 250
 vim.o.virtualedit = "block"
 vim.o.wrap = true
-vim.opt.shortmess:append("cC")
 
 -- Keymaps ---------------------------------------------------------------------
 
