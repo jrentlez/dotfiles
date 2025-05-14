@@ -29,22 +29,21 @@ pub fn directory() -> (String, Option<Repository>) {
         return (fmt_dir("/"), None);
     }
 
-    let git_root = Repository::discover_path(&cwd, ["/"]).ok();
-    match git_root {
-        Some(git_root) => {
+    match Repository::discover(&cwd) {
+        Ok(repo) => {
+            let git_root = repo.workdir().unwrap_or(&cwd);
+
             let rel_to_git_root = cwd
                 .strip_prefix(
                     git_root
                         .parent()
-                        .expect(".git folder has parent")
-                        .parent()
-                        .expect("git repo has parent"),
+                        .expect("Every git repository has a parent"),
                 )
-                .expect("cwd is in the git repo");
+                .expect("cwd is (a subdir of) git_root");
 
-            (fmt_dir(rel_to_git_root), Repository::open(git_root).ok())
+            (fmt_dir(rel_to_git_root), Some(repo))
         }
-        None => {
+        Err(_) => {
             let rel_to_home = cwd
                 .strip_prefix(var_lossy("HOME").expect("$HOME is set"))
                 .ok();
