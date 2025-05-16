@@ -20,8 +20,12 @@ local function setup_treesitter(buf, ft)
 	if lang == "jayvee" or vim.list_contains(require("nvim-treesitter.config").installed_parsers(), lang) then
 		finish_setup(buf, lang)
 	elseif vim.list_contains(require("nvim-treesitter.config").get_available(), lang) then
-		require("nvim-treesitter.install").install({ lang }, nil, function()
-			finish_setup(buf, lang)
+		require("nvim-treesitter.install").install(lang):await(function(err)
+			if err then
+				error(err, vim.log.levels.ERROR)
+			else
+				finish_setup(buf, lang)
+			end
 		end)
 	end
 end
