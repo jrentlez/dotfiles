@@ -6,3 +6,15 @@ edition = "2024"
 [dependencies]
 git2 = { version = "0.20.1", default-features = false }
 nix = { version = "0.30.0", features = ["hostname", "user"] }
+
+[lints.clippy]
+cast_possible_wrap = "deny"
+semicolon_if_nothing_returned = "deny"
+needless_pass_by_value = "deny"
+if_not_else = "warn"
+unreadable_literal = "warn"
+needless_for_each = "warn"
+unnecessary_semicolon = "deny"
+unnested_or_patterns = "warn"
+struct_field_names = "warn"
+bool_to_int_with_if = "deny"

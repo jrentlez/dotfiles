@@ -83,7 +83,12 @@ fn has_stash(repo: &Repository) -> bool {
     !stash_reflog.is_empty()
 }
 
-fn read_upstream<'b>(repo: &Repository, local: Branch<'b>) -> Option<(Branch<'b>, &'static str)> {
+struct Upstream<'b> {
+    branch: Branch<'b>,
+    ahead_behind: &'static str,
+}
+
+fn read_upstream<'b>(repo: &Repository, local: &Branch<'b>) -> Option<Upstream<'b>> {
     let upstream = local.upstream().ok()?;
     let local_id = local.get().target().expect("HEAD points to a reference");
     let upstream_id = upstream
@@ -104,7 +109,10 @@ fn read_upstream<'b>(repo: &Repository, local: Branch<'b>) -> Option<(Branch<'b>
     } else {
         ""
     };
-    Some((upstream, ahead_behind))
+    Some(Upstream {
+        branch: upstream,
+        ahead_behind,
+    })
 }
 
 pub fn git(repo: &Repository) -> String {
@@ -135,8 +143,11 @@ pub fn git(repo: &Repository) -> String {
                 .expect("Branch has name")
                 .expect("UTF8")
                 .to_string();
-            match read_upstream(repo, local) {
-                Some((upstream, ab)) => {
+            match read_upstream(repo, &local) {
+                Some(Upstream {
+                    branch: upstream,
+                    ahead_behind,
+                }) => {
                     let remote_prefix = repo
                         .branch_remote_name(upstream.get().name().expect("UTF8"))
                         .expect("Already verified existing upstream")
@@ -152,9 +163,9 @@ pub fn git(repo: &Repository) -> String {
                         .expect("upstream name starts with remote");
 
                     if local_name == upstream_branch_name {
-                        (upstream_full_name.to_string(), Some(ab))
+                        (upstream_full_name.to_string(), Some(ahead_behind))
                     } else {
-                        (local_name + ":" + upstream_full_name, Some(ab))
+                        (local_name + ":" + upstream_full_name, Some(ahead_behind))
                     }
                 }
                 None => (local_name, None),
