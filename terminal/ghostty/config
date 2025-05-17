@@ -1,7 +1,7 @@
 command = nu
 
 font-family = Adwaita Mono
-font-size = 18
+font-size = 15
 
 window-theme = ghostty
 theme = dark:NvimDark,light:NvimLight
