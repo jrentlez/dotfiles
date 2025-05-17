@@ -1,6 +1,6 @@
 ---@module "mini.deps"
 
-local add, now = MiniDeps.add, MiniDeps.now
+local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 
 --- Finish treesitter setup for a buffer
 ---@param buf integer buffer
@@ -61,4 +61,22 @@ now(function()
 			setup_treesitter(args.buf, args.match)
 		end,
 	})
+end)
+
+later(function()
+	local installed = require("nvim-treesitter.config").installed_parsers()
+	local required_parsers = vim.iter({
+		"c",
+		"lua",
+		"markdown",
+		"markdown_inline",
+		"query",
+		"vim",
+		"vimdoc",
+	})
+		:filter(function(parser)
+			return not vim.list_contains(installed, parser)
+		end)
+		:totable()
+	require("nvim-treesitter.install").install(required_parsers)
 end)
