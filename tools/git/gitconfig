@@ -1,32 +1,45 @@
 [core]
-	pager = delta
+pager = delta
+
 [user]
-	email = jonas.zeltner@posteo.de
-	name = Jonas Zeltner
-	signingkey = ~/.ssh/id_ed25519.pub
+email = jonas.zeltner@posteo.de
+name = Jonas Zeltner
+signingkey = ~/.ssh/id_ed25519.pub
+
 [init]
-	defaultBranch = main
+defaultBranch = main
+
 [interactive]
-	diffFilter = delta --color-only
+diffFilter = delta --color-only
+
 [delta]
-	navigate = true
-	line-numbers = true
+navigate = true
+line-numbers = true
+
 [merge]
-	conflictstyle = zdiff3
+conflictstyle = zdiff3
+
 [diff]
-	colorMoved = default
+colorMoved = default
+
 [fetch]
-	prune = true
+prune = true
+
 [gpg]
-	format = ssh
+format = ssh
+
 [gpg "ssh"]
-	allowedSignersFile = ~/.ssh/allowed_signers
+allowedSignersFile = ~/.ssh/allowed_signers
+
 [commit]
-	gpgsign = true
-	verbose = true
+gpgsign = true
+verbose = true
+
 [tag]
-	gpgsign = true
+gpgsign = true
+
 [rebase]
-	missingCommitsCheck = warn
+missingCommitsCheck = warn
+
 [log]
-	abbrevCommit = true
+abbrevCommit = true
