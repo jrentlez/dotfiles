@@ -44,6 +44,7 @@ vim.o.list = true
 vim.o.listchars = "tab:> ,extends:…,precedes:…,nbsp:␣"
 vim.o.mouse = "a"
 vim.o.number = true
+vim.o.pumheight = 10
 vim.o.relativenumber = true
 vim.o.scrolloff = 10
 vim.o.signcolumn = "yes"
