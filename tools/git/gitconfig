@@ -1,5 +1,5 @@
 [core]
-pager = delta
+pager = delta --diff-highlight
 
 [user]
 email = jonas.zeltner@posteo.de
@@ -9,18 +9,15 @@ signingkey = ~/.ssh/id_ed25519.pub
 [init]
 defaultBranch = main
 
-[interactive]
-diffFilter = delta --color-only
-
-[delta]
-navigate = true
-line-numbers = true
-
 [merge]
 conflictstyle = zdiff3
 
 [diff]
-colorMoved = default
+minimal = true
+mnemonicPrefix = true
+
+[interactive]
+diffFilter = delta --diff-highlight --color-only
 
 [fetch]
 prune = true
@@ -43,3 +40,11 @@ missingCommitsCheck = warn
 
 [log]
 abbrevCommit = true
+
+[delta]
+keep-plus-minus-markers = true
+file-style = "bold normal"
+navigate = true
+navigate-regex = "^(commit|added:|removed:|renamed:|Δ|•|(@@ -\\d+,\\d+ \\+\\d+,\\d+ @@))"
+
+; vim: filetype=gitconfig
