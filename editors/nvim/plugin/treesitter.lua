@@ -17,7 +17,7 @@ local function setup_treesitter(buf, ft)
 	ft = ft or vim.bo[buf].filetype
 
 	local lang = vim.treesitter.language.get_lang(ft) or ft
-	if lang == "jayvee" or vim.list_contains(require("nvim-treesitter.config").installed_parsers(), lang) then
+	if vim.list_contains(require("nvim-treesitter.config").installed_parsers(), lang) then
 		finish_setup(buf, lang)
 	elseif vim.list_contains(require("nvim-treesitter.config").get_available(), lang) then
 		require("nvim-treesitter.install").install(lang):await(function(err)
@@ -40,19 +40,6 @@ now(function()
 				vim.cmd("TSUpdate")
 			end,
 		},
-	})
-
-	vim.api.nvim_create_autocmd("User", {
-		pattern = "TSUpdate",
-		callback = function()
-			require("nvim-treesitter.parsers").jayvee = {
-				install_info = {
-					url = "https://github.com/jvalue/tree-sitter-jayvee",
-					revision = "3106c29e629f100fe5e4d3345bb848481b5e0ea5",
-				},
-				tier = 3,
-			}
-		end,
 	})
 
 	vim.api.nvim_create_autocmd("FileType", {
