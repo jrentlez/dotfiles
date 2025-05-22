@@ -20,7 +20,7 @@ local function setup_treesitter(buf, ft)
 	if vim.list_contains(require("nvim-treesitter.config").installed_parsers(), lang) then
 		finish_setup(buf, lang)
 	elseif vim.list_contains(require("nvim-treesitter.config").get_available(), lang) then
-		require("nvim-treesitter.install").install(lang):await(function(err)
+		require("nvim-treesitter").install(lang):await(function(err)
 			if err then
 				error(err, vim.log.levels.ERROR)
 			else
@@ -65,5 +65,5 @@ later(function()
 			return not vim.list_contains(installed, parser)
 		end)
 		:totable()
-	require("nvim-treesitter.install").install(required_parsers)
+	require("nvim-treesitter").install(required_parsers)
 end)
