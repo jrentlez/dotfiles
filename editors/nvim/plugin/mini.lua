@@ -137,6 +137,7 @@ later(function()
 			},
 		})
 	end, "Search pickers")
+	nmap("<leader>sc", ex.colorschemes, "Search colorschemes")
 
 	-- mini.hipatterns -----------------------------------------------------
 
