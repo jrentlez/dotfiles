@@ -17,7 +17,6 @@ zinit light Aloxaf/fzf-tab
 zinit light z-shell/zsh-eza
 
 # Add oh-my-zsh plugins
-zinit snippet OMZP::archlinux
 zinit snippet OMZP::colored-man-pages
 
 # Load completions
@@ -48,12 +47,8 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'eza -1 --color=always --ico
 # Load custom aliases
 source $HOME/.zshalias
 
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-    export EDITOR='vim'
-else
-    export EDITOR='nvim'
-fi
+# Set editor to neovim
+export EDITOR='nvim'
 
 #npm global extensions go here
 export npm_config_prefix="$HOME/.local/share/npm"
@@ -63,12 +58,7 @@ export PATH="$PATH:$HOME/.bin/"				# user executables
 export PATH="$PATH:$HOME/.local/bin"			# user executables
 export PATH="$PATH:$HOME/.cargo/bin"			# cargo packages
 export PATH="$PATH:$HOME/.local/share/npm/bin"		# npm global packages
-export PATH="$PATH:$HOME/.deno/bin/"			# deno
-
-# Enable sccache
-export RUSTC_WRAPPER=/usr/bin/sccache
 
 # Shell integrations
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
-
