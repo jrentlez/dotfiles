@@ -2,29 +2,22 @@
 
 local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 
---- Finish treesitter setup for a buffer
----@param buf integer buffer
----@param lang string treesitter language
-local function finish_setup(buf, lang)
-	vim.treesitter.start(buf, lang)
-	vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-end
-
---- Setup treesitter for a buffer
----@param buf integer buffer
----@param ft string? explicitly set filetype
-local function setup_treesitter(buf, ft)
-	ft = ft or vim.bo[buf].filetype
-
-	local lang = vim.treesitter.language.get_lang(ft) or ft
-	if vim.list_contains(require("nvim-treesitter.config").installed_parsers(), lang) then
-		finish_setup(buf, lang)
-	elseif vim.list_contains(require("nvim-treesitter.config").get_available(), lang) then
-		require("nvim-treesitter").install(lang):await(function(err)
+--- Ensure a buffer has its appropriate parser installed
+---@param bufnr integer The buffer to check
+---@param on_installed fun() Called once the parser is installed. If there is no appropriate parser for the buffer, `on_installed` is never called.
+local function ensure_installed(bufnr, on_installed)
+	local language = assert(
+		vim.treesitter.language.get_lang(vim.bo[bufnr].filetype),
+		"Only returns nil if filetype is '' which it never is"
+	)
+	if vim.list_contains(require("nvim-treesitter.config").installed_parsers(), language) then
+		on_installed()
+	elseif vim.list_contains(require("nvim-treesitter.config").get_available(), language) then
+		require("nvim-treesitter").install(language):await(function(err)
 			if err then
 				error(err, vim.log.levels.ERROR)
 			else
-				finish_setup(buf, lang)
+				on_installed()
 			end
 		end)
 	end
@@ -37,16 +30,20 @@ now(function()
 		monitor = "main",
 		hooks = {
 			post_checkout = function()
-				vim.cmd("TSUpdate")
+				require("nvim-treesitter").update()
 			end,
 		},
 	})
 
 	vim.api.nvim_create_autocmd("FileType", {
-		group = vim.api.nvim_create_augroup("NvimTreesitter-custom-setup", { clear = true }),
+		group = vim.api.nvim_create_augroup("nvim-treesitter-buffer-setup", { clear = true }),
 		callback = function(args)
-			setup_treesitter(args.buf, args.match)
+			ensure_installed(args.buf, function()
+				vim.treesitter.start(args.buf)
+				vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+			end)
 		end,
+		desc = "Ensure the appropriate parser is installed and start it",
 	})
 end)
 
