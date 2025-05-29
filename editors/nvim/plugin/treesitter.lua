@@ -10,10 +10,10 @@ local function ensure_installed(bufnr, on_installed)
 		vim.treesitter.language.get_lang(vim.bo[bufnr].filetype),
 		"Only returns nil if filetype is '' which it never is"
 	)
-	if vim.list_contains(require("nvim-treesitter.config").installed_parsers(), language) then
+	if vim.list_contains(require("nvim-treesitter").get_installed(), language) then
 		on_installed()
-	elseif vim.list_contains(require("nvim-treesitter.config").get_available(), language) then
-		require("nvim-treesitter").install(language):await(function(err)
+	elseif vim.list_contains(require("nvim-treesitter").get_available(), language) then
+		require("nvim-treesitter").install(language, { summary = true }):await(function(err)
 			if err then
 				error(err, vim.log.levels.ERROR)
 			else
@@ -30,7 +30,7 @@ now(function()
 		monitor = "main",
 		hooks = {
 			post_checkout = function()
-				require("nvim-treesitter").update()
+				require("nvim-treesitter").update({ summary = true })
 			end,
 		},
 	})
@@ -48,7 +48,7 @@ now(function()
 end)
 
 later(function()
-	local installed = require("nvim-treesitter.config").installed_parsers()
+	local installed = require("nvim-treesitter").get_installed()
 	local required_parsers = vim.iter({
 		"c",
 		"lua",
@@ -62,5 +62,5 @@ later(function()
 			return not vim.list_contains(installed, parser)
 		end)
 		:totable()
-	require("nvim-treesitter").install(required_parsers)
+	require("nvim-treesitter").install(required_parsers, { summary = true })
 end)
