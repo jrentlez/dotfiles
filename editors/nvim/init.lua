@@ -33,7 +33,6 @@ vim.g.clipboard = "osc52"
 
 vim.o.breakindent = true
 vim.o.clipboard = "unnamedplus"
-vim.o.conceallevel = 2
 vim.o.cursorline = true
 vim.o.ignorecase = true
 vim.o.inccommand = "split"
