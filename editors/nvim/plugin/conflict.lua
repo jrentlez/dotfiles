@@ -9,7 +9,7 @@ later(function()
 		require("conflict").jump_to_next_conflict(nil, nil, true)
 	end)
 
-	vim.keymap.set("n", "grn", function()
+	vim.keymap.set("n", "grh", function()
 		vim.ui.select({ "current", "base", "incoming", "none", "both" }, {
 			prompt = "Select a variant to keep",
 			format_item = function(item)

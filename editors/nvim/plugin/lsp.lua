@@ -87,7 +87,7 @@ later(function()
 			end
 
 			-- Enable document color
-			if client:supports_method(vim.lsp.protocol.Methods.document_color) then
+			if client:supports_method(vim.lsp.protocol.Methods.textDocument_documentColor, event.buf) then
 				vim.lsp.document_color.enable(true, event.buf)
 			end
 
