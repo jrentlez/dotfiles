@@ -39,7 +39,15 @@ fn git_status(repo: &Repository) -> String {
         .renames_from_rewrites(true)
         .renames_head_to_index(true);
 
-    let stats = repo.statuses(Some(&mut opts)).expect("Can get statuses");
+    let stats = match repo.statuses(Some(&mut opts)) {
+        Ok(stats) => stats,
+        Err(error) => match error.code() {
+            git2::ErrorCode::BareRepo => return "".to_string(),
+            code => {
+                panic!("{code:?}: {error}")
+            }
+        },
+    };
     let stat = match stats
         .into_iter()
         .map(|stat| stat.status())
