@@ -3,7 +3,7 @@
 local add, later = MiniDeps.add, MiniDeps.later
 
 later(function()
-	add({ source = "https://gitlab.com/TungstnBallon/conflict.nvim" })
+	add({ source = "TungstnBallon/conflict.nvim" })
 
 	vim.keymap.set("n", "gC", function()
 		require("conflict").jump_to_next_conflict(nil, nil, true)
