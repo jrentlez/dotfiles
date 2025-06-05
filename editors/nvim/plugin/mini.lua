@@ -36,7 +36,7 @@ later(function()
 	-- mini.bufremove ------------------------------------------------------
 
 	require("mini.bufremove").setup()
-	nmap("<leader>db", MiniBufremove.delete, "Delete buffer")
+	nmap("<leader>q", MiniBufremove.delete, "Delete buffer")
 
 	-- mini.completion -----------------------------------------------------
 
