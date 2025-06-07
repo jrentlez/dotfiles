@@ -115,5 +115,3 @@ vim.api.nvim_create_autocmd("BufRead", {
 	end,
 	desc = "Make readonly buffers nomodifiable",
 })
-
-require("vim._extui").enable({})
