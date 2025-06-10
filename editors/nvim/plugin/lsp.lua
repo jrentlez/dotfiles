@@ -31,7 +31,7 @@ later(function()
 			end
 
 			-- Lsp completion
-			if client:supports_method(vim.lsp.protocol.textDocument_completion, event.buf) then
+			if client:supports_method(vim.lsp.protocol.Methods.textDocument_completion, event.buf) then
 				vim.bo[event.buf].omnifunc = "v:lua.MiniCompletion.completefunc_lsp"
 			end
 
