@@ -87,7 +87,11 @@ later(function()
 			end
 
 			-- Enable document color
-			if client:supports_method(vim.lsp.protocol.Methods.textDocument_documentColor, event.buf) then
+			if
+				client:supports_method(vim.lsp.protocol.Methods.textDocument_documentColor, event.buf)
+				--TODO: remove this check after nvim-0.12 release
+				and vim.lsp.document_color
+			then
 				vim.lsp.document_color.enable(true, event.buf)
 			end
 
