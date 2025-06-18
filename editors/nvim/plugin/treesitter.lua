@@ -57,6 +57,7 @@ later(function()
 		"query",
 		"vim",
 		"vimdoc",
+		"comment",
 	})
 		:filter(function(parser)
 			return not vim.list_contains(installed, parser)

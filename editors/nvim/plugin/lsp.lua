@@ -125,6 +125,19 @@ later(function()
 						vim.lsp.buf.format({ bufnr = args.buf, name = server_name })
 					end,
 				})
+
+			-- HACK: Disable lsp comment highlighting so the treesitter comment parser can highlight TODO, FIXME, etc.
+			if client:supports_method(vim.lsp.protocol.Methods.textDocument_semanticTokens_full, event.buf) then
+				vim.api.nvim_set_hl(0, "@lsp.type.comment", {})
+
+				vim.api.nvim_create_autocmd("ColorScheme", {
+					desc = "Disable lsp comment highlighting so the treesitter comment parser can highlight TODO, FIXME, etc.",
+					group = vim.api.nvim_create_augroup("clear-lsp-comment-highlight", { clear = true }),
+					callback = function()
+						vim.api.nvim_set_hl(0, "@lsp.type.comment", {})
+					end,
+				})
+			end
 		end,
 		desc = "LSP configuration",
 	})

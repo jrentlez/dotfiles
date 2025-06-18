@@ -141,15 +141,9 @@ later(function()
 
 	-- mini.hipatterns -----------------------------------------------------
 
-	local hi = require("mini.hipatterns")
-	local words = require("mini.extra").gen_highlighter.words
-	hi.setup({
+	require("mini.hipatterns").setup({
 		highlighters = {
-			fixme = words({ "FIXME", "BUG" }, "MiniHipatternsFixme"),
-			hack = words({ "HACK", "WARN" }, "MiniHipatternsHack"),
-			todo = words({ "TODO" }, "MiniHipatternsTodo"),
-			note = words({ "NOTE", "INFO", "HINT" }, "MiniHipatternsNote"),
-			hex_color = hi.gen_highlighter.hex_color(),
+			hex_color = require("mini.hipatterns").gen_highlighter.hex_color(),
 		},
 	})
 
