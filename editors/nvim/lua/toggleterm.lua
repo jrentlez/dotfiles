@@ -49,7 +49,7 @@ function M.toggle()
 			new_cwd = vim.fs.dirname(old_buffer_path)
 		end
 
-		vim.fn.jobstart("nu", { term = true, cwd = new_cwd })
+		vim.fn.jobstart("zsh", { term = true, cwd = new_cwd })
 	end
 
 	vim.cmd.startinsert()

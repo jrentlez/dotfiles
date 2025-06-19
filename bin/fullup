@@ -29,6 +29,9 @@ rustup update
 section Dotfiles
 git -C "$HOME/.dotfiles" pull
 
+section "Zinit & Zsh plugins"
+zsh -c "source $HOME/.zshrc && zinit update"
+
 section "Prompt"
 (
 	cd "$HOME/.dotfiles/terminal/prompt" || return

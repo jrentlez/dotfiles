@@ -1,4 +1,4 @@
-command = nu
+command = zsh
 
 font-family = Adwaita Mono
 font-size = 15
