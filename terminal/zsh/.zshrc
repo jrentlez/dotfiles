@@ -59,3 +59,8 @@ export PATH="$PATH:$HOME/.local/share/npm/bin"		# npm global packages
 # Shell integrations
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
+
+if [[ "$TERM" == "xterm-ghostty" ]]
+then
+	export HAS_NERD_FONT=true
+fi
