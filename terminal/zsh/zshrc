@@ -45,6 +45,8 @@ zstyle ':fzf-tab:*' fzf-flags --ansi --color=bw --style=minimal
 
 # Set editor to neovim
 export EDITOR='nvim'
+# Use bat as the manpager
+export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
 
 # NPM global extensions go here
 export npm_config_prefix="$HOME/.local/share/npm"
