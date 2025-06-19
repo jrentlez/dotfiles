@@ -7,7 +7,6 @@ source "${ZINIT_HOME}/zinit.zsh"
 # Prompt
 zmodload zsh/parameter  # Needed to access jobstates variable
 setopt promptsubst
-export VIRTUAL_ENV_DISABLE_PROMPT=1
 precmd() {
 	print "$(prompt precmd)"
 }
@@ -37,6 +36,18 @@ setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 
+# Completion styling
+# Disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+# Force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
+zstyle ':completion:*' menu no
+# To make fzf-tab follow FZF_DEFAULT_OPTS.
+# NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
+
+# Environment Variables
+export PATH="$HOME/.local/bin/:$HOME/.bin:$HOME/.cargo/bin:$HOME/.local/share/npm/bin:$PATH"
+export EDITOR='nvim'
 export FZF_DEFAULT_OPTS="--ansi --style=minimal --color='
 	fg:-1 fg+:-1
 	bg:-1 bg+:-1 alt-bg:-1
@@ -46,50 +57,19 @@ export FZF_DEFAULT_OPTS="--ansi --style=minimal --color='
 	spinner:3 info:-1
 	prompt:6 query:-1
 '"
-
-# Completion styling
-# Disable sort when completing `git checkout`
-zstyle ':completion:*:git-checkout:*' sort false
-# set list-colors to enable filename colorizing
-# Force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
-zstyle ':completion:*' menu no
-# To make fzf-tab follow FZF_DEFAULT_OPTS.
-# NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
-zstyle ':fzf-tab:*' use-fzf-default-opts yes
-
-
-# Set editor to neovim
-export EDITOR='nvim'
-# Use bat as the manpager
 export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
-
-# NPM global extensions go here
 export npm_config_prefix="$HOME/.local/share/npm"
-
-# Extend path to
-export PATH="$PATH:$HOME/.bin/:$HOME/.local/bin"	# user executables
-export PATH="$PATH:$HOME/.cargo/bin"			# cargo packages
-export PATH="$PATH:$HOME/.local/share/npm/bin"		# npm global packages
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+[[ "$TERM" == "xterm-ghostty" ]] && export HAS_NERD_FONT=true
 
 # Shell integrations
 source <(fzf --zsh)
-eval "$(zoxide init --cmd cd zsh)"
 
-if [[ "$TERM" == "xterm-ghostty" ]]
-then
-	export HAS_NERD_FONT=true
-fi
+# Aliases
+alias te='$EDITOR'
+alias vim="nvim --noplugin"
+alias diffed='$EDITOR $(git diff --name-only --relative)'
+alias pacdiff='DIFFPROG="nvim -d" pacdiff -b -3 -s'
 
 # Enable vim mode
 bindkey -v
-
-# Better pacdiff
-alias pacdiff='DIFFPROG="nvim -d" pacdiff -b -3 -s'
-
-# Open file in [t]ext [e]ditor
-alias te='$EDITOR'
-# Open all files with changes in a git repository
-alias diffed='$EDITOR $(git diff --name-only --relative)'
-
-# Run nvim without plugins (in case of wierd behaviour)
-alias vim="nvim --noplugin"
