@@ -9,19 +9,16 @@ zmodload zsh/parameter  # Needed to access jobstates variable
 setopt promptsubst
 PROMPT='$(prompt "${#jobstates}" "$?"): '
 
-# Add zsh plugins
-zinit light zsh-users/zsh-syntax-highlighting
-zinit light zsh-users/zsh-completions
-zinit light zsh-users/zsh-autosuggestions
-zinit light Aloxaf/fzf-tab
-zinit light z-shell/zsh-eza
-
-# Add oh-my-zsh plugins
-zinit snippet OMZP::colored-man-pages
-
 # Load completions
+zinit light zsh-users/zsh-completions
 autoload -Uz compinit && compinit
 zinit cdreplay -q
+
+# Add zsh plugins
+zinit light Aloxaf/fzf-tab
+zinit light zdharma-continuum/fast-syntax-highlighting
+zinit light zsh-users/zsh-autosuggestions
+zinit light z-shell/zsh-eza
 
 # History
 HISTSIZE=5000
@@ -37,12 +34,13 @@ setopt hist_ignore_dups
 setopt hist_find_no_dups
 
 # Completion styling
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+# disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+# force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
 zstyle ':completion:*' menu no
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always --icons $realpath'
-zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'eza -1 --color=always --icons $realpath'
-
+# custom fzf flags
+# NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
+zstyle ':fzf-tab:*' fzf-flags --ansi --color=bw --style=minimal
 
 # Load custom aliases
 source $HOME/.zshalias
@@ -54,8 +52,7 @@ export EDITOR='nvim'
 export npm_config_prefix="$HOME/.local/share/npm"
 
 # Extend path to
-export PATH="$PATH:$HOME/.bin/"				# user executables
-export PATH="$PATH:$HOME/.local/bin"			# user executables
+export PATH="$PATH:$HOME/.bin/:$HOME/.local/bin"	# user executables
 export PATH="$PATH:$HOME/.cargo/bin"			# cargo packages
 export PATH="$PATH:$HOME/.local/share/npm/bin"		# npm global packages
 
