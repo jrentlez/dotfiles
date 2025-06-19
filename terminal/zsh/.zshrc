@@ -4,9 +4,10 @@ ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 source "${ZINIT_HOME}/zinit.zsh"
 
-VIRTUAL_ENV_DISABLE_PROMPT=1
+# Prompt
 zmodload zsh/parameter  # Needed to access jobstates variable
 setopt promptsubst
+export VIRTUAL_ENV_DISABLE_PROMPT=1
 PROMPT='$(prompt "${#jobstates}" "$?"): '
 
 # Load completions
@@ -34,21 +35,18 @@ setopt hist_ignore_dups
 setopt hist_find_no_dups
 
 # Completion styling
-# disable sort when completing `git checkout`
+# Disable sort when completing `git checkout`
 zstyle ':completion:*:git-checkout:*' sort false
-# force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
+# Force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
 zstyle ':completion:*' menu no
-# custom fzf flags
+# Custom fzf flags
 # NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
 zstyle ':fzf-tab:*' fzf-flags --ansi --color=bw --style=minimal
-
-# Load custom aliases
-source $HOME/.zshalias
 
 # Set editor to neovim
 export EDITOR='nvim'
 
-#npm global extensions go here
+# NPM global extensions go here
 export npm_config_prefix="$HOME/.local/share/npm"
 
 # Extend path to
@@ -64,3 +62,17 @@ if [[ "$TERM" == "xterm-ghostty" ]]
 then
 	export HAS_NERD_FONT=true
 fi
+
+# Enable vim mode
+bindkey -v
+
+# Better pacdiff
+alias pacdiff='DIFFPROG="nvim -d" pacdiff -b -3 -s'
+
+# Open file in [t]ext [e]ditor
+alias te='$EDITOR'
+# Open all files with changes in a git repository
+alias diffed='$EDITOR $(git diff --name-only --relative)'
+
+# Run nvim without plugins (in case of wierd behaviour)
+alias vim="nvim --noplugin"
