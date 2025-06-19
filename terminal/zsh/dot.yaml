@@ -1,3 +1,2 @@
 links:
-  .zshrc: ~/.zshrc
-  .zshalias: ~/.zshalias
+  zshrc: ~/.zshrc
