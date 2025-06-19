@@ -55,7 +55,7 @@ export PATH="$PATH:$HOME/.cargo/bin"			# cargo packages
 export PATH="$PATH:$HOME/.local/share/npm/bin"		# npm global packages
 
 # Shell integrations
-eval "$(fzf --zsh)"
+source <(fzf --zsh)
 eval "$(zoxide init --cmd cd zsh)"
 
 if [[ "$TERM" == "xterm-ghostty" ]]
