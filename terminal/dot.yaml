@@ -1,7 +1,4 @@
 links:
-  wezterm: ~/.config/wezterm
   ghostty: ~/.config/ghostty
-  nushell: ~/.config/nushell
   bat: ~/.config/bat
-  starship/starship.toml: ~/.config/starship.toml
   xdg-terminal-exec/xdg-terminals.list: ~/.config/xdg-terminals.list

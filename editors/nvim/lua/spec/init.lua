@@ -27,7 +27,6 @@ local ToolSpec = {
 		"clangd",
 		"rust_analyzer",
 		"glsl_analyzer",
-		"nushell",
 		"jayvee_ls",
 		"stylua3p_ls",
 	},
