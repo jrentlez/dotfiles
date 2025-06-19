@@ -48,7 +48,7 @@ zstyle ':fzf-tab:*' use-fzf-default-opts yes
 # Environment Variables
 export PATH="$HOME/.local/bin/:$HOME/.bin:$HOME/.cargo/bin:$HOME/.local/share/npm/bin:$PATH"
 export EDITOR='nvim'
-export FZF_DEFAULT_OPTS="--ansi --style=minimal --color='
+export FZF_DEFAULT_OPTS="--ansi --style=minimal --walker-skip=.wine --color='
 	fg:-1 fg+:-1
 	bg:-1 bg+:-1 alt-bg:-1
 	hl:2 hl+:2
