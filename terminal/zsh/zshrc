@@ -37,14 +37,26 @@ setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 
+export FZF_DEFAULT_OPTS="--ansi --style=minimal --color='
+	fg:-1 fg+:-1
+	bg:-1 bg+:-1 alt-bg:-1
+	hl:2 hl+:2
+	pointer:6 marker:5
+	header:5
+	spinner:3 info:-1
+	prompt:6 query:-1
+'"
+
 # Completion styling
 # Disable sort when completing `git checkout`
 zstyle ':completion:*:git-checkout:*' sort false
+# set list-colors to enable filename colorizing
 # Force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
 zstyle ':completion:*' menu no
-# Custom fzf flags
-# NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
-zstyle ':fzf-tab:*' fzf-flags --ansi --color=bw --style=minimal
+# To make fzf-tab follow FZF_DEFAULT_OPTS.
+# NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
+
 
 # Set editor to neovim
 export EDITOR='nvim'
