@@ -3,6 +3,7 @@ use git::git;
 use std::{
     env::{self, VarError},
     ffi::OsStr,
+    str::FromStr,
 };
 
 mod color;
@@ -60,31 +61,84 @@ fn status(last_status: u8) -> Option<String> {
     }
 }
 
-fn main() {
-    let mut args = env::args();
-    let _ = args.next();
-    let job_count = args
-        .next()
-        .and_then(|jc| jc.parse::<usize>().ok())
-        .unwrap_or_default();
-    let last_status = args
-        .next()
-        .and_then(|ls| ls.parse::<u8>().ok())
-        .unwrap_or_default();
+#[derive(Default)]
+enum ToPrint {
+    PreCmd,
+    LastLine,
+    #[default]
+    All,
+}
+impl ToPrint {
+    fn pre_cmd() -> String {
+        let userhost = userhost().unwrap_or_default();
+        let (dir, repo) = directory();
+        let gstat = repo.map(|repo| git(&repo)).unwrap_or_default();
+        let pyvenv = venv().unwrap_or_default();
+        format!("\n{}╭{userhost}{dir}{gstat}{pyvenv}", color::GREEN)
+    }
 
-    let userhost = userhost().unwrap_or_default();
-    let (dir, repo) = directory();
-    let gstat = repo.map(|repo| git(&repo)).unwrap_or_default();
-    let pyvenv = venv().unwrap_or_default();
-    let stat = status(last_status).unwrap_or_default();
-    println!(
-        "\n{}╭{userhost}{dir}{gstat}{pyvenv}\n{}╰{}{stat} ",
-        color::GREEN,
-        color::GREEN,
-        if job_count > 0 {
-            color::BLUE.to_string() + " ✦"
-        } else {
-            "".to_string()
+    fn last_line(job_count: usize, last_status: u8) -> String {
+        let stat = status(last_status).unwrap_or_default();
+        format!(
+            "{}╰{}{stat} ",
+            color::GREEN,
+            if job_count > 0 {
+                color::BLUE.to_string() + " ✦"
+            } else {
+                "".to_string()
+            }
+        )
+    }
+}
+impl FromStr for ToPrint {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "precmd" => Ok(ToPrint::PreCmd),
+            "lastline" => Ok(ToPrint::LastLine),
+            _ => Err(()),
         }
-    );
+    }
+}
+
+fn main() {
+    let mut job_count = 0;
+    let mut last_status = 0;
+    let mut to_print = ToPrint::default();
+    for arg in env::args().skip(1) {
+        match arg.parse::<ToPrint>() {
+            Ok(tp) => {
+                to_print = tp;
+                continue;
+            }
+            Err(()) => match arg.split_once('=') {
+                Some(("jobs", jc)) => {
+                    job_count = jc
+                        .parse::<usize>()
+                        .expect("Amount of running jobs fits into usize");
+                }
+                Some(("laststatus", ls)) => {
+                    last_status = ls.parse::<u8>().expect("Last exit code fits into u8");
+                }
+                Some(_) | None => continue,
+            },
+        }
+    }
+
+    match to_print {
+        ToPrint::PreCmd => {
+            print!("{}", ToPrint::pre_cmd());
+        }
+        ToPrint::LastLine => {
+            print!("{}", ToPrint::last_line(job_count, last_status));
+        }
+        ToPrint::All => {
+            print!(
+                "{}\n{}",
+                ToPrint::pre_cmd(),
+                ToPrint::last_line(job_count, last_status)
+            );
+        }
+    }
 }

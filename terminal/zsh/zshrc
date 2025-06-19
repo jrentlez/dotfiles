@@ -8,7 +8,10 @@ source "${ZINIT_HOME}/zinit.zsh"
 zmodload zsh/parameter  # Needed to access jobstates variable
 setopt promptsubst
 export VIRTUAL_ENV_DISABLE_PROMPT=1
-PROMPT='$(prompt "${#jobstates}" "$?"): '
+precmd() {
+	print "$(prompt precmd)"
+}
+PS1='$(prompt lastline jobs="${#jobstates}" laststatus="$?"): '
 
 # Load completions
 zinit light zsh-users/zsh-completions
