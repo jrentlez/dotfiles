@@ -10,7 +10,7 @@ setopt promptsubst
 precmd() {
 	print "$(prompt precmd)"
 }
-PS1='$(prompt lastline jobs="${#jobstates}" laststatus="$?"): '
+PS1='$(prompt lastline jobs="${#jobstates}" laststatus="$?")%F{cyan}:%f '
 
 # Load completions
 zinit light zsh-users/zsh-completions

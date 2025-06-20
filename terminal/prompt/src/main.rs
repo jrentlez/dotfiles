@@ -80,13 +80,14 @@ impl ToPrint {
     fn last_line(job_count: usize, last_status: u8) -> String {
         let stat = status(last_status).unwrap_or_default();
         format!(
-            "{}╰{}{stat} ",
+            "{}╰{}{stat}{} ",
             color::GREEN,
             if job_count > 0 {
                 color::BLUE.to_string() + " ✦"
             } else {
                 "".to_string()
-            }
+            },
+            color::RESET
         )
     }
 }
