@@ -29,4 +29,3 @@ alias pacdiff='DIFFPROG="nvim -d" pacdiff -b -3 -s'
 
 # Skim
 export SKIM_DEFAULT_OPTIONS="--ansi --color=bw"
-source "/usr/share/skim/key-bindings.bash"

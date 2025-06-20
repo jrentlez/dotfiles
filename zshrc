@@ -1,5 +1,5 @@
 # Environment Variables
-export PATH="$HOME/.local/bin/:$HOME/.bin:$HOME/.cargo/bin:$HOME/.local/share/npm/bin:$PATH"
+export PATH="$HOME/.local/share/bob/nvim-bin:$HOME/.local/bin/:$HOME/.bin:$HOME/.cargo/bin:$HOME/.local/share/npm/bin:$PATH"
 [[ ! -v EDITOR ]] && export EDITOR='nvim'
 export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
 export npm_config_prefix="$HOME/.local/share/npm"
@@ -20,7 +20,7 @@ setopt hist_ignore_dups
 setopt hist_find_no_dups
 
 # Prompt
-source /usr/share/git/git-prompt.sh
+source /usr/lib/git-core/git-sh-prompt
 precmd() { precmd() { print "" } } # Print blank line before each prompt but the first
 alias clear="precmd() {precmd() {echo }} && clear" # Prevent clear from inserting a prompt
 setopt promptsubst
@@ -110,7 +110,6 @@ bashcompinit
 
 # Skim
 export SKIM_DEFAULT_OPTIONS="--ansi --color=bw"
-source "/usr/share/skim/key-bindings.zsh"
 function skim-homedir-widget() {
 	local fd_excludes
 	fd_excludes=("--exclude=.cache" "--exclude=.git" "--exclude=node_modules" "--exclude=target")
