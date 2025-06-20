@@ -30,7 +30,7 @@ section Dotfiles
 git -C "$HOME/.dotfiles" pull
 
 section "Zinit & Zsh plugins"
-zsh -c "source $HOME/.zshrc && zinit update"
+zsh -c "source $HOME/.zshrc && zinit update -p"
 
 section "Prompt"
 (
