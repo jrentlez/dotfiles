@@ -16,3 +16,5 @@ keybind = ctrl+shift+l=new_split:right
 clipboard-read = allow
 clipboard-write = allow
 
+env = EDITOR=nvim
+env = HAS_NERD_FONT=true
