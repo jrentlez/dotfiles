@@ -4,24 +4,12 @@ ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 source "${ZINIT_HOME}/zinit.zsh"
 
-# Prompt
-zmodload zsh/parameter  # Needed to access jobstates variable
-setopt promptsubst
-precmd() {
-	print "$(prompt precmd)"
-}
-PS1='$(prompt lastline jobs="${#jobstates}" laststatus="$?")%F{cyan}:%f '
-
-# Load completions
-zinit light zsh-users/zsh-completions
-autoload -Uz compinit && compinit
-zinit cdreplay -q
-
-# Add zsh plugins
-zinit light Aloxaf/fzf-tab
-zinit light zdharma-continuum/fast-syntax-highlighting
-zinit light zsh-users/zsh-autosuggestions
-zinit light z-shell/zsh-eza
+# Environment Variables
+export PATH="$HOME/.local/bin/:$HOME/.bin:$HOME/.cargo/bin:$HOME/.local/share/npm/bin:$PATH"
+[[ ! -v EDITOR ]] && export EDITOR='nvim'
+export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
+export npm_config_prefix="$HOME/.local/share/npm"
+export VIRTUAL_ENV_DISABLE_PROMPT=1
 
 # History
 HISTSIZE=5000
@@ -36,34 +24,13 @@ setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 
-# Completion styling
-# Disable sort when completing `git checkout`
-zstyle ':completion:*:git-checkout:*' sort false
-# Force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
-zstyle ':completion:*' menu no
-# To make fzf-tab follow FZF_DEFAULT_OPTS.
-# NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
-zstyle ':fzf-tab:*' use-fzf-default-opts yes
-
-# Environment Variables
-export PATH="$HOME/.local/bin/:$HOME/.bin:$HOME/.cargo/bin:$HOME/.local/share/npm/bin:$PATH"
-export EDITOR='nvim'
-export FZF_DEFAULT_OPTS="--ansi --style=minimal --walker-skip=.wine --color='
-	fg:-1 fg+:-1
-	bg:-1 bg+:-1 alt-bg:-1
-	hl:2 hl+:2
-	pointer:6 marker:5
-	header:5
-	spinner:3 info:-1
-	prompt:6 query:-1
-'"
-export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
-export npm_config_prefix="$HOME/.local/share/npm"
-export VIRTUAL_ENV_DISABLE_PROMPT=1
-[[ "$TERM" == "xterm-ghostty" ]] && export HAS_NERD_FONT=true
-
-# Shell integrations
-source <(fzf --zsh)
+# Prompt
+zmodload zsh/parameter  # Needed to access jobstates variable
+setopt promptsubst
+precmd() {
+	print "$(prompt precmd)"
+}
+PS1='$(prompt lastline jobs="${#jobstates}" laststatus="$?")%F{cyan}:%f '
 
 # Aliases
 alias te='$EDITOR'
@@ -71,5 +38,49 @@ alias vim="nvim --noplugin"
 alias diffed='$EDITOR $(git diff --name-only --relative)'
 alias pacdiff='DIFFPROG="nvim -d" pacdiff -b -3 -s'
 
-# Enable vim mode
-bindkey -v
+# Load completions
+zinit light zsh-users/zsh-completions
+autoload -Uz compinit && compinit
+zinit cdreplay -q
+# Disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+
+# Add zsh plugins
+zinit light zdharma-continuum/fast-syntax-highlighting
+zinit light zsh-users/zsh-autosuggestions
+zinit light z-shell/zsh-eza
+
+
+#### FZF SETUP ####
+export FZF_DEFAULT_OPTS="--ansi --color=bw,hl:2,pointer:6,spinner:3 --style=minimal"
+fzf_excludes=("--exclude=Steam" "--exclude=.steam" "--exclude=Games" "--exclude=.wine" "--exclude=.cache" "--exclude=.git")
+export FZF_DEFAULT_COMMAND="fd --hidden --type l --type f --type d $fzf_excludes"
+
+# Shell integrations
+source <(fzf --zsh)
+
+function fzf-homedir-widget() {
+    setopt localoptions pipefail no_aliases 2> /dev/null
+    local dir="$(fd --type d --hidden --maxdepth 8 --follow $fzf_excludes . ~ | fzf)"
+    if [[ -z "$dir" ]]; then
+      zle redisplay
+      return 0
+    fi
+    zle push-line # Clear buffer. Auto-restored on next prompt.
+    BUFFER="builtin cd -- ${(q)dir:a}"
+    zle accept-line
+    local ret=$?
+    unset dir # ensure this doesn't end up appearing in prompt expansion
+    zle reset-prompt
+    return $ret
+}
+zle -N fzf-homedir-widget
+bindkey '^F' fzf-homedir-widget
+
+zinit light Aloxaf/fzf-tab
+# Force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
+zstyle ':completion:*' menu no
+# To make fzf-tab follow FZF_DEFAULT_OPTS.
+# NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
+
