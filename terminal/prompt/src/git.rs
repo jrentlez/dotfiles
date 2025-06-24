@@ -184,8 +184,9 @@ pub fn git(repo: &Repository) -> String {
     let stash = if has_stash(repo) { "$" } else { "" };
 
     " ".to_string()
-        + color::DARK_GRAY
+        + color::FG_DIM
         + &head
+        + color::RESET
         + &git_status(repo)
         + color::CYAN
         + ahead_behind.unwrap_or_default()
