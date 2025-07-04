@@ -1,8 +1,4 @@
----@module "mini.deps"
-
-local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
-
-now(function()
+require("mini.deps").now(function()
 	-- mini.notify ---------------------------------------------------------
 
 	require("mini.notify").setup()
@@ -20,7 +16,7 @@ now(function()
 	require("mini.icons").tweak_lsp_kind()
 end)
 
-later(function()
+require("mini.deps").later(function()
 	-- Keymaps -------------------------------------------------------------
 
 	local function nmap(lhs, rhs, desc)
@@ -46,7 +42,7 @@ later(function()
 
 	-- mini.ai -------------------------------------------------------------
 
-	add({ source = "nvim-treesitter/nvim-treesitter-textobjects", checkout = "main", monitor = "main" })
+	vim.pack.add({ { src = "https://github.com/nvim-treesitter/nvim-treesitter-textobjects.git", version = "main" } })
 
 	require("mini.ai").setup()
 	local ts = MiniAi.gen_spec.treesitter

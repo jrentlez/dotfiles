@@ -1,17 +1,11 @@
----@module "mini.deps"
-
-local add, later = MiniDeps.add, MiniDeps.later
-
-later(function()
-	add({
-		source = "WhoIsSethDaniel/mason-tool-installer.nvim",
-		depends = {
-			"neovim/nvim-lspconfig",
-			"mason-org/mason.nvim",
-			"mason-org/mason-lspconfig.nvim",
-		},
+require("mini.deps").later(function()
+	vim.pack.add({
+		"https://github.com/neovim/nvim-lspconfig.git",
+		"https://github.com/mason-org/mason.nvim.git",
+		"https://github.com/mason-org/mason-lspconfig.nvim.git",
+		"https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim.git",
 	})
-	add("jvalue/jayvee.nvim")
+	vim.pack.add({ "https://github.com/jvalue/jayvee.nvim.git" })
 
 	vim.api.nvim_create_autocmd("LspAttach", {
 		group = vim.api.nvim_create_augroup("default-lsp-attach", { clear = true }),
@@ -87,11 +81,7 @@ later(function()
 			end
 
 			-- Enable document color
-			if
-				client:supports_method(vim.lsp.protocol.Methods.textDocument_documentColor, event.buf)
-				--TODO: remove this check after nvim-0.12 release
-				and vim.lsp.document_color
-			then
+			if client:supports_method(vim.lsp.protocol.Methods.textDocument_documentColor, event.buf) then
 				vim.lsp.document_color.enable(true, event.buf)
 			end
 

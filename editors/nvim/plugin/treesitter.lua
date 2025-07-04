@@ -1,7 +1,3 @@
----@module "mini.deps"
-
-local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
-
 --- Ensure a buffer has its appropriate parser installed
 ---@param bufnr integer The buffer to check
 ---@param on_installed fun() Called once the parser is installed. If there is no appropriate parser for the buffer, `on_installed` is never called.
@@ -23,17 +19,22 @@ local function ensure_installed(bufnr, on_installed)
 	end
 end
 
-now(function()
-	add({
-		source = "nvim-treesitter/nvim-treesitter",
-		checkout = "main",
-		monitor = "main",
-		hooks = {
-			post_checkout = function()
+require("mini.deps").now(function()
+	vim.api.nvim_create_autocmd("PackChanged", {
+		group = vim.api.nvim_create_augroup("nvim-treesitter-update-parsers", { clear = true }),
+		callback = function(args)
+			local kind = args.data.kind --[[@as "install" | "update" | "delete"]]
+			local spec = args.data.spec --[[@as vim.pack.Spec]]
+			if spec.name == "nvim-treesitter" and (kind == "install" or kind == "update") then
 				require("nvim-treesitter").update({ summary = true })
-			end,
-		},
+			end
+		end,
+		desc = "Update treesitter parsers",
 	})
+	vim.pack.add({ {
+		src = "https://github.com/nvim-treesitter/nvim-treesitter.git",
+		version = "main",
+	} })
 
 	vim.api.nvim_create_autocmd("FileType", {
 		group = vim.api.nvim_create_augroup("nvim-treesitter-buffer-setup", { clear = true }),
@@ -47,7 +48,7 @@ now(function()
 	})
 end)
 
-later(function()
+require("mini.deps").later(function()
 	local installed = require("nvim-treesitter").get_installed()
 	local required_parsers = vim.iter({
 		"c",

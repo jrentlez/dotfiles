@@ -1,7 +1,5 @@
----@module "mini.deps"
-
 vim.b.lspfmt = "stylua3p_ls"
 
 -- Add neovim lua modules to path
-MiniDeps.add("folke/lazydev.nvim")
+vim.pack.add({ "https://github.com/folke/lazydev.nvim.git" })
 require("lazydev").setup()
