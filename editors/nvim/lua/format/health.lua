@@ -10,10 +10,14 @@ local function check_buffer(bufnr)
 
 	local fmt_autocmd_id = vim.b[bufnr].lsp_format_on_save_autocmd --[[@as integer?]]
 	if not fmt_autocmd_id then
-		vim.health.warn(
-			("No format-on-save autocommand for '%s'"):format(buf_name),
-			"The autocommand is only created once a LSP is attached to the buffer"
-		)
+		if vim.bo[bufnr].filetype == "" then
+			vim.health.info(("%s: default |filetype|"):format(buf_name))
+		else
+			vim.health.warn(
+				("No format-on-save autocommand for '%s'"):format(buf_name),
+				"The autocommand is only created once a LSP is attached to the buffer"
+			)
+		end
 		return
 	end
 	local fmt_autocmds = vim.api.nvim_get_autocmds({ id = fmt_autocmd_id, buffer = bufnr })
