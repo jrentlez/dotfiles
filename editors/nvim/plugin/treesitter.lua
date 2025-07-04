@@ -59,6 +59,7 @@ require("mini.deps").later(function()
 		"vim",
 		"vimdoc",
 		"comment",
+		"diff",
 	})
 		:filter(function(parser)
 			return not vim.list_contains(installed, parser)
