@@ -1,6 +1,5 @@
 vim.pack.add({ "https://github.com/echasnovski/mini.nvim" })
 
-
 -- Enable project local configuration
 vim.o.exrc = true
 
@@ -96,3 +95,7 @@ vim.api.nvim_create_autocmd("BufRead", {
 	end,
 	desc = "Make readonly buffers nomodifiable",
 })
+
+vim.api.nvim_create_user_command("PackUpdate", function()
+	vim.pack.update()
+end, { desc = "Update plugins" })
