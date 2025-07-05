@@ -5,7 +5,6 @@ require("mini.deps").later(function()
 		"https://github.com/mason-org/mason-lspconfig.nvim.git",
 		"https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim.git",
 	})
-	vim.pack.add({ "https://github.com/jvalue/jayvee.nvim.git" })
 
 	vim.api.nvim_create_autocmd("LspAttach", {
 		group = vim.api.nvim_create_augroup("default-lsp-attach", { clear = true }),
