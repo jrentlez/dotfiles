@@ -16,9 +16,6 @@ conflictstyle = zdiff3
 minimal = true
 mnemonicPrefix = true
 
-[interactive]
-diffFilter = delta --diff-highlight --color-only
-
 [fetch]
 prune = true
 
@@ -43,8 +40,7 @@ abbrevCommit = true
 
 [delta]
 keep-plus-minus-markers = true
-file-style = "bold normal"
 navigate = true
-navigate-regex = "^(commit|added:|removed:|renamed:|Δ|•|(@@ -\\d+,\\d+ \\+\\d+,\\d+ @@))"
+navigate-regex = "^(commit|diff --git|(@@ -\\d+,\\d+ \\+\\d+,\\d+ @@))"
 
 ; vim: filetype=gitconfig
