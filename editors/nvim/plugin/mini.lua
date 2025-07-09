@@ -40,28 +40,6 @@ require("mini.deps").later(function()
 	require("mini.completion").setup({ lsp_completion = { source_func = "omnifunc", auto_setup = false } })
 	vim.o.completeopt = "menuone,fuzzy,noinsert"
 
-	-- mini.ai -------------------------------------------------------------
-
-	vim.pack.add({ { src = "https://github.com/nvim-treesitter/nvim-treesitter-textobjects.git", version = "main" } })
-
-	require("mini.ai").setup()
-	local ts = MiniAi.gen_spec.treesitter
-	local gen_ai_spec = require("mini.extra").gen_ai_spec
-	require("mini.ai").setup({
-		custom_textobjects = {
-			F = ts({ a = "@function.outer", i = "@function.inner" }),
-			o = ts({
-				a = { "@conditional.outer", "@loop.outer" },
-				i = { "@conditional.inner", "@loop.inner" },
-			}),
-			B = gen_ai_spec.buffer(),
-			D = gen_ai_spec.diagnostic(),
-			I = gen_ai_spec.indent(),
-			L = gen_ai_spec.line(),
-			N = gen_ai_spec.number(),
-		},
-	})
-
 	-- mini.surround -------------------------------------------------------
 
 	require("mini.surround").setup()
