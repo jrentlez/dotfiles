@@ -46,7 +46,6 @@ zinit cdreplay -q
 zstyle ':completion:*:git-checkout:*' sort false
 
 # Add zsh plugins
-zinit light zdharma-continuum/fast-syntax-highlighting
 zinit light zsh-users/zsh-autosuggestions
 zinit light z-shell/zsh-eza
 
