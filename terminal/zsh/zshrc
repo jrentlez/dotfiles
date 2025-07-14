@@ -48,7 +48,7 @@ zinit cdreplay -q
 zstyle ':completion:*:git-checkout:*' sort false
 
 #### FZF SETUP ####
-export FZF_DEFAULT_OPTS="--ansi --color=bw,hl:2,pointer:6,spinner:3 --style=minimal"
+export FZF_DEFAULT_OPTS="--ansi --color=bw,hl:2,spinner:3 --style=minimal"
 fzf_excludes=("--exclude=Steam" "--exclude=.steam" "--exclude=Games" "--exclude=.wine" "--exclude=.cache" "--exclude=.git")
 export FZF_DEFAULT_COMMAND="fd --hidden --type l --type f --type d $fzf_excludes"
 
