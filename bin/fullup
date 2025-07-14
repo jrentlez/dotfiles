@@ -32,8 +32,22 @@ git -C "$HOME/.dotfiles" pull
 section "Zinit & Zsh plugins"
 zsh -c "source $HOME/.zshrc && zinit update -p"
 
-section "Prompt"
+section Prompt
 (
 	cd "$HOME/.dotfiles/terminal/prompt" || return
 	cargo install --path .
 )
+
+section "Neovim plugins"
+nvim_pack_log_file="$(nvim --headless "+echo stdpath('log')" +q 2>&1)/nvim-pack.log"
+nvim --headless +PackUpdate! +q 2>/dev/null
+# File's line in reverse order
+tac "${nvim_pack_log_file}" |
+	# Print lines up until the marker
+	sed -n "/======/q;p" |
+	# Trim empty starting lines
+	awk NF |
+	# Reverse lines back to original order
+	tac |
+	# Trim empty starting lines
+	awk NF
