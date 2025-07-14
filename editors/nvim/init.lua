@@ -20,7 +20,6 @@ vim.o.incsearch = true
 vim.o.infercase = true
 vim.o.linebreak = true
 vim.o.list = true
-vim.o.listchars = "tab:> ,extends:…,precedes:…,nbsp:␣"
 vim.o.mouse = "a"
 vim.o.number = true
 vim.o.pumheight = 10
