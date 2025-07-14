@@ -97,19 +97,24 @@ vim.api.nvim_create_autocmd("BufRead", {
 })
 
 vim.api.nvim_create_user_command("PackUpdate", function()
-	vim.pack.update()
+	local plugins = vim.iter(vim.pack.get())
+		:map(function(plugin)
+			return assert(plugin.spec.name)
+		end)
+		:totable()
+	vim.pack.update(plugins)
 end, { desc = "Update plugins" })
 
 vim.api.nvim_create_user_command("PackClean", function()
 	local inactive_names = vim.iter(vim.pack.get())
-		:map(function(package)
-			return not package.active and package.spec.name or nil
+		:map(function(plugin)
+			return not plugin.active and plugin.spec.name or nil
 		end)
 		:totable()
 
-	local msg = "Delete these inactive packages?\n\n"
-	vim.iter(inactive_names):each(function(package_name)
-		msg = msg .. package_name .. "\n"
+	local msg = "Delete these inactive plugins?\n\n"
+	vim.iter(inactive_names):each(function(plugin_name)
+		msg = msg .. plugin_name .. "\n"
 	end)
 
 	local confirmed = vim.fn.confirm(msg) == 1
