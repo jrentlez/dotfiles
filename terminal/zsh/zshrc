@@ -30,7 +30,7 @@ setopt promptsubst
 precmd() {
 	print "$(prompt precmd)"
 }
-PS1='$(prompt lastline jobs="${#jobstates}" laststatus="$?")%B:%b '
+PS1='$(prompt lastline jobs="${#jobstates}" laststatus="$?")$ '
 
 # Aliases
 alias ls='ls --color --classify'

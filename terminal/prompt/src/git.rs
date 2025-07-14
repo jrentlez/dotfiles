@@ -183,8 +183,7 @@ pub fn git(repo: &Repository) -> String {
 
     let stash = if has_stash(repo) { "$" } else { "" };
 
-    " ".to_string()
-        + color::FG_DIM
+    color::FG_DIM.to_string()
         + &head
         + color::RESET
         + &git_status(repo)

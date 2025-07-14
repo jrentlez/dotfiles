@@ -85,12 +85,12 @@ fn fmt_dir<P: AsRef<Path>>(path: P) -> String {
     let previous_components = previous_components
         .map(|previous_components| previous_components.to_str().expect("UTF8"))
         .unwrap_or_default();
-    " ".to_string()
-        + color::FG_NORMAL
+    color::FG_NORMAL.to_string()
         + previous_components
         + color::FG_BOLD
         + final_component.to_str().expect("UTF8")
         + color::RESET
+        + " "
 }
 
 pub fn directory() -> (String, Option<Repository>) {

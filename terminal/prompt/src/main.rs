@@ -38,24 +38,25 @@ fn userhost() -> Option<String> {
         userhost.push('@');
         userhost.push_str(&host.to_string_lossy());
     }
+    userhost.push(' ');
 
     if !show_username {
         None
     } else if is_root {
-        Some(color::RED.to_string() + " " + &userhost)
+        Some(color::RED.to_string() + &userhost)
     } else {
-        Some(" ".to_string() + color::FG_CURSIVE + &userhost)
+        Some(color::FG_CURSIVE.to_string() + &userhost)
     }
 }
 
 fn venv() -> Option<String> {
     let venv_prompt = var_lossy("VIRTUAL_ENV_PROMPT")?;
-    Some(color::FG_CURSIVE.to_string() + " (" + &venv_prompt + ")")
+    Some(color::FG_CURSIVE.to_string() + "(" + &venv_prompt + ") ")
 }
 
 fn status(last_status: u8) -> Option<String> {
     if last_status != 0 {
-        Some(color::RED.to_string() + " " + &last_status.to_string())
+        Some(color::RED.to_string() + &last_status.to_string() + " ")
     } else {
         None
     }
@@ -72,20 +73,20 @@ impl ToPrint {
     fn pre_cmd() -> String {
         let userhost = userhost().unwrap_or_default();
         let (dir, repo) = directory();
-        let gstat = repo.map(|repo| git(&repo)).unwrap_or_default();
-        let pyvenv = venv().unwrap_or_default();
+        let git_status = repo.map(|repo| git(&repo)).unwrap_or_default();
+        let python_venv = venv().unwrap_or_default();
         format!(
-            "\n{}{BOX_DRAWING_TOP}{userhost}{dir}{gstat}{pyvenv}",
+            "\n{}{userhost}{dir}{git_status}{python_venv}",
             color::FG_NORMAL
         )
     }
 
     fn last_line(job_count: usize, last_status: u8) -> String {
-        let stat = status(last_status).unwrap_or_default();
+        let job_symbol = if job_count > 0 { "✦ " } else { "" };
+        let last_status_symbol = status(last_status).unwrap_or_default();
         format!(
-            "{}{BOX_DRAWING_BOTTOM}{}{stat}{} ",
+            "{}{job_symbol}{last_status_symbol}{}",
             color::FG_NORMAL,
-            if job_count > 0 { " ✦" } else { "" },
             color::RESET
         )
     }
@@ -101,9 +102,6 @@ impl FromStr for ToPrint {
         }
     }
 }
-
-const BOX_DRAWING_TOP: char = '┏';
-const BOX_DRAWING_BOTTOM: char = '┗';
 
 fn main() {
     let mut job_count = 0;
