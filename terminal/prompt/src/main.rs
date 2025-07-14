@@ -44,13 +44,13 @@ fn userhost() -> Option<String> {
     } else if is_root {
         Some(color::RED.to_string() + " " + &userhost)
     } else {
-        Some(" ".to_string() + color::YELLOW + &userhost)
+        Some(" ".to_string() + color::FG_CURSIVE + &userhost)
     }
 }
 
 fn venv() -> Option<String> {
     let venv_prompt = var_lossy("VIRTUAL_ENV_PROMPT")?;
-    Some(color::GREEN.to_string() + " (" + &venv_prompt + ")")
+    Some(color::FG_CURSIVE.to_string() + " (" + &venv_prompt + ")")
 }
 
 fn status(last_status: u8) -> Option<String> {
@@ -74,19 +74,18 @@ impl ToPrint {
         let (dir, repo) = directory();
         let gstat = repo.map(|repo| git(&repo)).unwrap_or_default();
         let pyvenv = venv().unwrap_or_default();
-        format!("\n{}╭{userhost}{dir}{gstat}{pyvenv}", color::GREEN)
+        format!(
+            "\n{}{BOX_DRAWING_TOP}{userhost}{dir}{gstat}{pyvenv}",
+            color::FG_NORMAL
+        )
     }
 
     fn last_line(job_count: usize, last_status: u8) -> String {
         let stat = status(last_status).unwrap_or_default();
         format!(
-            "{}╰{}{stat}{} ",
-            color::GREEN,
-            if job_count > 0 {
-                color::BLUE.to_string() + " ✦"
-            } else {
-                "".to_string()
-            },
+            "{}{BOX_DRAWING_BOTTOM}{}{stat}{} ",
+            color::FG_NORMAL,
+            if job_count > 0 { " ✦" } else { "" },
             color::RESET
         )
     }
@@ -102,6 +101,9 @@ impl FromStr for ToPrint {
         }
     }
 }
+
+const BOX_DRAWING_TOP: char = '┏';
+const BOX_DRAWING_BOTTOM: char = '┗';
 
 fn main() {
     let mut job_count = 0;

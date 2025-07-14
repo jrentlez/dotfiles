@@ -80,7 +80,7 @@ fn git_status(repo: &Repository) -> String {
     if stat.is_wt_deleted() || stat.is_index_deleted() {
         s.push('✖');
     }
-    color::PURPLE.to_string() + &s
+    color::YELLOW.to_string() + &s
 }
 
 fn has_stash(repo: &Repository) -> bool {
@@ -109,7 +109,7 @@ fn read_upstream<'b>(repo: &Repository, local: &Branch<'b>) -> Option<Upstream<'
         .expect("Has ahead begind count");
 
     let ahead_behind = if ahead > 0 && behind > 0 {
-        "⇕"
+        "⇡⇣"
     } else if ahead > 0 {
         "⇡"
     } else if behind > 0 {
@@ -188,7 +188,7 @@ pub fn git(repo: &Repository) -> String {
         + &head
         + color::RESET
         + &git_status(repo)
-        + color::CYAN
+        + color::YELLOW
         + ahead_behind.unwrap_or_default()
         + stash
 }

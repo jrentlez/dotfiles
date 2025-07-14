@@ -82,12 +82,15 @@ fn last_n_path_components(path: &Path, n: NonZeroUsize) -> (Option<&OsStr>, &OsS
 fn fmt_dir<P: AsRef<Path>>(path: P) -> String {
     let (previous_components, final_component) =
         last_n_path_components(path.as_ref(), MAX_COMPONENTS);
-    let mut s = " ".to_string();
-    if let Some(previous_components) = previous_components {
-        s += color::CYAN;
-        s += previous_components.to_str().expect("UTF8");
-    }
-    s + color::CYAN_BOLD + final_component.to_str().expect("UTF8") + color::RESET
+    let previous_components = previous_components
+        .map(|previous_components| previous_components.to_str().expect("UTF8"))
+        .unwrap_or_default();
+    " ".to_string()
+        + color::FG_NORMAL
+        + previous_components
+        + color::FG_BOLD
+        + final_component.to_str().expect("UTF8")
+        + color::RESET
 }
 
 pub fn directory() -> (String, Option<Repository>) {
