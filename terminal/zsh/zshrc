@@ -46,9 +46,7 @@ zinit cdreplay -q
 zstyle ':completion:*:git-checkout:*' sort false
 
 # Add zsh plugins
-zinit light zsh-users/zsh-autosuggestions
 zinit light z-shell/zsh-eza
-
 
 #### FZF SETUP ####
 export FZF_DEFAULT_OPTS="--ansi --color=bw,hl:2,pointer:6,spinner:3 --style=minimal"
