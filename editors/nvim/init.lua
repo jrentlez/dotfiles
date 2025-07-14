@@ -96,14 +96,14 @@ vim.api.nvim_create_autocmd("BufRead", {
 	desc = "Make readonly buffers nomodifiable",
 })
 
-vim.api.nvim_create_user_command("PackUpdate", function(args)
+vim.api.nvim_create_user_command("PackUpdate", function()
 	local plugins = vim.iter(vim.pack.get())
 		:map(function(plugin)
 			return assert(plugin.spec.name)
 		end)
 		:totable()
-	vim.pack.update(plugins, args.bang and { force = true } or nil)
-end, { desc = "Update plugins", bang = true })
+	vim.pack.update(plugins)
+end, { desc = "Update plugins" })
 
 vim.api.nvim_create_user_command("PackClean", function()
 	local inactive_names = vim.iter(vim.pack.get())
