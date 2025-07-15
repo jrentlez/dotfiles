@@ -8,7 +8,7 @@ use std::{
 
 use git2::Repository;
 
-use crate::{color, var_lossy};
+use crate::{ansi::Shell, var_lossy};
 
 const MAX_COMPONENTS: NonZeroUsize = NonZeroUsize::new(3).unwrap();
 
@@ -79,25 +79,25 @@ fn last_n_path_components(path: &Path, n: NonZeroUsize) -> (Option<&OsStr>, &OsS
     }
 }
 
-fn fmt_dir<P: AsRef<Path>>(path: P) -> String {
+fn fmt_dir<P: AsRef<Path>>(path: P, shell: Shell) -> String {
     let (previous_components, final_component) =
         last_n_path_components(path.as_ref(), MAX_COMPONENTS);
     let previous_components = previous_components
         .map(|previous_components| previous_components.to_str().expect("UTF8"))
         .unwrap_or_default();
-    color::FG_NORMAL.to_string()
+    shell.fg_normal().to_string()
         + previous_components
-        + color::FG_BOLD
+        + shell.fg_bold()
         + final_component.to_str().expect("UTF8")
-        + color::RESET
+        + shell.reset()
         + " "
 }
 
-pub fn directory() -> (String, Option<Repository>) {
+pub fn directory(shell: Shell) -> (String, Option<Repository>) {
     let cwd = std::env::current_dir().expect("Can get current dir");
 
     if cwd == Path::new("/") {
-        return (fmt_dir("/"), None);
+        return (fmt_dir("/", shell), None);
     }
 
     match Repository::discover(&cwd) {
@@ -112,7 +112,7 @@ pub fn directory() -> (String, Option<Repository>) {
                 )
                 .expect("cwd is (a subdir of) git_root");
 
-            (fmt_dir(rel_to_git_root), Some(repo))
+            (fmt_dir(rel_to_git_root, shell), Some(repo))
         }
         Err(_) => {
             let rel_to_home = cwd
@@ -124,7 +124,7 @@ pub fn directory() -> (String, Option<Repository>) {
                 None => cwd,
             };
 
-            (fmt_dir(dir), None)
+            (fmt_dir(dir, shell), None)
         }
     }
 }

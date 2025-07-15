@@ -1,6 +1,6 @@
 use git2::{Branch, BranchType, Commit, ErrorCode, Repository, StatusOptions};
 
-use crate::color;
+use crate::ansi::Shell;
 
 enum Head<'repo> {
     Unborn,
@@ -31,7 +31,7 @@ fn read_head(repo: &Repository) -> Head<'_> {
     }
 }
 
-fn git_status(repo: &Repository) -> String {
+fn git_status(repo: &Repository, shell: Shell) -> String {
     let mut opts = StatusOptions::new();
     opts.include_untracked(true)
         .recurse_untracked_dirs(true)
@@ -80,7 +80,7 @@ fn git_status(repo: &Repository) -> String {
     if stat.is_wt_deleted() || stat.is_index_deleted() {
         s.push('✖');
     }
-    color::YELLOW.to_string() + &s
+    shell.yellow().to_string() + &s
 }
 
 fn has_stash(repo: &Repository) -> bool {
@@ -123,7 +123,7 @@ fn read_upstream<'b>(repo: &Repository, local: &Branch<'b>) -> Option<Upstream<'
     })
 }
 
-pub fn git(repo: &Repository) -> String {
+pub fn git(repo: &Repository, shell: Shell) -> String {
     let (head, ahead_behind) = match read_head(repo) {
         Head::Unborn => (
             repo.find_reference("HEAD")
@@ -183,11 +183,10 @@ pub fn git(repo: &Repository) -> String {
 
     let stash = if has_stash(repo) { "$" } else { "" };
 
-    color::FG_DIM.to_string()
+    shell.fg_dim().to_string()
         + &head
-        + color::RESET
-        + &git_status(repo)
-        + color::YELLOW
+        + shell.yellow()
+        + &git_status(repo, shell)
         + ahead_behind.unwrap_or_default()
         + stash
 }

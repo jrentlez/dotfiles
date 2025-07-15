@@ -6,7 +6,9 @@ use std::{
     str::FromStr,
 };
 
-mod color;
+use crate::ansi::Shell;
+
+mod ansi;
 mod dir;
 mod git;
 
@@ -24,7 +26,7 @@ fn var_lossy<K: AsRef<OsStr>>(key: K) -> Option<String> {
         .ok()
 }
 
-fn userhost() -> Option<String> {
+fn userhost(shell: Shell) -> Option<String> {
     let mut userhost = var_lossy("USER").expect("$USER is present");
 
     let is_root = is_root();
@@ -43,20 +45,20 @@ fn userhost() -> Option<String> {
     if !show_username {
         None
     } else if is_root {
-        Some(color::RED.to_string() + &userhost)
+        Some(shell.red().to_string() + &userhost)
     } else {
-        Some(color::FG_CURSIVE.to_string() + &userhost)
+        Some(shell.fg_italic().to_string() + &userhost)
     }
 }
 
-fn venv() -> Option<String> {
+fn venv(shell: Shell) -> Option<String> {
     let venv_prompt = var_lossy("VIRTUAL_ENV_PROMPT")?;
-    Some(color::FG_CURSIVE.to_string() + "(" + &venv_prompt + ") ")
+    Some(shell.fg_italic().to_string() + "(" + &venv_prompt + ") ")
 }
 
-fn status(last_status: u8) -> Option<String> {
+fn status(last_status: u8, shell: Shell) -> Option<String> {
     if last_status != 0 {
-        Some(color::RED.to_string() + &last_status.to_string() + " ")
+        Some(shell.red().to_string() + &last_status.to_string() + " ")
     } else {
         None
     }
@@ -70,24 +72,24 @@ enum ToPrint {
     All,
 }
 impl ToPrint {
-    fn pre_cmd() -> String {
-        let userhost = userhost().unwrap_or_default();
-        let (dir, repo) = directory();
-        let git_status = repo.map(|repo| git(&repo)).unwrap_or_default();
-        let python_venv = venv().unwrap_or_default();
+    fn pre_cmd(shell: Shell) -> String {
+        let userhost = userhost(shell).unwrap_or_default();
+        let (dir, repo) = directory(shell);
+        let git_status = repo.map(|repo| git(&repo, shell)).unwrap_or_default();
+        let python_venv = venv(shell).unwrap_or_default();
         format!(
             "\n{}{userhost}{dir}{git_status}{python_venv}",
-            color::FG_NORMAL
+            shell.fg_normal()
         )
     }
 
-    fn last_line(job_count: usize, last_status: u8) -> String {
+    fn last_line(job_count: usize, last_status: u8, shell: Shell) -> String {
         let job_symbol = if job_count > 0 { "✦ " } else { "" };
-        let last_status_symbol = status(last_status).unwrap_or_default();
+        let last_status_symbol = status(last_status, shell).unwrap_or_default();
         format!(
             "{}{job_symbol}{last_status_symbol}{}",
-            color::FG_NORMAL,
-            color::RESET
+            shell.fg_normal(),
+            shell.fg_normal()
         )
     }
 }
@@ -107,6 +109,7 @@ fn main() {
     let mut job_count = 0;
     let mut last_status = 0;
     let mut to_print = ToPrint::default();
+    let mut shell = Shell::default();
     for arg in env::args().skip(1) {
         match arg.parse::<ToPrint>() {
             Ok(tp) => {
@@ -122,6 +125,11 @@ fn main() {
                 Some(("laststatus", ls)) => {
                     last_status = ls.parse::<u8>().expect("Last exit code fits into u8");
                 }
+                Some(("shell", sh)) => {
+                    shell = sh
+                        .parse::<Shell>()
+                        .expect("Only bash and zsh are supported");
+                }
                 Some(_) | None => continue,
             },
         }
@@ -129,16 +137,16 @@ fn main() {
 
     match to_print {
         ToPrint::PreCmd => {
-            print!("{}", ToPrint::pre_cmd());
+            print!("{}", ToPrint::pre_cmd(shell));
         }
         ToPrint::LastLine => {
-            print!("{}", ToPrint::last_line(job_count, last_status));
+            print!("{}", ToPrint::last_line(job_count, last_status, shell));
         }
         ToPrint::All => {
             print!(
                 "{}\n{}",
-                ToPrint::pre_cmd(),
-                ToPrint::last_line(job_count, last_status)
+                ToPrint::pre_cmd(shell),
+                ToPrint::last_line(job_count, last_status, shell)
             );
         }
     }
