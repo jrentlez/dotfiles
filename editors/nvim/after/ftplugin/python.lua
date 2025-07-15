@@ -1,1 +1,1 @@
-vim.b.lspfmt = "ruff"
+vim.b.formatlsp = "ruff"

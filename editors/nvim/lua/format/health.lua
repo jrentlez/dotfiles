@@ -25,14 +25,14 @@ local function check_buffer(bufnr)
 
 	vim.health.start(("LSP formatter(s) for '%s'"):format(buf_name))
 
-	local server_name = vim.b[bufnr].lspfmt --[[@as string?]]
+	local server_name = vim.b[bufnr].formatlsp --[[@as string?]]
 	if server_name and server_name == "" then
-		vim.health.info("Formatting on save disabled (vim.b.lspfmt = '')")
+		vim.health.info("Formatting on save disabled (vim.b.formatlsp = '')")
 		return
 	elseif server_name then
-		vim.health.info(("vim.b.lspfmt = '%s'"):format(server_name))
+		vim.health.info(("vim.b.formatlsp = '%s'"):format(server_name))
 	else
-		vim.health.info("No specific LSP formatter set (vim.b.lspfmt = nil)")
+		vim.health.info("No specific LSP formatter set (vim.b.formatlsp = nil)")
 	end
 
 	local formatting_lsps = vim.lsp.get_clients({

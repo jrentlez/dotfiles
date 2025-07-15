@@ -107,7 +107,7 @@ require("mini.deps").later(function()
 					buffer = event.buf,
 					group = lsp_augroup,
 					callback = function(args)
-						local server_name = vim.b[args.buf].lspfmt
+						local server_name = vim.b[args.buf].formatlsp
 						if server_name == "" then
 							return
 						end
