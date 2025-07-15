@@ -56,12 +56,18 @@ fn venv(shell: Shell) -> Option<String> {
     Some(shell.fg_italic().to_string() + "(" + &venv_prompt + ") ")
 }
 
-fn status(last_status: u8, shell: Shell) -> Option<String> {
-    if last_status != 0 {
-        Some(shell.red().to_string() + &last_status.to_string() + " ")
+fn colored_prompt_suffix(suffix: &str, job_count: usize, last_status: u8, shell: Shell) -> String {
+    if job_count > 0 && last_status > 0 {
+        shell.magenta()
+    } else if job_count > 0 {
+        shell.blue()
+    } else if last_status > 0 {
+        shell.red()
     } else {
-        None
+        shell.fg_normal()
     }
+    .to_string()
+        + suffix
 }
 
 #[derive(Default)]
@@ -77,20 +83,14 @@ impl ToPrint {
         let (dir, repo) = directory(shell);
         let git_status = repo.map(|repo| git(&repo, shell)).unwrap_or_default();
         let python_venv = venv(shell).unwrap_or_default();
-        format!(
-            "\n{}{userhost}{dir}{git_status}{python_venv}",
-            shell.fg_normal()
-        )
+
+        "\n".to_string() + shell.fg_normal() + &userhost + &dir + &git_status + &python_venv
     }
 
-    fn last_line(job_count: usize, last_status: u8, shell: Shell) -> String {
-        let job_symbol = if job_count > 0 { "✦ " } else { "" };
-        let last_status_symbol = status(last_status, shell).unwrap_or_default();
-        format!(
-            "{}{job_symbol}{last_status_symbol}{}",
-            shell.fg_normal(),
-            shell.fg_normal()
-        )
+    fn last_line(job_count: usize, last_status: u8, prompt_suffix: &str, shell: Shell) -> String {
+        colored_prompt_suffix(prompt_suffix, job_count, last_status, shell)
+            + shell.fg_normal()
+            + " "
     }
 }
 impl FromStr for ToPrint {
@@ -110,6 +110,7 @@ fn main() {
     let mut last_status = 0;
     let mut to_print = ToPrint::default();
     let mut shell = Shell::default();
+    let mut prompt_suffix = "$".to_string();
     for arg in env::args().skip(1) {
         match arg.parse::<ToPrint>() {
             Ok(tp) => {
@@ -130,6 +131,9 @@ fn main() {
                         .parse::<Shell>()
                         .expect("Only bash and zsh are supported");
                 }
+                Some(("prompt_character", suffix)) => {
+                    prompt_suffix = suffix.to_string();
+                }
                 Some(_) | None => continue,
             },
         }
@@ -140,13 +144,16 @@ fn main() {
             print!("{}", ToPrint::pre_cmd(shell));
         }
         ToPrint::LastLine => {
-            print!("{}", ToPrint::last_line(job_count, last_status, shell));
+            print!(
+                "{}",
+                ToPrint::last_line(job_count, last_status, &prompt_suffix, shell)
+            );
         }
         ToPrint::All => {
             print!(
                 "{}\n{}",
                 ToPrint::pre_cmd(shell),
-                ToPrint::last_line(job_count, last_status, shell)
+                ToPrint::last_line(job_count, last_status, &prompt_suffix, shell)
             );
         }
     }

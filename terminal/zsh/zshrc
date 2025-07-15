@@ -21,7 +21,7 @@ setopt hist_find_no_dups
 # Prompt
 zmodload zsh/parameter  # Needed to access jobstates variable
 setopt promptsubst
-PS1='$(prompt jobs="${#jobstates}" laststatus="$?" shell=zsh)$ '
+PS1='$(prompt jobs="${#jobstates}" laststatus="$?" shell=zsh)'
 
 # Aliases
 alias ls='ls --color --classify'

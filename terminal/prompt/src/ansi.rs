@@ -37,6 +37,8 @@ macro_rules! ansi_sequence {
 ansi_sequence!(reset, "\x1b[0m");
 ansi_sequence!(red, "\x1b[31m");
 ansi_sequence!(yellow, "\x1b[33m");
+ansi_sequence!(blue, "\x1b[34m");
+ansi_sequence!(magenta, "\x1b[35m");
 ansi_sequence!(fg_normal, "\x1b[0;39m");
 ansi_sequence!(fg_bold, "\x1b[1;39m");
 ansi_sequence!(fg_dim, "\x1b[2;39m");
