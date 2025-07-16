@@ -3,11 +3,13 @@ command = zsh
 font-family = Adwaita Mono
 font-size = 16
 
-theme = dark:Adwaita Dark,light:Adwaita
+window-theme = ghostty
+theme = dark:NvimDark,light:NvimLight
 cursor-color = #D28A52
 
 window-padding-balance = true
 maximize = true
+gtk-titlebar-hide-when-maximized = true
 
 keybind = ctrl+shift+l=new_split:right
 
