@@ -109,11 +109,11 @@ fn read_upstream<'b>(repo: &Repository, local: &Branch<'b>) -> Option<Upstream<'
         .expect("Has ahead begind count");
 
     let ahead_behind = if ahead > 0 && behind > 0 {
-        "⇡⇣"
+        "↑↓"
     } else if ahead > 0 {
-        "⇡"
+        "↑"
     } else if behind > 0 {
-        "⇣"
+        "↓"
     } else {
         ""
     };
@@ -185,8 +185,9 @@ pub fn git(repo: &Repository, shell: Shell) -> String {
 
     shell.fg_dim().to_string()
         + &head
-        + shell.yellow()
+        + shell.yellow_normal()
         + &git_status(repo, shell)
+        + shell.fg_normal()
         + ahead_behind.unwrap_or_default()
         + stash
 }
