@@ -24,7 +24,7 @@ require("mini.deps").now(function()
 		group = vim.api.nvim_create_augroup("nvim-treesitter-update-parsers", { clear = true }),
 		callback = function(args)
 			local kind = args.data.kind --[[@as "install" | "update" | "delete"]]
-			local spec = args.data.spec --[[@as vim.pack.Spec]]
+			local spec = args.data.spec --[[@as vim.pack.SpecResolved]]
 			if spec.name == "nvim-treesitter" and (kind == "install" or kind == "update") then
 				require("nvim-treesitter").update({ summary = true })
 			end
