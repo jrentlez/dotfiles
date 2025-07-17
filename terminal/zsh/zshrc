@@ -34,32 +34,38 @@ alias pacdiff='DIFFPROG="nvim -d" pacdiff -b -3 -s'
 # Load completions
 autoload -U compinit && compinit
 
-#### FZF SETUP ####
-export FZF_DEFAULT_OPTS="--ansi --color=bw,hl:2,spinner:3 --style=minimal"
-fzf_excludes=("--exclude=Steam" "--exclude=.steam" "--exclude=Games" "--exclude=.wine" "--exclude=.cache" "--exclude=.git")
-export FZF_DEFAULT_COMMAND="fd --hidden --type l --type f --type d $fzf_excludes"
-
-# Shell integrations
-source <(fzf --zsh)
-
-function fzf-homedir-widget() {
-    setopt localoptions pipefail no_aliases 2> /dev/null
-    local dir="$(fd --type d --hidden --maxdepth 8 --follow $fzf_excludes . ~ | fzf)"
-    if [[ -z "$dir" ]]; then
-      zle redisplay
-      return 0
-    fi
-    zle push-line # Clear buffer. Auto-restored on next prompt.
-    BUFFER="builtin cd -- ${(q)dir:a}"
-    zle accept-line
-    local ret=$?
-    unset dir # ensure this doesn't end up appearing in prompt expansion
-    zle reset-prompt
-    return $ret
+#### SKIM ####
+export SKIM_DEFAULT_OPTIONS="--ansi --color=bw"
+source "/usr/share/skim/key-bindings.zsh"
+function skim-homedir-widget() {
+	fd_excludes=("--exclude=Steam" "--exclude=.steam" "--exclude=Games" "--exclude=.wine" "--exclude=.cache" "--exclude=.git")
+	cmd="fd --type d --hidden --maxdepth 8 --follow ${fd_excludes[*]} . ~"
+	setopt localoptions pipefail no_aliases 2> /dev/null
+	dir="$(eval "$cmd" | sk --no-multi --tiebreak=length)"
+	if [[ -z "$dir" ]]; then
+		zle redisplay
+		return 0
+	fi
+	if [[ -z "$BUFFER" ]]; then
+		BUFFER="cd ${(q)dir}"
+		zle accept-line
+	else
+		print -sr "cd ${(q)dir}"
+		cd "$dir"
+	fi
+	local ret=$?
+	unset dir
+	unset cmd
+	unset fd_excludes
+	zle skim-redraw-prompt
+	tput cnorm
+	return $ret
 }
-zle -N fzf-homedir-widget
-bindkey '^F' fzf-homedir-widget
+zle -N skim-homedir-widget
+bindkey '^F' skim-homedir-widget
 
+#### FZF-TAB ####
+export FZF_DEFAULT_OPTS="$SKIM_DEFAULT_OPTIONS --style=minimal"
 source "/usr/share/zsh/plugins/fzf-tab-git/fzf-tab.zsh"
 # Force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
 zstyle ':completion:*' menu no
