@@ -84,6 +84,11 @@ require("mini.deps").later(function()
 				vim.lsp.document_color.enable(true, event.buf)
 			end
 
+			-- Enable linked editing ranges
+			if client:supports_method(vim.lsp.protocol.Methods.textDocument_linkedEditingRange, event.buf) then
+				vim.lsp.linked_editing_range.enable(true, { client_id = client.id })
+			end
+
 			-- Enable codelens
 			if client:supports_method(vim.lsp.protocol.Methods.textDocument_codeLens, event.buf) then
 				vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave", "BufWritePost" }, {
