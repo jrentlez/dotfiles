@@ -42,22 +42,21 @@ fn git_status(repo: &Repository, shell: Shell) -> String {
     let stats = match repo.statuses(Some(&mut opts)) {
         Ok(stats) => stats,
         Err(error) => match error.code() {
-            git2::ErrorCode::BareRepo => return "".to_string(),
+            git2::ErrorCode::BareRepo => return String::new(),
             code => {
                 panic!("{code:?}: {error}")
             }
         },
     };
-    let stat = match stats
+    let Some(stat) = stats
         .into_iter()
         .map(|stat| stat.status())
         .reduce(|a, b| a | b)
-    {
-        Some(stat) => stat,
-        None => return "".to_string(),
+    else {
+        return String::new();
     };
 
-    let mut s = "".to_string();
+    let mut s = String::new();
     if stat.is_conflicted() {
         s.push('⇄');
     }
@@ -84,11 +83,10 @@ fn git_status(repo: &Repository, shell: Shell) -> String {
 }
 
 fn has_stash(repo: &Repository) -> bool {
-    let stash_reflog = match repo.reflog("refs/stash") {
-        Ok(reflog) => reflog,
-        Err(_) => return false,
-    };
-    !stash_reflog.is_empty()
+    match repo.reflog("refs/stash") {
+        Ok(reflog) => !reflog.is_empty(),
+        Err(_) => false,
+    }
 }
 
 struct Upstream<'b> {

@@ -55,9 +55,8 @@ fn last_n_path_components(path: &Path, n: NonZeroUsize) -> (Option<&OsStr>, &OsS
     };
 
     let mut iter = bytes.iter();
-    let last_component_start = match find_nth_last_component_start(&mut iter, 0) {
-        Some(last_component_start) => last_component_start,
-        None => return (None, OsStr::from_bytes(bytes)),
+    let Some(last_component_start) = find_nth_last_component_start(&mut iter, 0) else {
+        return (None, OsStr::from_bytes(bytes));
     };
 
     let remaining_components = n.get() - 1;

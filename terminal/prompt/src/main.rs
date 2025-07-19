@@ -115,7 +115,6 @@ fn main() {
         match arg.parse::<ToPrint>() {
             Ok(tp) => {
                 to_print = tp;
-                continue;
             }
             Err(()) => match arg.split_once('=') {
                 Some(("jobs", jc)) => {
@@ -134,7 +133,7 @@ fn main() {
                 Some(("prompt_character", suffix)) => {
                     prompt_suffix = suffix.to_string();
                 }
-                Some(_) | None => continue,
+                Some(_) | None => {}
             },
         }
     }
