@@ -112,7 +112,7 @@ vim.api.nvim_create_user_command("PackClean", function()
 		:map(
 			---@param plugin vim.pack.PlugData
 			function(plugin)
-				return not plugin.active and plugin.spec.name
+				return not plugin.active and plugin.spec.name or nil
 			end
 		)
 		:totable() --[[@as string[] ]]
