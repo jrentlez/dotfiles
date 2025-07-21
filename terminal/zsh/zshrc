@@ -38,9 +38,12 @@ autoload -U compinit && compinit
 export SKIM_DEFAULT_OPTIONS="--ansi --color=bw"
 source "/usr/share/skim/key-bindings.zsh"
 function skim-homedir-widget() {
+	local fd_excludes
 	fd_excludes=("--exclude=Steam" "--exclude=.steam" "--exclude=Games" "--exclude=.wine" "--exclude=.cache" "--exclude=.git")
+	local cmd
 	cmd="fd --type d --hidden --maxdepth 8 --follow ${fd_excludes[*]} . ~"
 	setopt localoptions pipefail no_aliases 2> /dev/null
+	local dir
 	dir="$(eval "$cmd" | sk --no-multi --tiebreak=length)"
 	if [[ -z "$dir" ]]; then
 		zle redisplay
@@ -53,10 +56,8 @@ function skim-homedir-widget() {
 		print -sr "cd ${(q)dir}"
 		cd "$dir"
 	fi
-	local ret=$?
-	unset dir
-	unset cmd
-	unset fd_excludes
+	local ret
+	ret=$?
 	zle skim-redraw-prompt
 	tput cnorm
 	return $ret
