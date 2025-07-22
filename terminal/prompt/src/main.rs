@@ -1,24 +1,19 @@
-use dir::directory;
-use git::git;
 use std::{
-    env::{self, VarError},
+    env::{VarError, args_os, var},
     ffi::OsStr,
-    str::FromStr,
 };
 
-use crate::ansi::Shell;
+use cli::Args;
 
 mod ansi;
+mod cli;
 mod dir;
 mod git;
-
-#[inline]
-fn is_root() -> bool {
-    nix::unistd::geteuid() == nix::unistd::ROOT
-}
+mod misc;
+mod section;
 
 fn var_lossy<K: AsRef<OsStr>>(key: K) -> Option<String> {
-    env::var(key)
+    var(key)
         .or_else(|err| match err {
             VarError::NotPresent => Err(()),
             VarError::NotUnicode(s) => Ok(s.to_string_lossy().to_string()),
@@ -26,134 +21,12 @@ fn var_lossy<K: AsRef<OsStr>>(key: K) -> Option<String> {
         .ok()
 }
 
-fn userhost(shell: Shell) -> Option<String> {
-    let mut userhost = var_lossy("USER").expect("$USER is present");
-
-    let is_root = is_root();
-    let show_username = is_root
-        || var_lossy("LOGNAME").is_some_and(|logname| logname != userhost)
-        || ["SSH_CONNECTION", "SSH_CLIENT", "SSH_TTY"]
-            .iter()
-            .any(|var| var_lossy(var).is_some());
-    if var_lossy("SSH_CONNECTION").is_some() {
-        let host = nix::unistd::gethostname().expect("Can get hostname");
-        userhost.push('@');
-        userhost.push_str(&host.to_string_lossy());
-    }
-    userhost.push(' ');
-
-    if !show_username {
-        None
-    } else if is_root {
-        Some(shell.red().to_string() + &userhost)
-    } else {
-        Some(shell.fg_italic().to_string() + &userhost)
-    }
-}
-
-fn venv(shell: Shell) -> Option<String> {
-    let venv_prompt = var_lossy("VIRTUAL_ENV_PROMPT")?;
-    Some(shell.fg_italic().to_string() + "(" + &venv_prompt + ") ")
-}
-
-fn colored_prompt_suffix(suffix: &str, job_count: usize, last_status: u8, shell: Shell) -> String {
-    if job_count > 0 && last_status > 0 {
-        shell.magenta()
-    } else if job_count > 0 {
-        shell.blue()
-    } else if last_status > 0 {
-        shell.red()
-    } else {
-        shell.fg_normal()
-    }
-    .to_string()
-        + suffix
-}
-
-#[derive(Default)]
-enum ToPrint {
-    PreCmd,
-    LastLine,
-    #[default]
-    All,
-}
-impl ToPrint {
-    fn pre_cmd(shell: Shell) -> String {
-        let userhost = userhost(shell).unwrap_or_default();
-        let (dir, repo) = directory(shell);
-        let git_status = repo.map(|repo| git(&repo, shell)).unwrap_or_default();
-        let python_venv = venv(shell).unwrap_or_default();
-
-        "\n".to_string() + shell.fg_normal() + &userhost + &dir + &git_status + &python_venv
-    }
-
-    fn last_line(job_count: usize, last_status: u8, prompt_suffix: &str, shell: Shell) -> String {
-        colored_prompt_suffix(prompt_suffix, job_count, last_status, shell)
-            + shell.fg_normal()
-            + " "
-    }
-}
-impl FromStr for ToPrint {
-    type Err = ();
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "precmd" => Ok(ToPrint::PreCmd),
-            "lastline" => Ok(ToPrint::LastLine),
-            _ => Err(()),
-        }
-    }
-}
-
 fn main() {
-    let mut job_count = 0;
-    let mut last_status = 0;
-    let mut to_print = ToPrint::default();
-    let mut shell = Shell::default();
-    let mut prompt_suffix = "$".to_string();
-    for arg in env::args().skip(1) {
-        match arg.parse::<ToPrint>() {
-            Ok(tp) => {
-                to_print = tp;
-            }
-            Err(()) => match arg.split_once('=') {
-                Some(("jobs", jc)) => {
-                    job_count = jc
-                        .parse::<usize>()
-                        .expect("Amount of running jobs fits into usize");
-                }
-                Some(("laststatus", ls)) => {
-                    last_status = ls.parse::<u8>().expect("Last exit code fits into u8");
-                }
-                Some(("shell", sh)) => {
-                    shell = sh
-                        .parse::<Shell>()
-                        .expect("Only bash and zsh are supported");
-                }
-                Some(("prompt_character", suffix)) => {
-                    prompt_suffix = suffix.to_string();
-                }
-                Some(_) | None => {}
-            },
-        }
-    }
-
-    match to_print {
-        ToPrint::PreCmd => {
-            print!("{}", ToPrint::pre_cmd(shell));
-        }
-        ToPrint::LastLine => {
-            print!(
-                "{}",
-                ToPrint::last_line(job_count, last_status, &prompt_suffix, shell)
-            );
-        }
-        ToPrint::All => {
-            print!(
-                "{}\n{}",
-                ToPrint::pre_cmd(shell),
-                ToPrint::last_line(job_count, last_status, &prompt_suffix, shell)
-            );
-        }
-    }
+    let args = args_os().skip(1).collect::<Args>();
+    args.section().print(
+        args.shell(),
+        args.job_count(),
+        args.last_status(),
+        args.prompt_suffix(),
+    );
 }
