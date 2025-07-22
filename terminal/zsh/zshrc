@@ -24,8 +24,8 @@ setopt promptsubst
 PS1='$(prompt jobs="${#jobstates}" laststatus="$?" shell=zsh)'
 
 # Aliases
-alias ls='ls --color --classify'
-alias tree='tree -C -F'
+alias ls='ls --color'
+alias tree='tree -C'
 alias te='$EDITOR'
 alias vim="nvim --noplugin"
 alias diffed='$EDITOR $(git diff --name-only --relative)'
