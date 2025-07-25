@@ -1,43 +1,43 @@
 local M = {}
 
 function M.check()
-	vim.health.start("Check all specified packages are installed")
+	vim.health.start("Check all specified tools are installed")
 
-	local installed_pkgs = require("mason-registry").get_installed_packages() --[[@as Package[] ]]
-	vim.iter(require("spec").mason):each(
-		---@param pkg_name string
-		function(pkg_name)
+	local installed_packages = require("mason-registry").get_installed_packages() --[[@as Package[] ]]
+	vim.iter(require("tools").mason):each(
+		---@param tool_name string
+		function(tool_name)
 			if
-				vim.iter(installed_pkgs):any(
-					---@param pkg Package
-					function(pkg)
-						return pkg.name == pkg_name or vim.list_contains(pkg:get_aliases(), pkg_name)
+				vim.iter(installed_packages):any(
+					---@param package Package
+					function(package)
+						return package.name == tool_name or vim.list_contains(package:get_aliases(), tool_name)
 					end
 				)
 			then
-				vim.health.ok(("'%s' installed via mason"):format(pkg_name))
+				vim.health.ok(("'%s' installed via mason"):format(tool_name))
 			elseif
 				vim.iter(require("mason-registry").get_all_packages()):any(
 					---@param pkg Package
 					function(pkg)
-						return pkg.name == pkg_name or vim.list_contains(pkg:get_aliases(), pkg_name)
+						return pkg.name == tool_name or vim.list_contains(pkg:get_aliases(), tool_name)
 					end
 				)
 			then
 				vim.health.error(
-					("'%s' was not automatically installed via mason"):format(pkg_name),
+					("'%s' was not automatically installed via mason"):format(tool_name),
 					"Make sure the automatic installation process in `/plugin/lsp.lua` works"
 				)
 			else
 				vim.health.warn(
-					("It seems '%s' is not available via mason"):format(pkg_name),
+					("It seems '%s' is not available via mason"):format(tool_name),
 					"If the package is an LSP installed on your system, you need to specify it in the `system_lsps` list, not `mason`"
 				)
 			end
 		end
 	)
 
-	vim.iter(require("spec").system_lsps):each(function(server_name)
+	vim.iter(require("tools").system_lsps):each(function(server_name)
 		local lspconfig = assert(vim.lsp.config[server_name])
 		if type(lspconfig.cmd) == "function" then
 			vim.health.ok(("'%s' is an in-process LSP"):format(server_name))
@@ -58,8 +58,8 @@ function M.check()
 				local name = vim.list_contains(pkg.spec.categories, pkg.Cat.LSP)
 						and require("mason-lspconfig").get_mappings().package_to_lspconfig[pkg.name]
 					or pkg.name
-				local specified = vim.list_contains(require("spec").mason, name)
-					or vim.list_contains(require("spec").system_lsps, name)
+				local specified = vim.list_contains(require("tools").mason, name)
+					or vim.list_contains(require("tools").system_lsps, name)
 				if specified then
 					return nil
 				else

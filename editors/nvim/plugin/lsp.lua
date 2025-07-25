@@ -136,14 +136,14 @@ require("mini.deps").later(function()
 		desc = "LSP configuration",
 	})
 
-	vim.lsp.config("*", require("spec").lsp_default_config)
+	vim.lsp.config("*", require("tools").lsp_default_config)
 
-	vim.lsp.enable(require("spec").system_lsps)
+	vim.lsp.enable(require("tools").system_lsps)
 
 	require("mason").setup({
 		PATH = "append",
 	})
-	require("mason-tool-installer").setup({ ensure_installed = require("spec").mason, auto_update = true })
+	require("mason-tool-installer").setup({ ensure_installed = require("tools").mason, auto_update = true })
 	vim.cmd("MasonToolsUpdate")
 	require("mason-lspconfig").setup()
 end)

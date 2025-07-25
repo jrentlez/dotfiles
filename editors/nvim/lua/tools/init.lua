@@ -1,9 +1,9 @@
 ---Specification regarding language-servers, formatters and linters
----@class (exact) ToolSpec
+---@class (exact) Tools
 ---@field mason string[] Tools (including LSPs) to install via mason. LSPs listed here are automatically configured
 ---@field system_lsps string[] LSPs that need to be enabled in addition to those installed with mason
 ---@field lsp_default_config vim.lsp.Config The default configuration for all LSPs
-local ToolSpec = {
+local Tools = {
 	mason = {
 		-- LSPs
 		"eslint",
@@ -50,4 +50,4 @@ local ToolSpec = {
 	},
 }
 
-return ToolSpec
+return Tools
