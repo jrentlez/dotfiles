@@ -12,14 +12,7 @@ local function print_executable_message(name, cmd)
 			vim.health.ok(("`%s`: `%s` is executable"):format(name, cmd))
 		end
 	else
-		if not cmd or name == cmd then
-			vim.health.warn(("`%s` is not executable"):format(name), ("`%s` may not be installed"):format(name))
-		else
-			vim.health.warn(
-				("`%s`: `%s` is not executable"):format(name, cmd),
-				("`%s` may not be installed"):format(name)
-			)
-		end
+		vim.health.warn(("`%s` is not executable"):format(cmd or name), ("`%s` may not be installed"):format(name))
 	end
 end
 
