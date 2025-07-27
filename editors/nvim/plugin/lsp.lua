@@ -162,6 +162,5 @@ require("mini.deps").later(function()
 		"tinymist",
 		"vtsls",
 		"yamlls",
-		"zls",
 	})
 end)
