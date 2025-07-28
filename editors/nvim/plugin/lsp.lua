@@ -68,11 +68,6 @@ local function on_lsp_attach(event)
 		vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
 	end
 
-	-- Enable document color
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_documentColor, event.buf) then
-		vim.lsp.document_color.enable(true, event.buf)
-	end
-
 	-- Enable linked editing ranges
 	if client:supports_method(vim.lsp.protocol.Methods.textDocument_linkedEditingRange, event.buf) then
 		vim.lsp.linked_editing_range.enable(true, { client_id = client.id })
