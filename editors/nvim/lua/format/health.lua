@@ -8,22 +8,22 @@ local function check_buffer(bufnr)
 	local buf_name = vim.api.nvim_buf_get_name(bufnr)
 	buf_name = buf_name == "" and "[No Name]" or (vim.fs.relpath(assert(vim.uv.cwd()), buf_name) or buf_name)
 
+	vim.health.start("LSP formatter(s) for " .. buf_name)
+
 	local fmt_autocmd_id = vim.b[bufnr].lsp_format_on_save_autocmd --[[@as integer?]]
 	if not fmt_autocmd_id then
-		if vim.bo[bufnr].filetype == "" then
-			vim.health.info(buf_name .. ": default |filetype|")
+		if vim.tbl_isempty(vim.lsp.get_clients({ bufnr = bufnr })) then
+			vim.health.info("No LSPs attached")
 		else
-			vim.health.warn(
-				"No format-on-save autocommand for " .. buf_name,
-				"The autocommand is only created once a LSP is attached to the buffer"
+			vim.health.error(
+				"No format-on-save autocommand",
+				"The autocommand should be created on every `LspAttach` event"
 			)
 		end
 		return
 	end
 	local fmt_autocmds = vim.api.nvim_get_autocmds({ id = fmt_autocmd_id, buffer = bufnr })
 	assert(#fmt_autocmds == 1)
-
-	vim.health.start("LSP formatter(s) for " .. buf_name)
 
 	local server_name = vim.b[bufnr].formatlsp --[[@as string?]]
 	if server_name and server_name == "" then
