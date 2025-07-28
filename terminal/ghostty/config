@@ -3,9 +3,7 @@ command = zsh
 font-family = Adwaita Mono
 font-size = 16
 
-window-theme = ghostty
-theme = dark:NvimDark,light:NvimLight
-cursor-color = #D28A52
+theme = dark:Adwaita Dark,light:Adwaita
 
 window-padding-balance = true
 maximize = true
