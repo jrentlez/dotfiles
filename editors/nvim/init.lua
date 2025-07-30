@@ -41,6 +41,9 @@ vim.o.wrap = true
 vim.keymap.set({ "n", "x" }, "j", [[v:count == 0 ? 'gj' : 'j']], { expr = true })
 vim.keymap.set({ "n", "x" }, "k", [[v:count == 0 ? 'gk' : 'k']], { expr = true })
 
+---@param lhs string
+---@param rhs string | function
+---@param desc string
 local function nmap(lhs, rhs, desc)
 	vim.keymap.set("n", lhs, rhs, { desc = desc })
 end
@@ -49,23 +52,13 @@ nmap("<Esc>", "<cmd>nohlsearch<cr>", "Clear highlights on search when pressing <
 
 nmap("<leader>q", "<cmd>bdelete<cr>", "Delete buffer")
 
----@type vim.diagnostic.Opts?
-local config_backup = nil
-nmap("<leader>e", function()
-	if config_backup then
-		vim.diagnostic.config(config_backup)
-		config_backup = nil
-	else
-		config_backup = assert(vim.diagnostic.config())
-		vim.diagnostic.config({
-			virtual_lines = { current_line = true },
-			virtual_text = false,
-		})
-	end
-end, "Toggle line diagnostics with virtual lines")
-
 nmap("gb", "<cmd>bnext<cr>", "Go to next buffer")
 nmap("gB", "<cmd>bprevious<cr>", "Go to pevious buffer")
+
+nmap("gqo", "<cmd>copen<cr>", ":copen")
+nmap("gqc", "<cmd>cclose<cr>", ":cclose")
+nmap("gqn", "<cmd>cprevious<cr>", ":cnext")
+nmap("gqp", "<cmd>cprevious<cr>", ":cprevious")
 
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 

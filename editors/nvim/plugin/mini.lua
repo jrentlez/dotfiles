@@ -169,6 +169,7 @@ require("mini.deps").later(function()
 			{ mode = "n", keys = "<leader>h", desc = "+Hunks" },
 			{ mode = "v", keys = "<leader>h", desc = "+Hunks" },
 			{ mode = "n", keys = "<leader>d", desc = "+Delete" },
+			{ mode = "n", keys = "gq", desc = "+Quickfix" },
 		},
 
 		window = {
