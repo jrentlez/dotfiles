@@ -17,32 +17,30 @@ local function on_lsp_attach(event)
 		vim.bo[event.buf].omnifunc = "v:lua.MiniCompletion.completefunc_lsp"
 	end
 
-	-- Keymaps
-	local function pnmap(lhs, scope, desc)
-		vim.keymap.set("n", lhs, function()
-			require("mini.extra").pickers.lsp({ scope = scope }, {})
-		end, { desc = desc, buffer = event.buf })
+	-- Keymaps (see :help lsp-defaults for already existing keymaps)
+
+	---@param lhs string
+	---@param rhs function
+	---@param desc string
+	local function nmap(lhs, rhs, desc)
+		vim.keymap.set("n", lhs, rhs, { desc = desc, buffer = event.buf })
 	end
 	if client:supports_method(vim.lsp.protocol.Methods.textDocument_definition, event.buf) then
-		pnmap("gd", "definition", "vim.lsp.buf.definition()")
+		nmap("gd", vim.lsp.buf.definition, "vim.lsp.buf.definition()")
 	end
 	if client:supports_method(vim.lsp.protocol.Methods.textDocument_declaration, event.buf) then
-		pnmap("gD", "declaration", "vim.lsp.buf.declaration()")
+		nmap("gd", vim.lsp.buf.declaration, "vim.lsp.buf.declaration()")
 	end
 	if client:supports_method(vim.lsp.protocol.Methods.textDocument_typeDefinition, event.buf) then
-		pnmap("grt", "type_definition", "vim.lsp.buf.type_definition()")
+		nmap("grt", vim.lsp.buf.type_definition, "vim.lsp.buf.type_definition()")
 	end
 	if client:supports_method(vim.lsp.protocol.Methods.textDocument_documentSymbol, event.buf) then
-		pnmap("grs", "document_symbol", "vim.lsp.buf.document_symbol()")
-	end
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_implementation, event.buf) then
-		pnmap("gri", "implementation", "vim.lsp.buf.implementation()")
-	end
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_references, event.buf) then
-		pnmap("grr", "references", "vim.lsp.buf.references()")
+		nmap("grs", vim.lsp.buf.document_symbol, "vim.lsp.buf.document_symbol()")
 	end
 	if client:supports_method(vim.lsp.protocol.Methods.workspace_symbol, event.buf) then
-		pnmap("grw", "workspace_symbol", "vim.lsp.buf.workspace_sybmol()")
+		nmap("grw", function()
+			vim.lsp.buf.workspace_symbol()
+		end, "vim.lsp.buf.workspace_sybmol()")
 	end
 
 	local lsp_augroup = vim.api.nvim_create_augroup("custom-lsp-autocmds", { clear = false })
