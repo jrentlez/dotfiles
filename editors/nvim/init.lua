@@ -71,7 +71,7 @@ vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" }
 
 -- Misc ------------------------------------------------------------------------
 
-vim.cmd.colorscheme("default")
+vim.cmd.colorscheme("terminal")
 
 vim.diagnostic.config({
 	virtual_text = { source = "if_many" },
