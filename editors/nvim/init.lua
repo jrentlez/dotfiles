@@ -59,6 +59,7 @@ nmap("gqo", "<cmd>copen<cr>", ":copen")
 nmap("gqc", "<cmd>cclose<cr>", ":cclose")
 nmap("gqn", "<cmd>cprevious<cr>", ":cnext")
 nmap("gqp", "<cmd>cprevious<cr>", ":cprevious")
+nmap("gqd", vim.diagnostic.setqflist, "vim.diagnostic.setqflist()")
 
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
