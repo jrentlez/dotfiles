@@ -7,6 +7,9 @@ vim.g.mapleader = " "
 -- Use the terminal to copy/paste
 vim.g.clipboard = "osc52"
 
+-- Set the colorscheme to use the terminal's foreground and background color
+vim.cmd.colorscheme("terminal")
+
 -- Options ---------------------------------------------------------------------
 
 vim.o.breakindent = true
@@ -71,13 +74,7 @@ vim.keymap.set({ "i", "s" }, "<C-l>", function()
 	vim.snippet.jump(1)
 end)
 
--- Misc ------------------------------------------------------------------------
-
-vim.cmd.colorscheme("terminal")
-
-vim.diagnostic.config({
-	virtual_text = { source = "if_many" },
-})
+-- Autocommands ----------------------------------------------------------------
 
 vim.api.nvim_create_autocmd("TextYankPost", {
 	group = vim.api.nvim_create_augroup("hl_on_yank", { clear = true }),
@@ -96,6 +93,8 @@ vim.api.nvim_create_autocmd("BufRead", {
 	end,
 	desc = "Make readonly buffers nomodifiable",
 })
+
+-- User commands ---------------------------------------------------------------
 
 vim.api.nvim_create_user_command("PackUpdate", function()
 	local plugin_names = vim.iter(vim.pack.get())
