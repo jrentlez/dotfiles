@@ -1,22 +1,22 @@
-require("mini.deps").now(function()
-	-- mini.notify ---------------------------------------------------------
+vim.pack.add({ "https://github.com/echasnovski/mini.nvim" })
 
-	require("mini.notify").setup()
-	vim.notify = MiniNotify.make_notify()
+-- mini.notify ---------------------------------------------------------
 
-	-- mini.files ----------------------------------------------------------
+require("mini.notify").setup()
+vim.notify = MiniNotify.make_notify()
 
-	require("mini.files").setup()
+-- mini.files ----------------------------------------------------------
 
-	-- mini.icons ----------------------------------------------------------
+require("mini.files").setup()
 
-	require("mini.icons").setup({
-		style = vim.env.HAS_NERD_FONT and "glyph" or "ascii",
-	})
-	require("mini.icons").tweak_lsp_kind()
-end)
+-- mini.icons ----------------------------------------------------------
 
-require("mini.deps").later(function()
+require("mini.icons").setup({
+	style = vim.env.HAS_NERD_FONT and "glyph" or "ascii",
+})
+require("mini.icons").tweak_lsp_kind()
+
+vim.schedule(function()
 	-- Keymaps -------------------------------------------------------------
 
 	local function nmap(lhs, rhs, desc)

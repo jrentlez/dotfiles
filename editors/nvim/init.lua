@@ -1,5 +1,3 @@
-vim.pack.add({ "https://github.com/echasnovski/mini.nvim" })
-
 -- Enable project local configuration
 vim.o.exrc = true
 

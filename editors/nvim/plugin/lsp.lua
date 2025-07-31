@@ -123,7 +123,7 @@ local function notify_on_registered_capability(err, params, ctx)
 	return vim.lsp.handlers[vim.lsp.protocol.Methods.client_registerCapability](err, params, ctx)
 end
 
-require("mini.deps").later(function()
+vim.schedule(function()
 	vim.pack.add({
 		"https://github.com/neovim/nvim-lspconfig.git",
 	})
