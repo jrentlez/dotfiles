@@ -13,6 +13,7 @@ vim.g.clipboard = "osc52"
 
 vim.o.breakindent = true
 vim.o.clipboard = "unnamedplus"
+vim.o.completeopt = "menuone,fuzzy,noinsert"
 vim.o.cursorline = true
 vim.o.ignorecase = true
 vim.o.inccommand = "split"
@@ -62,6 +63,15 @@ nmap("gqp", "<cmd>cprevious<cr>", ":cprevious")
 nmap("gqd", vim.diagnostic.setqflist, "vim.diagnostic.setqflist()")
 
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+
+vim.keymap.del({ "i", "s" }, "<S-Tab>")
+vim.keymap.del({ "i", "s" }, "<Tab>")
+vim.keymap.set({ "i", "s" }, "<C-h>", function()
+	vim.snippet.jump(-1)
+end)
+vim.keymap.set({ "i", "s" }, "<C-l>", function()
+	vim.snippet.jump(1)
+end)
 
 -- Misc ------------------------------------------------------------------------
 

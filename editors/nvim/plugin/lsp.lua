@@ -14,7 +14,7 @@ local function on_lsp_attach(event)
 
 	-- Lsp completion
 	if client:supports_method(vim.lsp.protocol.Methods.textDocument_completion, event.buf) then
-		vim.bo[event.buf].omnifunc = "v:lua.MiniCompletion.completefunc_lsp"
+		vim.lsp.completion.enable(true, client.id, event.buf, { autotrigger = true })
 	end
 
 	-- Keymaps (see :help lsp-defaults for already existing keymaps)

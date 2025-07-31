@@ -34,12 +34,6 @@ require("mini.deps").later(function()
 	require("mini.bufremove").setup()
 	nmap("<leader>q", MiniBufremove.delete, "Delete buffer")
 
-	-- mini.completion -----------------------------------------------------
-
-	require("mini.snippets").setup()
-	require("mini.completion").setup({ lsp_completion = { source_func = "omnifunc", auto_setup = false } })
-	vim.o.completeopt = "menuone,fuzzy,noinsert"
-
 	-- mini.surround -------------------------------------------------------
 
 	require("mini.surround").setup()
