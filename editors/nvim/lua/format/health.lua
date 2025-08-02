@@ -8,12 +8,12 @@ local function check_buffer(bufnr)
 	local buf_name = vim.api.nvim_buf_get_name(bufnr)
 	buf_name = buf_name == "" and "[No Name]" or (vim.fs.relpath(assert(vim.uv.cwd()), buf_name) or buf_name)
 
-	vim.health.start("LSP formatter(s) for " .. buf_name)
+	vim.health.start("Formatting language server(s) for " .. buf_name)
 
 	local fmt_autocmd_id = vim.b[bufnr].lsp_format_on_save_autocmd --[[@as integer?]]
 	if not fmt_autocmd_id then
 		if vim.tbl_isempty(vim.lsp.get_clients({ bufnr = bufnr })) then
-			vim.health.info("No LSPs attached")
+			vim.health.info("No language servers attached")
 		else
 			vim.health.error(
 				"No format-on-save autocommand",
@@ -32,7 +32,7 @@ local function check_buffer(bufnr)
 	elseif server_name then
 		vim.health.info(('`vim.b.formatlsp = "%s"`'):format(server_name))
 	else
-		vim.health.info("No specific LSP formatter set (`vim.b.formatlsp = nil`)")
+		vim.health.info("No specific formatting language server set (`vim.b.formatlsp = nil`)")
 	end
 
 	local formatting_lsps = vim.lsp.get_clients({
@@ -47,7 +47,7 @@ local function check_buffer(bufnr)
 				('`%s` may not support `"%s"`'):format(server_name, vim.lsp.protocol.Methods.textDocument_formatting),
 			})
 		else
-			vim.health.warn("No LSP with formatting capabilities attached to buffer")
+			vim.health.warn("No language server with formatting capabilities attached to buffer")
 		end
 		return
 	end

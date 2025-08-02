@@ -85,7 +85,7 @@ local function on_lsp_attach(event)
 	-- Enable format on save
 	vim.b[event.buf].lsp_format_on_save_autocmd = vim.b[event.buf].lsp_format_on_save_autocmd
 		or vim.api.nvim_create_autocmd("BufWritePre", {
-			desc = "Attempt to format with LSP(s)",
+			desc = "Attempt to format with language server(s)",
 			buffer = event.buf,
 			group = lsp_augroup,
 			callback = function(args)
@@ -131,7 +131,7 @@ vim.schedule(function()
 	vim.api.nvim_create_autocmd("LspAttach", {
 		group = vim.api.nvim_create_augroup("default-lsp-attach", { clear = true }),
 		callback = on_lsp_attach,
-		desc = "LSP configuration",
+		desc = "Language server setup",
 	})
 
 	---HACK: according to `emmylua_ls` the `cfg` parameter is missing a `cmd` field, which is not actually required
