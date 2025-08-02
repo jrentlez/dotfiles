@@ -71,7 +71,6 @@ vim.schedule(function()
 	nmap("<leader>sh", function()
 		return bi.help({ default_split = "vertical" })
 	end, "Search help")
-	nmap("<leader>sk", ex.keymaps, "Search keymaps")
 	nmap("<leader>sf", bi.files, "Search files")
 	nmap("<leader>sg", bi.grep_live, "Search by grep")
 	nmap("<leader>sr", ex.oldfiles, "Search recent files")
@@ -80,14 +79,6 @@ vim.schedule(function()
 	nmap("<leader>/", function()
 		return ex.buf_lines({ scope = "current" }, {})
 	end, "Search buffer (fuzzy)")
-	nmap("<leader>sn", function()
-		return bi.files({}, {
-			source = {
-				cwd = vim.fn.stdpath("config"),
-				name = "Neovim config files",
-			},
-		})
-	end, "Search neovim config")
 	nmap("<leader>s/", ex.buf_lines, "Search open buffers (fuzzy)")
 	nmap("<leader>sp", function()
 		local all = vim.tbl_extend("error", bi, ex)
@@ -101,7 +92,6 @@ vim.schedule(function()
 			},
 		})
 	end, "Search pickers")
-	nmap("<leader>sc", ex.colorschemes, "Search colorschemes")
 
 	-- mini.hipatterns -----------------------------------------------------
 
