@@ -134,6 +134,8 @@ vim.schedule(function()
 		desc = "LSP configuration",
 	})
 
+	---HACK: according to `emmylua_ls` the `cfg` parameter is missing a `cmd` field, which is not actually required
+	---@diagnostic disable-next-line: param-type-not-match
 	vim.lsp.config("*", {
 		handlers = {
 			[vim.lsp.protocol.Methods.client_registerCapability] = notify_on_registered_capability,
@@ -148,7 +150,7 @@ vim.schedule(function()
 		"glsl_analyzer",
 		"jayvee_ls",
 		"jsonls",
-		"lua_ls",
+		"emmylua_ls",
 		"ruff",
 		"rust_analyzer",
 		"stylua3p_ls",
