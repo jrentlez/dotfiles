@@ -118,7 +118,7 @@ vim.api.nvim_create_user_command("PackClean", function()
 		)
 		:totable() --[[@as string[] ]]
 
-	local msg = vim.iter(inactive_names):fold(
+	local message = vim.iter(inactive_names):fold(
 		"Delete these inactive plugins?\n\n",
 		---@param plugin_name string
 		function(msg, plugin_name)
@@ -126,7 +126,7 @@ vim.api.nvim_create_user_command("PackClean", function()
 		end
 	) --[[@as string]]
 
-	local confirmed = vim.fn.confirm(msg) == 1
+	local confirmed = vim.fn.confirm(message) == 1
 	if confirmed then
 		vim.pack.del(inactive_names)
 	end
