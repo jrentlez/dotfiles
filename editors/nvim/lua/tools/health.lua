@@ -20,6 +20,18 @@ local M = {}
 function M.check()
 	vim.health.start("Language servers")
 	vim.health.info("see `:checkhealth vim.lsp`")
+	for name, v in pairs(vim.lsp._enabled_configs) do
+		local config = v.resolved_config
+		if config and type(config.cmd) == "function" then
+			vim.health.warn(
+				("`:checkhealth vim.lsp` cannot tell whether this is executable or not"):format(config.name or name),
+				{
+					"The configuration's `cmd` field is a function",
+					("see `:help lspconfig-all`"):format(config.name or name),
+				}
+			)
+		end
+	end
 
 	vim.health.start("Formatters")
 	print_executable_message("stylua")
