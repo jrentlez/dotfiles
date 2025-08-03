@@ -107,6 +107,11 @@ vim.api.nvim_create_user_command("PackClean", function()
 		)
 		:totable() --[[@as string[] ]]
 
+	if vim.tbl_isempty(inactive_names) then
+		vim.print("Nothing to clean")
+		return
+	end
+
 	local message = vim.iter(inactive_names):fold(
 		"Delete these inactive plugins?\n\n",
 		---@param plugin_name string
