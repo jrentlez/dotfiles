@@ -31,7 +31,7 @@ fn read_head(repo: &Repository) -> Head<'_> {
     }
 }
 
-fn git_status(repo: &Repository, shell: Shell) -> String {
+fn git_status(repo: &Repository) -> String {
     let mut opts = StatusOptions::new();
     opts.include_untracked(true)
         .recurse_untracked_dirs(true)
@@ -56,30 +56,41 @@ fn git_status(repo: &Repository, shell: Shell) -> String {
         return String::new();
     };
 
-    let mut s = String::new();
+    let mut status = String::new();
     if stat.is_conflicted() {
-        s.push('⇄');
+        status.push('C');
     }
     if stat.is_wt_new() {
-        s.push('?');
+        status.push('n');
+    }
+    if stat.is_index_new() {
+        status.push('N');
     }
     if stat.is_wt_modified() {
-        s.push('!');
+        status.push('m');
     }
-    if stat.is_index_new() || stat.is_index_modified() {
-        s.push('+');
+    if stat.is_index_modified() {
+        status.push('M');
     }
-    if stat.is_wt_renamed()
-        || stat.is_wt_typechange()
-        || stat.is_index_renamed()
-        || stat.is_index_typechange()
-    {
-        s.push('»');
+    if stat.is_wt_typechange() {
+        status.push('t');
     }
-    if stat.is_wt_deleted() || stat.is_index_deleted() {
-        s.push('✖');
+    if stat.is_index_typechange() {
+        status.push('T');
     }
-    shell.yellow().to_string() + &s
+    if stat.is_wt_renamed() {
+        status.push('r');
+    }
+    if stat.is_index_renamed() {
+        status.push('R');
+    }
+    if stat.is_wt_deleted() {
+        status.push('d');
+    }
+    if stat.is_index_deleted() {
+        status.push('D');
+    }
+    status
 }
 
 fn has_stash(repo: &Repository) -> bool {
@@ -107,11 +118,11 @@ fn read_upstream<'b>(repo: &Repository, local: &Branch<'b>) -> Option<Upstream<'
         .expect("Has ahead begind count");
 
     let ahead_behind = if ahead > 0 && behind > 0 {
-        "↑↓"
+        "AB"
     } else if ahead > 0 {
-        "↑"
+        "A"
     } else if behind > 0 {
-        "↓"
+        "B"
     } else {
         ""
     };
@@ -179,12 +190,12 @@ pub fn git(repo: &Repository, shell: Shell) -> String {
         }
     };
 
-    let stash = if has_stash(repo) { "$" } else { "" };
+    let stash = if has_stash(repo) { "S" } else { "" };
 
     shell.fg_dim().to_string()
         + &head
         + shell.yellow_normal()
-        + &git_status(repo, shell)
+        + &git_status(repo)
         + shell.fg_normal()
         + ahead_behind.unwrap_or_default()
         + stash
