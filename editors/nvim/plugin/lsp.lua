@@ -19,29 +19,37 @@ local function on_lsp_attach(event)
 
 	-- Keymaps (see :help lsp-defaults for already existing keymaps)
 
+	---@param method vim.lsp.protocol.Method.ClientToServer
 	---@param lhs string
-	---@param rhs function
+	---@param rhs fun()
 	---@param desc string
-	local function nmap(lhs, rhs, desc)
-		vim.keymap.set("n", lhs, rhs, { desc = desc, buffer = event.buf })
+	local function lsp_map(method, lhs, rhs, desc)
+		if client:supports_method(method, event.buf) then
+			vim.keymap.set("n", lhs, rhs, { desc = desc, buffer = event.buf })
+		end
 	end
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_definition, event.buf) then
-		nmap("gd", vim.lsp.buf.definition, "vim.lsp.buf.definition()")
-	end
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_declaration, event.buf) then
-		nmap("gd", vim.lsp.buf.declaration, "vim.lsp.buf.declaration()")
-	end
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_typeDefinition, event.buf) then
-		nmap("grt", vim.lsp.buf.type_definition, "vim.lsp.buf.type_definition()")
-	end
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_documentSymbol, event.buf) then
-		nmap("grs", vim.lsp.buf.document_symbol, "vim.lsp.buf.document_symbol()")
-	end
-	if client:supports_method(vim.lsp.protocol.Methods.workspace_symbol, event.buf) then
-		nmap("grw", function()
-			vim.lsp.buf.workspace_symbol()
-		end, "vim.lsp.buf.workspace_sybmol()")
-	end
+	lsp_map(vim.lsp.protocol.Methods.textDocument_definition, "gd", vim.lsp.buf.definition, "vim.lsp.buf.definition()")
+	lsp_map(
+		vim.lsp.protocol.Methods.textDocument_declaration,
+		"gD",
+		vim.lsp.buf.declaration,
+		"vim.lsp.buf.definition()"
+	)
+	lsp_map(
+		vim.lsp.protocol.Methods.textDocument_typeDefinition,
+		"grt",
+		vim.lsp.buf.type_definition,
+		"vim.lsp.buf.type_definition()"
+	)
+	lsp_map(
+		vim.lsp.protocol.Methods.textDocument_documentSymbol,
+		"grs",
+		vim.lsp.buf.document_symbol,
+		"vim.lsp.buf.document_symbol()"
+	)
+	lsp_map(vim.lsp.protocol.Methods.textDocument_workspace_symbol, "grw", function()
+		vim.lsp.buf.workspace_symbol()
+	end, "vim.lsp.buf.workspace_symbol()")
 
 	local lsp_augroup = vim.api.nvim_create_augroup("custom-lsp-autocmds", { clear = false })
 

@@ -15,6 +15,5 @@ clipboard-read = allow
 clipboard-write = allow
 
 env = EDITOR=nvim
-env = HAS_NERD_FONT=true
 
 shell-integration-features = ssh-env,ssh-terminfo

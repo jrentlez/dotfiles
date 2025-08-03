@@ -20,7 +20,6 @@ vim.o.ignorecase = true
 vim.o.inccommand = "split"
 vim.o.incsearch = true
 vim.o.infercase = true
-vim.o.linebreak = true
 vim.o.list = true
 vim.o.mouse = "a"
 vim.o.number = true
@@ -30,8 +29,6 @@ vim.o.scrolloff = 10
 vim.o.signcolumn = "yes"
 vim.o.smartcase = true
 vim.o.smartindent = true
-vim.o.splitbelow = true
-vim.o.splitright = true
 vim.o.timeoutlen = 300
 vim.o.undofile = true
 vim.o.updatetime = 250
@@ -97,15 +94,7 @@ vim.api.nvim_create_autocmd("BufRead", {
 -- User commands ---------------------------------------------------------------
 
 vim.api.nvim_create_user_command("PackUpdate", function()
-	local plugin_names = vim.iter(vim.pack.get())
-		:map(
-			---@param plugin vim.pack.PlugData
-			function(plugin)
-				return plugin.spec.name
-			end
-		)
-		:totable() --[[@as string[] ]]
-	vim.pack.update(plugin_names)
+	vim.pack.update()
 end, { desc = "Update plugins" })
 
 vim.api.nvim_create_user_command("PackClean", function()
