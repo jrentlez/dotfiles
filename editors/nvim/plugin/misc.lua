@@ -14,9 +14,4 @@ vim.schedule(function()
 
 	-- Extui
 	require("vim._extui").enable({})
-
-	-- ToggleTerm
-	vim.keymap.set({ "n", "t" }, "<C-Space>", function()
-		require("toggleterm").toggle()
-	end, { desc = "Terminal in vertical split" })
 end)
