@@ -29,6 +29,7 @@ vim.o.scrolloff = 10
 vim.o.signcolumn = "yes"
 vim.o.smartcase = true
 vim.o.smartindent = true
+vim.o.splitright = true
 vim.o.timeoutlen = 300
 vim.o.undofile = true
 vim.o.updatetime = 250
