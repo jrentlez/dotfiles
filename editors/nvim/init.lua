@@ -12,14 +12,17 @@ vim.cmd.colorscheme("terminal")
 
 -- Options ---------------------------------------------------------------------
 
+vim.o.autocomplete = true
 vim.o.breakindent = true
 vim.o.clipboard = "unnamedplus"
-vim.o.completeopt = "menuone,fuzzy,noinsert"
+vim.o.complete = "o"
+vim.o.completeopt = "menuone,fuzzy,noinsert,popup"
 vim.o.cursorline = true
 vim.o.ignorecase = true
 vim.o.inccommand = "split"
 vim.o.incsearch = true
 vim.o.infercase = true
+vim.o.linebreak = true
 vim.o.list = true
 vim.o.mouse = "a"
 vim.o.number = true
@@ -35,7 +38,6 @@ vim.o.undofile = true
 vim.o.updatetime = 250
 vim.o.virtualedit = "block"
 vim.o.wrap = true
-
 -- Keymaps ---------------------------------------------------------------------
 
 vim.keymap.set({ "n", "x" }, "j", [[v:count == 0 ? 'gj' : 'j']], { expr = true })
