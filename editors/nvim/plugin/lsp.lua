@@ -159,5 +159,6 @@ vim.schedule(function()
 		"tinymist",
 		"vtsls",
 		"yamlls",
+		"html",
 	})
 end)
