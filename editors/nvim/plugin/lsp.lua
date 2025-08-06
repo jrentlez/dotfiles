@@ -35,12 +35,6 @@ local function on_lsp_attach(event)
 		vim.lsp.buf.declaration,
 		"vim.lsp.buf.definition()"
 	)
-	lsp_map(
-		vim.lsp.protocol.Methods.textDocument_documentSymbol,
-		"grs",
-		vim.lsp.buf.document_symbol,
-		"vim.lsp.buf.document_symbol()"
-	)
 	lsp_map(vim.lsp.protocol.Methods.textDocument_workspace_symbol, "grw", function()
 		vim.lsp.buf.workspace_symbol()
 	end, "vim.lsp.buf.workspace_symbol()")
