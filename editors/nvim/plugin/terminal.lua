@@ -32,7 +32,7 @@ local function toggle_terminal()
 		})
 	end
 
-	local vertical = vim.o.lines * (vim.g.toggleterm_ratio or 2.5) <= vim.o.columns
+	local vertical = vim.o.lines * 2.5 <= vim.o.columns
 	window = vim.api.nvim_open_win(buffer, true, { vertical = vertical })
 	vim.wo[window].winfixbuf = true
 
