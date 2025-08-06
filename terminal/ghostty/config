@@ -14,6 +14,9 @@ keybind = ctrl+shift+l=new_split:right
 clipboard-read = allow
 clipboard-write = allow
 
-env = EDITOR=nvim
 
-shell-integration-features = ssh-env,ssh-terminfo
+# TODO: Reenable this once ghostty 1.2.0 releases
+
+# env = EDITOR=nvim
+#
+# shell-integration-features = ssh-env,ssh-terminfo
