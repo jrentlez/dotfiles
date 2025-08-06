@@ -1,14 +1,6 @@
--- Enable project local configuration
-vim.o.exrc = true
-
--- Use space as the one and only true leader key
+-- Global Variables ------------------------------------------------------------
 vim.g.mapleader = " "
-
--- Use the terminal to copy/paste
 vim.g.clipboard = "osc52"
-
--- Set the colorscheme to use the terminal's foreground and background color
-vim.cmd.colorscheme("terminal")
 
 -- Options ---------------------------------------------------------------------
 
@@ -18,6 +10,7 @@ vim.o.clipboard = "unnamedplus"
 vim.o.complete = "o"
 vim.o.completeopt = "menuone,fuzzy,noinsert,popup"
 vim.o.cursorline = true
+vim.o.exrc = true
 vim.o.ignorecase = true
 vim.o.inccommand = "split"
 vim.o.incsearch = true
@@ -38,6 +31,11 @@ vim.o.undofile = true
 vim.o.updatetime = 250
 vim.o.virtualedit = "block"
 vim.o.wrap = true
+
+-- Colorscheme -----------------------------------------------------------------
+
+vim.cmd.colorscheme("terminal")
+
 -- Keymaps ---------------------------------------------------------------------
 
 vim.keymap.set({ "n", "x" }, "j", [[v:count == 0 ? 'gj' : 'j']], { expr = true })
