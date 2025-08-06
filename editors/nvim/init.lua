@@ -63,6 +63,12 @@ nmap("gqn", "<cmd>cnext<cr>", ":cnext")
 nmap("gqp", "<cmd>cprevious<cr>", ":cprevious")
 nmap("gqd", vim.diagnostic.setqflist, "vim.diagnostic.setqflist()")
 
+nmap("glo", "<cmd>lopen<cr>", ":lopen")
+nmap("glc", "<cmd>lclose<cr>", ":lclose")
+nmap("gln", "<cmd>lnext<cr>", ":lnext")
+nmap("glp", "<cmd>lprevious<cr>", ":lprevious")
+nmap("gld", vim.diagnostic.setloclist, "vim.diagnostic.setloclist()")
+
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
 vim.keymap.del({ "i", "s" }, "<S-Tab>")
