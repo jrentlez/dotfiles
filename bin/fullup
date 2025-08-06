@@ -11,12 +11,11 @@ function section() {
 	fi
 }
 
-section "System & AUR packages"
-paru -Syu --noconfirm
-if [ -f /tmp/NVIM_COMMIT ]; then
-	xdg-open "https://github.com/neovim/neovim/compare/$(cat /tmp/NVIM_COMMIT)...HEAD"
-	sudo rm /tmp/NVIM_COMMIT
-fi
+section "System packages"
+sudo pacman -Syu --noconfirm
+
+section "AUR packages"
+rua upgrade
 
 section Flatpak
 flatpak update -y
