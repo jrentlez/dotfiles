@@ -5,11 +5,18 @@ local function on_lsp_attach(event)
 
 	-- Lsp folds
 	if client:supports_method(vim.lsp.protocol.Methods.textDocument_foldingRange, event.buf) then
-		vim.o.foldmethod = "expr"
-		vim.o.foldexpr = "v:lua.vim.lsp.foldexpr()"
-		vim.o.foldtext = "v:lua.vim.lsp.foldtext()"
-		vim.o.foldlevel = 99
-		vim.o.foldlevelstart = 99
+		---@param option string
+		---@param value any
+		local function set_if_unset(option, value)
+			if not vim.api.nvim_get_option_info2(option, {}).was_set then
+				vim.o[option] = value
+			end
+		end
+		set_if_unset("foldmethod", "expr")
+		set_if_unset("foldexpr", "v:lua.vim.lsp.foldexpr()")
+		set_if_unset("foldtext", "v:lua.vim.lsp.foldtext()")
+		set_if_unset("foldlevel", 99)
+		set_if_unset("foldlevelstart", 99)
 	end
 
 	-- Lsp completion
