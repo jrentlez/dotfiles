@@ -30,6 +30,6 @@ git -C "$HOME/.dotfiles" pull
 
 section Prompt
 (
-	cd "$HOME/.dotfiles/terminal/prompt" || return
+	cd "$HOME/.dotfiles/prompt" || return
 	cargo install --path .
 )

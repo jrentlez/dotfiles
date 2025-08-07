@@ -1,0 +1,8 @@
+links:
+  nvim: ~/.config/nvim
+  sshconfig: ~/.ssh/config
+  gitconfig: ~/.gitconfig
+  ghostty: ~/.config/ghostty
+  batconfig: ~/.config/bat/config
+  xdg-terminals.list: ~/.config/xdg-terminals.list
+  zshrc: ~/.zshrc
