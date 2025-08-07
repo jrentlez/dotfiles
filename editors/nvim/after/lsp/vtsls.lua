@@ -1,4 +1,3 @@
----@type vim.lsp.Config
 return {
 	settings = {
 		typescript = {
@@ -19,4 +18,4 @@ return {
 			},
 		},
 	},
-}
+} ---@type vim.lsp.Config

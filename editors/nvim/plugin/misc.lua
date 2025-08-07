@@ -1,5 +1,8 @@
 vim.pack.add({ "https://github.com/jvalue/jayvee.nvim.git" })
 
+-- {{{ function `goto_next_conflict_marker` and helper
+-- {{{ helper
+
 ---@param lines string[]
 ---@return boolean
 local function go_to_marker_in(lines)
@@ -16,7 +19,7 @@ local function go_to_marker_in(lines)
 	else
 		return false
 	end
-end
+end -- }}}
 
 local function goto_next_conflict_marker()
 	local row = unpack(vim.api.nvim_win_get_cursor(0))
@@ -29,10 +32,9 @@ local function goto_next_conflict_marker()
 	if go_to_marker_in(lines) then
 		return
 	end
-end
+end -- }}}
 
 vim.schedule(function()
 	require("vim._extui").enable({})
-
 	vim.keymap.set("n", "gC", goto_next_conflict_marker, { desc = "Go to next conflict marker" })
 end)

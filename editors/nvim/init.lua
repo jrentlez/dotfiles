@@ -1,9 +1,7 @@
--- Global Variables ------------------------------------------------------------
+-- {{{ Global Variables
 vim.g.mapleader = " "
-vim.g.clipboard = "osc52"
-
--- Options ---------------------------------------------------------------------
-
+vim.g.clipboard = "osc52" -- }}}
+-- {{{ Options
 vim.o.autocomplete = true
 vim.o.breakindent = true
 vim.o.clipboard = "unnamedplus"
@@ -30,14 +28,10 @@ vim.o.timeoutlen = 300
 vim.o.undofile = true
 vim.o.updatetime = 250
 vim.o.virtualedit = "block"
-vim.o.wrap = true
-
--- Colorscheme -----------------------------------------------------------------
-
-vim.cmd.colorscheme("terminal")
-
--- Keymaps ---------------------------------------------------------------------
-
+vim.o.wrap = true -- }}}
+-- {{{ Colorscheme
+vim.cmd.colorscheme("terminal") -- }}}
+-- {{{ Keymaps
 vim.keymap.set({ "n", "x" }, "j", [[v:count == 0 ? 'gj' : 'j']], { expr = true })
 vim.keymap.set({ "n", "x" }, "k", [[v:count == 0 ? 'gk' : 'k']], { expr = true })
 
@@ -76,10 +70,8 @@ vim.keymap.set({ "i", "s" }, "<C-h>", function()
 end)
 vim.keymap.set({ "i", "s" }, "<C-l>", function()
 	vim.snippet.jump(1)
-end)
-
--- Autocommands ----------------------------------------------------------------
-
+end) -- }}}
+-- {{{ Autocommands
 vim.api.nvim_create_autocmd("TextYankPost", {
 	group = vim.api.nvim_create_augroup("hl_on_yank", { clear = true }),
 	callback = function()
@@ -96,10 +88,8 @@ vim.api.nvim_create_autocmd("BufRead", {
 		end
 	end,
 	desc = "Make readonly buffers nomodifiable",
-})
-
--- User commands ---------------------------------------------------------------
-
+}) -- }}}
+-- {{{ User commands
 vim.api.nvim_create_user_command("PackUpdate", function()
 	vim.pack.update()
 end, { desc = "Update plugins" })
@@ -131,4 +121,4 @@ vim.api.nvim_create_user_command("PackClean", function()
 	if confirmed then
 		vim.pack.del(inactive_names)
 	end
-end, { desc = "Delete inactive plugins" })
+end, { desc = "Delete inactive plugins" }) -- }}}

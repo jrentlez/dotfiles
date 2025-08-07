@@ -1,4 +1,22 @@
---- Ensure a buffer has its appropriate parser installed
+-- {{{ Auto recompile on nvim-treesitter change
+vim.api.nvim_create_autocmd("PackChanged", {
+	group = vim.api.nvim_create_augroup("nvim-treesitter-update-parsers", { clear = true }),
+	callback = function(args)
+		local kind = args.data.kind --[[@as "install" | "update" | "delete"]]
+		local spec = args.data.spec --[[@as vim.pack.SpecResolved]]
+		if spec.name == "nvim-treesitter" and kind ~= "delete" then
+			require("nvim-treesitter").update({ summary = true })
+		end
+	end,
+	desc = "Update treesitter parsers",
+}) -- }}}
+
+vim.pack.add({ {
+	src = "https://github.com/nvim-treesitter/nvim-treesitter.git",
+	version = "main",
+} })
+
+-- {{{ Auto install missing parsers
 ---@param bufnr integer The buffer to check
 ---@param on_installed fun() Called once the parser is installed. If there is no appropriate parser for the buffer, `on_installed` is never called.
 local function ensure_installed(bufnr, on_installed)
@@ -19,22 +37,6 @@ local function ensure_installed(bufnr, on_installed)
 	end
 end
 
-vim.api.nvim_create_autocmd("PackChanged", {
-	group = vim.api.nvim_create_augroup("nvim-treesitter-update-parsers", { clear = true }),
-	callback = function(args)
-		local kind = args.data.kind --[[@as "install" | "update" | "delete"]]
-		local spec = args.data.spec --[[@as vim.pack.SpecResolved]]
-		if spec.name == "nvim-treesitter" and (kind == "install" or kind == "update") then
-			require("nvim-treesitter").update({ summary = true })
-		end
-	end,
-	desc = "Update treesitter parsers",
-})
-vim.pack.add({ {
-	src = "https://github.com/nvim-treesitter/nvim-treesitter.git",
-	version = "main",
-} })
-
 vim.api.nvim_create_autocmd("FileType", {
 	group = vim.api.nvim_create_augroup("nvim-treesitter-buffer-setup", { clear = true }),
 	callback = function(args)
@@ -44,7 +46,7 @@ vim.api.nvim_create_autocmd("FileType", {
 		end)
 	end,
 	desc = "Ensure the appropriate parser is installed and start it",
-})
+}) -- }}}
 
 vim.schedule(function()
 	local installed = require("nvim-treesitter").get_installed()

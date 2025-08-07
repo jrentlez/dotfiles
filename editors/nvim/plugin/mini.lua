@@ -1,54 +1,37 @@
 vim.pack.add({ "https://github.com/echasnovski/mini.nvim" })
 
--- mini.notify ---------------------------------------------------------
-
+-- {{{ mini.notify
 require("mini.notify").setup()
-vim.notify = MiniNotify.make_notify()
-
--- mini.files ----------------------------------------------------------
-
-require("mini.files").setup({ content = { prefix = function() end } })
+vim.notify = MiniNotify.make_notify() -- }}}
+-- {{{ mini.files
+require("mini.files").setup({ content = { prefix = function() end } }) -- }}}
 
 vim.schedule(function()
-	-- Keymaps -------------------------------------------------------------
-
 	local function nmap(lhs, rhs, desc)
 		vim.keymap.set("n", lhs, rhs, { desc = desc })
 	end
-
-	-- mini.files ----------------------------------------------------------
-
+	-- {{{ mini.files
 	nmap("<leader>f", function()
 		MiniFiles.open(vim.api.nvim_buf_get_name(0))
-	end, "Open file explorer")
-
-	-- mini.bufremove ------------------------------------------------------
-
+	end, "Open file explorer") -- }}}
+	-- {{{ mini.bufremove
 	require("mini.bufremove").setup()
-	nmap("<leader>q", MiniBufremove.delete, "Delete buffer")
-
-	-- mini.trailspace -----------------------------------------------------
-
+	nmap("<leader>q", MiniBufremove.delete, "Delete buffer") -- }}}
+	-- {{{ mini.trailspace
 	require("mini.trailspace").setup()
-	vim.api.nvim_create_user_command("Trim", MiniTrailspace.trim, { desc = "Trim trailing whitespace" })
-
-	-- mini.diff -----------------------------------------------------------
-
+	vim.api.nvim_create_user_command("Trim", MiniTrailspace.trim, { desc = "Trim trailing whitespace" }) -- }}}
+	-- {{{ mini.diff
 	require("mini.diff").setup({
 		mappings = {
 			apply = "<leader>ha",
 			reset = "<leader>hr",
 		},
 	})
-	nmap("<leader>ho", MiniDiff.toggle_overlay, "Hunks overlay")
-
-	-- mini.git -----------------------------------------------------------
-
+	nmap("<leader>ho", MiniDiff.toggle_overlay, "Hunks overlay") -- }}}
+	-- {{{ mini.git
 	require("mini.git").setup()
-	nmap("<leader>hi", MiniGit.show_at_cursor, "Show line history")
-
-	-- mini.pick -----------------------------------------------------------
-
+	nmap("<leader>hi", MiniGit.show_at_cursor, "Show line history") -- }}}
+	-- {{{ mini.pick
 	local pick = require("mini.pick")
 	pick.setup({ source = { show = pick.default_show } })
 	vim.ui.select = MiniPick.ui_select
@@ -78,18 +61,14 @@ vim.schedule(function()
 			},
 		})
 	end, "Search pickers")
-	nmap("<leader>sr", extra.oldfiles, "Search recent files")
-
-	-- mini.hipatterns -----------------------------------------------------
-
+	nmap("<leader>sr", extra.oldfiles, "Search recent files") -- }}}
+	-- {{{ mini.hipatterns
 	require("mini.hipatterns").setup({
 		highlighters = {
 			hex_color = require("mini.hipatterns").gen_highlighter.hex_color(),
 		},
-	})
-
-	-- mini.clue -----------------------------------------------------------
-
+	}) -- }}}
+	-- {{{ mini.clue
 	local miniclue = require("mini.clue")
 	miniclue.setup({
 		triggers = {
@@ -131,5 +110,5 @@ vim.schedule(function()
 			{ mode = "n", keys = "gq", desc = "+Quickfix" },
 		},
 		window = { delay = vim.o.timeoutlen },
-	})
+	}) -- }}}
 end)

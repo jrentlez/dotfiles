@@ -1,4 +1,3 @@
----@type vim.lsp.Config
 return {
 	settings = {
 		["rust-analyzer"] = {
@@ -7,4 +6,4 @@ return {
 			},
 		},
 	},
-}
+} ---@type vim.lsp.Config

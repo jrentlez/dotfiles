@@ -1,30 +1,12 @@
+-- {{{ on_lsp_attach
+
 ---@param event vim.api.keyset.create_autocmd.callback_args
 ---@return boolean? delete Whether to delete the autocmd after exectuion
 local function on_lsp_attach(event)
 	local client = assert(vim.lsp.get_client_by_id(event.data.client_id))
+	local lsp_augroup = vim.api.nvim_create_augroup("custom-lsp-autocmds", { clear = false })
 
-	-- Lsp folds
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_foldingRange, event.buf) then
-		---@param option string
-		---@param value any
-		local function set_if_unset(option, value)
-			if not vim.api.nvim_get_option_info2(option, {}).was_set then
-				vim.o[option] = value
-			end
-		end
-		set_if_unset("foldmethod", "expr")
-		set_if_unset("foldexpr", "v:lua.vim.lsp.foldexpr()")
-		set_if_unset("foldtext", "v:lua.vim.lsp.foldtext()")
-		set_if_unset("foldlevel", 99)
-		set_if_unset("foldlevelstart", 99)
-	end
-
-	-- Lsp completion
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_completion, event.buf) then
-		vim.lsp.completion.enable(true, client.id, event.buf)
-	end
-
-	-- Keymaps (see :help lsp-defaults for already existing keymaps)
+	-- {{{ Keymaps (see `:help lsp-defaults` for already existing keymaps)
 
 	---@param method vim.lsp.protocol.Method.ClientToServer
 	---@param lhs string
@@ -44,13 +26,27 @@ local function on_lsp_attach(event)
 	)
 	lsp_map(vim.lsp.protocol.Methods.textDocument_workspace_symbol, "grw", function()
 		vim.lsp.buf.workspace_symbol()
-	end, "vim.lsp.buf.workspace_symbol()")
-
-	local lsp_augroup = vim.api.nvim_create_augroup("custom-lsp-autocmds", { clear = false })
-
-	-- The following two autocommands are used to highlight references of the
-	-- word under your cursor when your cursor rests there for a little while.
-	--    See `:help CursorHold` for information about when this is executed
+	end, "vim.lsp.buf.workspace_symbol()") -- }}}
+	-- {{{ Enable folds
+	if client:supports_method(vim.lsp.protocol.Methods.textDocument_foldingRange, event.buf) then
+		---@param option string
+		---@param value any
+		local function set_if_unset(option, value)
+			if not vim.api.nvim_get_option_info2(option, {}).was_set then
+				vim.o[option] = value
+			end
+		end
+		set_if_unset("foldmethod", "expr")
+		set_if_unset("foldexpr", "v:lua.vim.lsp.foldexpr()")
+		set_if_unset("foldtext", "v:lua.vim.lsp.foldtext()")
+		set_if_unset("foldlevel", 99)
+		set_if_unset("foldlevelstart", 99)
+	end -- }}}
+	-- {{{ Enable completion
+	if client:supports_method(vim.lsp.protocol.Methods.textDocument_completion, event.buf) then
+		vim.lsp.completion.enable(true, client.id, event.buf)
+	end -- }}}
+	-- {{{ Enable document highlight
 	if client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
 		vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 			buffer = event.buf,
@@ -62,19 +58,16 @@ local function on_lsp_attach(event)
 			group = lsp_augroup,
 			callback = vim.lsp.buf.clear_references,
 		})
-	end
-
-	-- Enable inlay hints
+	end -- }}}
+	-- {{{ Enable inlay hints
 	if client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
 		vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
-	end
-
-	-- Enable linked editing ranges
+	end -- }}}
+	-- {{{ Enable linked editing ranges
 	if client:supports_method(vim.lsp.protocol.Methods.textDocument_linkedEditingRange, event.buf) then
 		vim.lsp.linked_editing_range.enable(true, { client_id = client.id })
-	end
-
-	-- Enable codelens
+	end -- }}}
+	-- {{{ Enable codelens
 	if client:supports_method(vim.lsp.protocol.Methods.textDocument_codeLens, event.buf) then
 		vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave", "BufWritePost" }, {
 			group = lsp_augroup,
@@ -83,9 +76,8 @@ local function on_lsp_attach(event)
 			desc = "Refresh codelens",
 		})
 		vim.keymap.set("n", "grl", vim.lsp.codelens.run, { desc = "vim.lsp.codelens.run()", buffer = event.buf })
-	end
-
-	-- Enable format on save
+	end -- }}}
+	-- {{{ Enable format on save
 	vim.b[event.buf].lsp_format_on_save_autocmd = vim.b[event.buf].lsp_format_on_save_autocmd
 		or vim.api.nvim_create_autocmd("BufWritePre", {
 			desc = "Attempt to format with language server(s)",
@@ -98,9 +90,8 @@ local function on_lsp_attach(event)
 				end
 				vim.lsp.buf.format({ bufnr = args.buf, name = server_name })
 			end,
-		})
-
-	-- HACK: Disable lsp comment highlighting so the treesitter comment parser can highlight TODO, FIXME, etc.
+		}) -- }}}
+	-- {{{ HACK: Disable lsp comment highlighting so the treesitter comment parser can highlight TODO, FIXME, etc.
 	if client:supports_method(vim.lsp.protocol.Methods.textDocument_semanticTokens_full, event.buf) then
 		vim.api.nvim_set_hl(0, "@lsp.type.comment", {})
 
@@ -111,8 +102,10 @@ local function on_lsp_attach(event)
 				vim.api.nvim_set_hl(0, "@lsp.type.comment", {})
 			end,
 		})
-	end
-end
+	end -- }}}
+end -- }}}
+
+-- {{{ notify_on_registered_capability
 
 ---@param params lsp.RegistrationParams
 ---@param ctx lsp.HandlerContext
@@ -124,7 +117,7 @@ local function notify_on_registered_capability(err, params, ctx)
 	end
 
 	return vim.lsp.handlers[vim.lsp.protocol.Methods.client_registerCapability](err, params, ctx)
-end
+end -- }}}
 
 vim.schedule(function()
 	vim.pack.add({
