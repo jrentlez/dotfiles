@@ -45,6 +45,7 @@ local function on_lsp_attach(event)
 	-- {{{ Enable completion
 	if client:supports_method(vim.lsp.protocol.Methods.textDocument_completion, event.buf) then
 		vim.lsp.completion.enable(true, client.id, event.buf)
+		vim.bo[event.buf].complete = "o"
 	end -- }}}
 	-- {{{ Enable document highlight
 	if client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
@@ -84,11 +85,10 @@ local function on_lsp_attach(event)
 			buffer = event.buf,
 			group = lsp_augroup,
 			callback = function(args)
-				local server_name = vim.b[args.buf].formatlsp
-				if server_name == "" then
-					return
+				local formatlsp = vim.b[args.buf].formatlsp
+				if formatlsp ~= "" then
+					vim.lsp.buf.format({ bufnr = args.buf, name = formatlsp })
 				end
-				vim.lsp.buf.format({ bufnr = args.buf, name = server_name })
 			end,
 		}) -- }}}
 	-- {{{ HACK: Disable lsp comment highlighting so the treesitter comment parser can highlight TODO, FIXME, etc.

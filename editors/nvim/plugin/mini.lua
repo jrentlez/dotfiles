@@ -107,7 +107,8 @@ vim.schedule(function()
 			{ mode = "n", keys = "<leader>s", desc = "+Search" },
 			{ mode = "n", keys = "<leader>h", desc = "+Hunks" },
 			{ mode = "v", keys = "<leader>h", desc = "+Hunks" },
-			{ mode = "n", keys = "gq", desc = "+Quickfix" },
+			{ mode = "n", keys = "gq", desc = "+Quickfix List" },
+			{ mode = "n", keys = "gl", desc = "+Location List" },
 		},
 		window = { delay = vim.o.timeoutlen },
 	}) -- }}}

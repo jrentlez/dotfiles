@@ -40,13 +40,13 @@ local function enter_terminal()
 end -- }}}
 
 local function toggle_terminal()
-	if not window or not vim.api.nvim_win_is_valid(window) then
+	if window and vim.api.nvim_win_is_valid(window) then
+		assert(buffer and vim.api.nvim_buf_is_valid(buffer))
+		vim.api.nvim_win_hide(window)
+	else
 		ensure_valid_buffer()
 		open_buffer_in_window()
 		enter_terminal()
-	else
-		assert(buffer and vim.api.nvim_buf_is_valid(buffer))
-		vim.api.nvim_win_hide(window)
 	end
 end -- }}}
 

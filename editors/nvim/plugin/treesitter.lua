@@ -10,7 +10,6 @@ vim.api.nvim_create_autocmd("PackChanged", {
 	end,
 	desc = "Update treesitter parsers",
 }) -- }}}
-
 vim.pack.add({ {
 	src = "https://github.com/nvim-treesitter/nvim-treesitter.git",
 	version = "main",
@@ -20,10 +19,7 @@ vim.pack.add({ {
 ---@param bufnr integer The buffer to check
 ---@param on_installed fun() Called once the parser is installed. If there is no appropriate parser for the buffer, `on_installed` is never called.
 local function ensure_installed(bufnr, on_installed)
-	local language = assert(
-		vim.treesitter.language.get_lang(vim.bo[bufnr].filetype),
-		"Only returns nil if filetype is '' which it never is"
-	)
+	local language = vim.treesitter.language.get_lang(vim.bo[bufnr].filetype)
 	if vim.list_contains(require("nvim-treesitter").get_installed(), language) then
 		on_installed()
 	elseif vim.list_contains(require("nvim-treesitter").get_available(), language) then
