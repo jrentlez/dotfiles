@@ -33,7 +33,7 @@ local function open_buffer_in_window()
 	vim.wo[window].winfixbuf = true
 end
 local function enter_terminal()
-	if not vim.bo[buffer].buftype == "terminal" then
+	if not vim.bo[buffer].buftype ~= "terminal" then
 		vim.fn.jobstart("zsh", { term = true })
 	end
 	vim.cmd.startinsert()
