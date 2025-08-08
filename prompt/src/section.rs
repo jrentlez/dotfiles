@@ -1,10 +1,11 @@
-use std::str::FromStr;
+use std::{ffi::OsStr, io::Write};
 
 use crate::{
     ansi::Shell,
     dir::directory,
     git::git,
     misc::{colored_prompt_suffix, userhost, venv},
+    write_bytes,
 };
 
 #[derive(Default, Debug, Clone, Copy)]
@@ -15,50 +16,57 @@ pub enum Section {
     All,
 }
 impl Section {
-    fn pre_cmd(shell: Shell) -> String {
-        let userhost = userhost(shell).unwrap_or_default();
-        let (dir, repo) = directory(shell);
-        let git_status = repo.map(|repo| git(&repo, shell)).unwrap_or_default();
-        let python_venv = venv(shell).unwrap_or_default();
-
-        "\n".to_string() + shell.fg_normal() + &userhost + &dir + &git_status + &python_venv
+    fn pre_cmd(writer: &mut impl Write, shell: Shell) {
+        write_bytes!(writer, b"\n", shell.fg_normal());
+        userhost(writer, shell);
+        if let Some(repo) = directory(writer, shell) {
+            git(writer, &repo, shell);
+        }
+        venv(writer, shell);
     }
 
-    fn last_line(job_count: usize, last_status: u8, prompt_suffix: &str, shell: Shell) -> String {
-        colored_prompt_suffix(prompt_suffix, job_count, last_status, shell)
-            + shell.fg_normal()
-            + " "
+    fn last_line(
+        writer: &mut impl Write,
+        job_count: usize,
+        last_status: u8,
+        prompt_suffix: &OsStr,
+        shell: Shell,
+    ) {
+        colored_prompt_suffix(writer, prompt_suffix, job_count, last_status, shell);
+        write_bytes!(writer, shell.fg_normal(), b" ");
     }
 
-    pub fn print(self, shell: Shell, job_count: usize, last_status: u8, prompt_suffix: &str) {
+    pub fn write(
+        self,
+        mut writer: impl Write,
+        shell: Shell,
+        job_count: usize,
+        last_status: u8,
+        prompt_suffix: &OsStr,
+    ) {
         match self {
-            Self::PreCmd => {
-                print!("{}", Self::pre_cmd(shell));
-            }
+            Self::PreCmd => Self::pre_cmd(&mut writer, shell),
             Self::LastLine => {
-                print!(
-                    "{}",
-                    Self::last_line(job_count, last_status, prompt_suffix, shell)
-                );
+                Self::last_line(&mut writer, job_count, last_status, prompt_suffix, shell);
             }
             Self::All => {
-                print!(
-                    "{}\n{}",
-                    Self::pre_cmd(shell),
-                    Self::last_line(job_count, last_status, prompt_suffix, shell)
-                );
+                Self::pre_cmd(&mut writer, shell);
+                write_bytes!(writer, b"\n");
+                Self::last_line(&mut writer, job_count, last_status, prompt_suffix, shell);
             }
         }
     }
 }
-impl FromStr for Section {
-    type Err = ();
+impl TryFrom<&OsStr> for Section {
+    type Error = ();
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "precmd" => Ok(Section::PreCmd),
-            "lastline" => Ok(Section::LastLine),
-            _ => Err(()),
+    fn try_from(s: &OsStr) -> Result<Self, Self::Error> {
+        if s == "precmd" {
+            Ok(Section::PreCmd)
+        } else if s == "lastline" {
+            Ok(Section::LastLine)
+        } else {
+            Err(())
         }
     }
 }

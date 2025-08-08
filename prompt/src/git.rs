@@ -1,6 +1,8 @@
+use std::io::Write;
+
 use git2::{Branch, BranchType, Commit, ErrorCode, Repository, StatusOptions};
 
-use crate::ansi::Shell;
+use crate::{ansi::Shell, strip_prefix_bytes, write_bytes};
 
 enum Head<'repo> {
     Unborn,
@@ -31,7 +33,7 @@ fn read_head(repo: &Repository) -> Head<'_> {
     }
 }
 
-fn git_status(repo: &Repository) -> String {
+fn git_status(writer: &mut impl Write, repo: &Repository) {
     let mut opts = StatusOptions::new();
     opts.include_untracked(true)
         .recurse_untracked_dirs(true)
@@ -42,7 +44,7 @@ fn git_status(repo: &Repository) -> String {
     let stats = match repo.statuses(Some(&mut opts)) {
         Ok(stats) => stats,
         Err(error) => match error.code() {
-            git2::ErrorCode::BareRepo => return String::new(),
+            git2::ErrorCode::BareRepo => return,
             code => {
                 panic!("{code:?}: {error}")
             }
@@ -53,44 +55,44 @@ fn git_status(repo: &Repository) -> String {
         .map(|stat| stat.status())
         .reduce(|a, b| a | b)
     else {
-        return String::new();
+        return;
     };
 
-    let mut status = String::new();
+    let mut status = vec![];
     if stat.is_conflicted() {
-        status.push('C');
+        status.push(b'C');
     }
     if stat.is_wt_new() {
-        status.push('n');
+        status.push(b'n');
     }
     if stat.is_index_new() {
-        status.push('N');
+        status.push(b'N');
     }
     if stat.is_wt_modified() {
-        status.push('m');
+        status.push(b'm');
     }
     if stat.is_index_modified() {
-        status.push('M');
+        status.push(b'M');
     }
     if stat.is_wt_typechange() {
-        status.push('t');
+        status.push(b't');
     }
     if stat.is_index_typechange() {
-        status.push('T');
+        status.push(b'T');
     }
     if stat.is_wt_renamed() {
-        status.push('r');
+        status.push(b'r');
     }
     if stat.is_index_renamed() {
-        status.push('R');
+        status.push(b'R');
     }
     if stat.is_wt_deleted() {
-        status.push('d');
+        status.push(b'd');
     }
     if stat.is_index_deleted() {
-        status.push('D');
+        status.push(b'D');
     }
-    status
+    write_bytes!(writer, &status);
 }
 
 fn has_stash(repo: &Repository) -> bool {
@@ -132,71 +134,66 @@ fn read_upstream<'b>(repo: &Repository, local: &Branch<'b>) -> Option<Upstream<'
     })
 }
 
-pub fn git(repo: &Repository, shell: Shell) -> String {
-    let (head, ahead_behind) = match read_head(repo) {
-        Head::Unborn => (
-            repo.find_reference("HEAD")
-                .expect("Can read head file")
-                .symbolic_target()
-                .expect("Is symbolic and UTF8")
-                .strip_prefix("refs/heads/")
-                .expect("target starts with refs/heads/")
-                .to_string(),
-            None,
-        ),
-        Head::Commit(commit) => (
-            commit
+pub fn git(writer: &mut impl Write, repo: &Repository, shell: Shell) {
+    write_bytes!(writer, shell.fg_dim());
+
+    let ahead_behind = match read_head(repo) {
+        Head::Unborn => {
+            let head = repo.find_reference("HEAD").expect("Can read head file");
+            let head_name = head.symbolic_target_bytes().expect("Is symbolic");
+            let head_name_stripped = strip_prefix_bytes(head_name, b"refs/heads/")
+                .expect("target starts with refs/heads/");
+            write_bytes!(writer, head_name_stripped);
+            None
+        }
+        Head::Commit(commit) => {
+            let id = commit
                 .into_object()
                 .short_id()
-                .expect("commit has short id")
-                .as_str()
-                .expect("UTF8")
-                .to_string(),
-            None,
-        ),
+                .expect("Commit hash short id");
+            write_bytes!(writer, &id);
+            None
+        }
         Head::Branch(local) => {
-            let local_name = local
-                .name()
-                .expect("Branch has name")
-                .expect("UTF8")
-                .to_string();
+            let local_name = local.name_bytes().expect("Branch has name");
             match read_upstream(repo, &local) {
                 Some(Upstream {
                     branch: upstream,
                     ahead_behind,
                 }) => {
-                    let remote_prefix = repo
+                    let remote_without_slash = repo
                         .branch_remote_name(upstream.get().name().expect("UTF8"))
-                        .expect("Already verified existing upstream")
-                        .as_str()
-                        .expect("UTF8")
-                        .to_string()
-                        + "/";
-                    let upstream_full_name =
-                        upstream.name().expect("Branch has name").expect("UTF8");
-
-                    let upstream_branch_name = upstream_full_name
-                        .strip_prefix(&remote_prefix)
-                        .expect("upstream name starts with remote");
+                        .expect("Already verified existing upstream");
+                    let upstream_name_with_remote = upstream.name_bytes().expect("Branch has name");
+                    let mut upstream_branch_name =
+                        strip_prefix_bytes(upstream_name_with_remote, &remote_without_slash)
+                            .expect("Upstream starts with remote");
+                    let slash = upstream_branch_name.split_off_first();
+                    assert_eq!(slash, Some(&b'/'));
 
                     if local_name == upstream_branch_name {
-                        (upstream_full_name.to_string(), Some(ahead_behind))
+                        write_bytes!(writer, upstream_branch_name);
                     } else {
-                        (local_name + ":" + upstream_full_name, Some(ahead_behind))
+                        write_bytes!(writer, local_name, b":", upstream_branch_name);
                     }
+                    Some(ahead_behind)
                 }
-                None => (local_name, None),
+                None => {
+                    write_bytes!(writer, local_name);
+                    None
+                }
             }
         }
     };
 
-    let stash = if has_stash(repo) { "S" } else { "" };
-
-    shell.fg_dim().to_string()
-        + &head
-        + shell.yellow_normal()
-        + &git_status(repo)
-        + shell.fg_normal()
-        + ahead_behind.unwrap_or_default()
-        + stash
+    write_bytes!(writer, shell.yellow_normal());
+    git_status(writer, repo);
+    write_bytes!(
+        writer,
+        shell.fg_normal(),
+        ahead_behind.unwrap_or_default().as_bytes()
+    );
+    if has_stash(repo) {
+        write_bytes!(writer, b"S");
+    }
 }

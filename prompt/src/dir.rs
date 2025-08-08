@@ -1,7 +1,7 @@
 use std::{
-    env::var_os,
-    ffi::OsStr,
+    env::{current_dir, var_os},
     fs::metadata,
+    io::Write,
     num::NonZeroUsize,
     ops::ControlFlow,
     os::{linux::fs::MetadataExt, unix::ffi::OsStrExt},
@@ -10,14 +10,14 @@ use std::{
 
 use git2::Repository;
 
-use crate::{ansi::Shell, var_lossy};
+use crate::{ansi::Shell, write_bytes};
 
 const MAX_COMPONENTS: NonZeroUsize = NonZeroUsize::new(3).unwrap();
 const MAIN_SEPARATOR_BYTE: u8 = MAIN_SEPARATOR as u8;
 
 // NOTE: Mostly taken from GNU pwd (logical path)
 // See https://github.com/MaiZure/coreutils-8.3/blob/master/src/pwd.c
-fn current_directory() -> PathBuf {
+fn current_logical_directory() -> PathBuf {
     let wd = PathBuf::from(var_os("PWD").expect("Can get PWD environment variable"));
     let mut components = wd.components();
     assert_eq!(
@@ -72,55 +72,55 @@ where
 }
 
 /// BUG: If the path contains "//" this will return incorrect results
-fn last_n_path_components(path: &Path, n: NonZeroUsize) -> (Option<&OsStr>, &OsStr) {
+fn last_n_path_components(path: &Path, n: NonZeroUsize) -> (Option<&[u8]>, &[u8]) {
     let bytes = match trim_trailing_separator(path.as_os_str().as_bytes()) {
         ControlFlow::Continue(bytes) => bytes,
-        ControlFlow::Break(bytes) => return (None, OsStr::from_bytes(bytes)),
+        ControlFlow::Break(bytes) => return (None, bytes),
     };
 
     let mut iter = bytes.iter();
     let Some(last_component_start) = find_nth_last_component_start(&mut iter, 0) else {
-        return (None, OsStr::from_bytes(bytes));
+        return (None, bytes);
     };
 
     let remaining_components = n.get() - 1;
     if remaining_components == 0 {
-        return (None, OsStr::from_bytes(&bytes[last_component_start..]));
+        return (None, &bytes[last_component_start..]);
     }
 
     match find_nth_last_component_start(&mut iter, remaining_components - 1) {
         Some(nth_last_component_start) => (
-            Some(OsStr::from_bytes(
-                &bytes[nth_last_component_start..last_component_start],
-            )),
-            OsStr::from_bytes(&bytes[last_component_start..]),
+            Some(&bytes[nth_last_component_start..last_component_start]),
+            &bytes[last_component_start..],
         ),
         None => (
-            Some(OsStr::from_bytes(&bytes[..last_component_start])),
-            OsStr::from_bytes(&bytes[last_component_start..]),
+            Some(&bytes[..last_component_start]),
+            &bytes[last_component_start..],
         ),
     }
 }
 
-fn fmt_dir<P: AsRef<Path>>(path: P, shell: Shell) -> String {
+fn fmt_dir(writer: &mut impl Write, path: impl AsRef<Path>, shell: Shell) {
     let (previous_components, final_component) =
         last_n_path_components(path.as_ref(), MAX_COMPONENTS);
-    let previous_components = previous_components
-        .map(|previous_components| previous_components.to_str().expect("UTF8"))
-        .unwrap_or_default();
-    shell.fg_normal().to_string()
-        + previous_components
-        + shell.fg_bold()
-        + final_component.to_str().expect("UTF8")
-        + shell.reset()
-        + " "
+
+    write_bytes!(
+        writer,
+        shell.fg_normal(),
+        previous_components.unwrap_or_default(),
+        shell.fg_bold(),
+        final_component,
+        shell.reset(),
+        b" "
+    );
 }
 
-pub fn directory(shell: Shell) -> (String, Option<Repository>) {
-    let wd = current_directory();
+pub fn directory(writer: &mut impl Write, shell: Shell) -> Option<Repository> {
+    let wd = current_logical_directory();
 
     if wd == Path::new("/") {
-        return (fmt_dir("/", shell), None);
+        fmt_dir(writer, "/", shell);
+        return None;
     }
 
     match Repository::discover(&wd) {
@@ -135,19 +135,19 @@ pub fn directory(shell: Shell) -> (String, Option<Repository>) {
                 )
                 .expect("cwd is (a subdir of) git_root");
 
-            (fmt_dir(rel_to_git_root, shell), Some(repo))
+            fmt_dir(writer, rel_to_git_root, shell);
+            Some(repo)
         }
         Err(_) => {
-            let rel_to_home = wd
-                .strip_prefix(var_lossy("HOME").expect("$HOME is set"))
-                .ok();
+            let rel_to_home = wd.strip_prefix(var_os("HOME").expect("$HOME is set")).ok();
 
             let dir = match rel_to_home {
                 Some(rel_to_home) => Path::new("~").join(rel_to_home),
                 None => wd,
             };
 
-            (fmt_dir(dir, shell), None)
+            fmt_dir(writer, dir, shell);
+            None
         }
     }
 }

@@ -1,4 +1,7 @@
-use std::ffi::OsString;
+use std::{
+    ffi::{OsStr, OsString},
+    os::unix::ffi::OsStrExt,
+};
 
 use crate::{ansi::Shell, section::Section};
 
@@ -8,7 +11,7 @@ struct ArgsBuilder {
     job_count: Option<usize>,
     last_status: Option<u8>,
     shell: Option<Shell>,
-    prompt_suffix: Option<String>,
+    prompt_suffix: Option<OsString>,
 }
 impl ArgsBuilder {
     fn finish(self) -> Args {
@@ -24,7 +27,7 @@ impl ArgsBuilder {
             job_count: job_count.unwrap_or_default(),
             last_status: last_status.unwrap_or_default(),
             shell: shell.unwrap_or_default(),
-            prompt_suffix: prompt_suffix.unwrap_or_else(|| '$'.to_string()),
+            prompt_suffix: prompt_suffix.unwrap_or_else(|| OsString::from("$")),
         }
     }
 }
@@ -35,7 +38,7 @@ pub struct Args {
     job_count: usize,
     last_status: u8,
     shell: Shell,
-    prompt_suffix: String,
+    prompt_suffix: OsString,
 }
 
 impl Args {
@@ -55,34 +58,42 @@ impl Args {
         self.shell
     }
 
-    pub fn prompt_suffix(&self) -> &str {
+    pub fn prompt_suffix(&self) -> &OsStr {
         &self.prompt_suffix
     }
 }
 impl FromIterator<OsString> for Args {
     fn from_iter<T: IntoIterator<Item = OsString>>(iter: T) -> Self {
         iter.into_iter()
-            .fold(ArgsBuilder::default(), |mut builder, s| {
-                let s = s.to_string_lossy();
-                match s.split_once('=') {
-                    Some(("print", tp)) => {
-                        builder.section = Some(tp.parse().expect("Unsupported print value"));
-                    }
-                    Some(("jobs", jc)) => {
-                        builder.job_count =
-                            Some(jc.parse().expect("Amount of running jobs fits into usize"));
-                    }
-                    Some(("laststatus", ls)) => {
-                        builder.last_status =
-                            Some(ls.parse().expect("Last exit code fits into u8"));
-                    }
-                    Some(("shell", sh)) => {
-                        builder.shell = Some(sh.parse().expect("Only bash and zsh are supported"));
-                    }
-                    Some(("prompt_character", suffix)) => {
-                        builder.prompt_suffix = Some(suffix.to_string());
-                    }
-                    Some(_) | None => {}
+            .fold(ArgsBuilder::default(), |mut builder, arg| {
+                let arg_bytes = arg.as_bytes();
+                let key_value = arg_bytes.iter().position(|b| *b == b'=').map(|idx| {
+                    let (key, mut value) = arg_bytes.split_at(idx);
+                    let equals = value.split_off_first();
+                    assert_eq!(equals, Some(&b'='));
+                    (OsStr::from_bytes(key), OsStr::from_bytes(value))
+                });
+                let Some((key, value)) = key_value else {
+                    return builder;
+                };
+                if key == "print" {
+                    builder.section =
+                        Some(Section::try_from(value).expect("Unsupported print value"));
+                } else if key == "jobs" {
+                    let value = value.to_str().expect("UTF-8");
+                    builder.job_count = Some(
+                        value
+                            .parse()
+                            .expect("Amount of running jobs fits into usize"),
+                    );
+                } else if key == "laststatus" {
+                    let value = value.to_str().expect("UTF-8");
+                    builder.last_status = Some(value.parse().expect("Last exit code fits into u8"));
+                } else if key == "shell" {
+                    let value = value.to_str().expect("UTF-8");
+                    builder.shell = Some(value.parse().expect("Only bash and zsh are supported"));
+                } else if key == "prompt_character" {
+                    builder.prompt_suffix = Some(value.to_os_string());
                 }
                 builder
             })

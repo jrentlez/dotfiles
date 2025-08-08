@@ -22,13 +22,14 @@ macro_rules! ansi_sequence {
     ($name:ident, $sequence:literal) => {
         impl Shell {
             // NOTE: See https://github.com/starship/starship/issues/110
-            pub const fn $name(self) -> &'static str {
+            pub const fn $name(self) -> &'static [u8] {
                 match self {
                     // Wrap whith \[ \]
                     Self::Bash => concat!("\u{5c}\u{5b}", $sequence, "\u{5c}\u{5d}"),
                     // Wrap whith %{ %}
                     Self::Zsh => concat!("\u{25}\u{7b}", $sequence, "\u{25}\u{7d}"),
                 }
+                .as_bytes()
             }
         }
     };
