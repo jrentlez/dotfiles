@@ -39,7 +39,7 @@ export SKIM_DEFAULT_OPTIONS="--ansi --color=bw"
 source "/usr/share/skim/key-bindings.zsh"
 function skim-homedir-widget() {
 	local fd_excludes
-	fd_excludes=("--exclude=Steam" "--exclude=.steam" "--exclude=Games" "--exclude=.wine" "--exclude=.cache" "--exclude=.git")
+	fd_excludes=("--exclude=Steam" "--exclude=.steam" "--exclude=Games" "--exclude=.wine" "--exclude=.cache" "--exclude=.git" "--exclude=node_modules")
 	local cmd
 	cmd="fd --type d --hidden --maxdepth 8 --follow ${fd_excludes[*]} . ~"
 	setopt localoptions pipefail no_aliases 2> /dev/null
