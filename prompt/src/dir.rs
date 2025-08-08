@@ -1,9 +1,11 @@
 use std::{
+    env::var_os,
     ffi::OsStr,
+    fs::metadata,
     num::NonZeroUsize,
     ops::ControlFlow,
-    os::unix::ffi::OsStrExt,
-    path::{MAIN_SEPARATOR, Path},
+    os::{linux::fs::MetadataExt, unix::ffi::OsStrExt},
+    path::{Component, MAIN_SEPARATOR, Path, PathBuf},
 };
 
 use git2::Repository;
@@ -11,8 +13,30 @@ use git2::Repository;
 use crate::{ansi::Shell, var_lossy};
 
 const MAX_COMPONENTS: NonZeroUsize = NonZeroUsize::new(3).unwrap();
-
 const MAIN_SEPARATOR_BYTE: u8 = MAIN_SEPARATOR as u8;
+
+// NOTE: Mostly taken from GNU pwd (logical path)
+// See https://github.com/MaiZure/coreutils-8.3/blob/master/src/pwd.c
+fn current_directory() -> PathBuf {
+    let wd = PathBuf::from(var_os("PWD").expect("Can get PWD environment variable"));
+    let mut components = wd.components();
+    assert_eq!(
+        Some(Component::RootDir),
+        components.next(),
+        "PWD starts with root"
+    );
+    for component in components {
+        assert_ne!(
+            Component::CurDir,
+            component,
+            "PWD does not contain '.' components"
+        );
+    }
+    let wd_ino = wd.metadata().expect("PWD is accessible").st_ino();
+    let dot_ino = metadata(".").expect("'.' is accessible").st_ino();
+    assert_eq!(wd_ino, dot_ino, "PWD is the same INODE as '.'");
+    wd
+}
 
 fn trim_trailing_separator(bytes: &[u8]) -> ControlFlow<&[u8], &[u8]> {
     if bytes
@@ -93,17 +117,17 @@ fn fmt_dir<P: AsRef<Path>>(path: P, shell: Shell) -> String {
 }
 
 pub fn directory(shell: Shell) -> (String, Option<Repository>) {
-    let cwd = std::env::current_dir().expect("Can get current dir");
+    let wd = current_directory();
 
-    if cwd == Path::new("/") {
+    if wd == Path::new("/") {
         return (fmt_dir("/", shell), None);
     }
 
-    match Repository::discover(&cwd) {
+    match Repository::discover(&wd) {
         Ok(repo) => {
-            let git_root = repo.workdir().unwrap_or(&cwd);
+            let git_root = repo.workdir().unwrap_or(&wd);
 
-            let rel_to_git_root = cwd
+            let rel_to_git_root = wd
                 .strip_prefix(
                     git_root
                         .parent()
@@ -114,13 +138,13 @@ pub fn directory(shell: Shell) -> (String, Option<Repository>) {
             (fmt_dir(rel_to_git_root, shell), Some(repo))
         }
         Err(_) => {
-            let rel_to_home = cwd
+            let rel_to_home = wd
                 .strip_prefix(var_lossy("HOME").expect("$HOME is set"))
                 .ok();
 
             let dir = match rel_to_home {
                 Some(rel_to_home) => Path::new("~").join(rel_to_home),
-                None => cwd,
+                None => wd,
             };
 
             (fmt_dir(dir, shell), None)
