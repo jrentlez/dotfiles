@@ -1,10 +1,40 @@
-use std::{env::var_os, ffi::OsStr, io::Write, os::unix::ffi::OsStrExt};
+use std::{
+    env::var_os,
+    ffi::{CStr, OsStr},
+    io::Write,
+    os::unix::ffi::OsStrExt,
+};
+
+use libc::{geteuid, gethostname};
 
 use crate::{ansi::Shell, write_bytes};
 
-#[inline]
 fn is_root() -> bool {
-    nix::unistd::geteuid() == nix::unistd::ROOT
+    let euid = unsafe { geteuid() };
+    euid == 0
+}
+
+fn hostname() -> Option<Vec<u8>> {
+    let mut buffer = Vec::<u8>::with_capacity(256);
+    let ptr = buffer.as_mut_ptr().cast();
+    let len = buffer.capacity();
+
+    let res = unsafe { gethostname(ptr, len) };
+    if res == -1 {
+        return None;
+    }
+    assert_eq!(res, 0, "res is either -1 or 0");
+
+    if let Some(last) = buffer.last_mut() {
+        *last = 0;
+    }
+
+    let ptr = buffer.as_ptr().cast();
+    let len = unsafe { CStr::from_ptr(ptr) }.count_bytes();
+    unsafe {
+        buffer.set_len(len);
+    }
+    Some(buffer)
 }
 
 pub fn userhost(writer: &mut impl Write, shell: Shell) {
@@ -30,8 +60,8 @@ pub fn userhost(writer: &mut impl Write, shell: Shell) {
     );
 
     if var_os("SSH_CONNECTION").is_some() {
-        let host = nix::unistd::gethostname().expect("Can get hostname");
-        write_bytes!(writer, b"@", host.as_bytes());
+        let host = hostname().expect("Can get hostname");
+        write_bytes!(writer, b"@", &host);
     }
     write_bytes!(writer, b" ");
 }
