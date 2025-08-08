@@ -2,8 +2,6 @@ use std::{
     env::{current_dir, var_os},
     fs::metadata,
     io::Write,
-    num::NonZeroUsize,
-    ops::ControlFlow,
     os::{linux::fs::MetadataExt, unix::ffi::OsStrExt},
     path::{Component, MAIN_SEPARATOR, Path, PathBuf},
 };
@@ -12,7 +10,6 @@ use git2::Repository;
 
 use crate::{ansi::Shell, write_bytes};
 
-const MAX_COMPONENTS: NonZeroUsize = NonZeroUsize::new(3).unwrap();
 const MAIN_SEPARATOR_BYTE: u8 = MAIN_SEPARATOR as u8;
 
 // NOTE: Mostly taken from GNU pwd (logical path)
@@ -38,115 +35,105 @@ fn current_logical_directory() -> PathBuf {
     wd
 }
 
-fn trim_trailing_separator(bytes: &[u8]) -> ControlFlow<&[u8], &[u8]> {
+fn current_physical_directory() -> PathBuf {
+    current_dir().expect("Can get current directory")
+}
+
+#[inline]
+fn trim_trailing_separator(bytes: &mut &[u8]) {
     if bytes
         .last()
         .is_some_and(|byte| *byte == MAIN_SEPARATOR_BYTE)
     {
-        if bytes.len() == 1 {
-            return ControlFlow::Break(bytes);
-        }
-
-        ControlFlow::Continue(&bytes[..bytes.len() - 1])
-    } else {
-        ControlFlow::Continue(bytes)
+        bytes.split_off_last().expect("Bytes is not empty");
     }
 }
 
-#[inline]
-fn find_nth_last_component_start<'a, I>(iter: &mut I, n: usize) -> Option<usize>
-where
-    I: Iterator<Item = &'a u8> + DoubleEndedIterator + ExactSizeIterator,
-{
-    let mut remaining_components = n + 1;
-    iter.enumerate()
-        .rfind(|(_, byte)| {
-            if **byte == MAIN_SEPARATOR_BYTE {
-                remaining_components -= 1;
-                remaining_components == 0
-            } else {
-                false
-            }
-        })
-        .map(|(idx, _)| idx + 1)
-}
+fn path_split_last(path: &Path) -> (Option<&[u8]>, &[u8]) {
+    let mut bytes = path.as_os_str().as_bytes();
+    if bytes == [MAIN_SEPARATOR_BYTE] {
+        return (None, bytes);
+    }
 
-/// BUG: If the path contains "//" this will return incorrect results
-fn last_n_path_components(path: &Path, n: NonZeroUsize) -> (Option<&[u8]>, &[u8]) {
-    let bytes = match trim_trailing_separator(path.as_os_str().as_bytes()) {
-        ControlFlow::Continue(bytes) => bytes,
-        ControlFlow::Break(bytes) => return (None, bytes),
-    };
-
-    let mut iter = bytes.iter();
-    let Some(last_component_start) = find_nth_last_component_start(&mut iter, 0) else {
+    trim_trailing_separator(&mut bytes);
+    let Some(last_component_start) = bytes.iter().rposition(|b| *b == MAIN_SEPARATOR_BYTE) else {
         return (None, bytes);
     };
 
-    let remaining_components = n.get() - 1;
-    if remaining_components == 0 {
-        return (None, &bytes[last_component_start..]);
-    }
+    let (prev, last) = bytes.split_at(last_component_start + 1);
+    (Some(prev), last)
+}
 
-    match find_nth_last_component_start(&mut iter, remaining_components - 1) {
-        Some(nth_last_component_start) => (
-            Some(&bytes[nth_last_component_start..last_component_start]),
-            &bytes[last_component_start..],
-        ),
-        None => (
-            Some(&bytes[..last_component_start]),
-            &bytes[last_component_start..],
-        ),
+fn replace_home_with_tilde(path: &Path, home: &Path) -> Option<PathBuf> {
+    match path.strip_prefix(home) {
+        Ok(p) => Some(PathBuf::from("~").join(p)),
+        Err(_) => None,
     }
 }
 
-fn fmt_dir(writer: &mut impl Write, path: impl AsRef<Path>, shell: Shell) {
-    let (previous_components, final_component) =
-        last_n_path_components(path.as_ref(), MAX_COMPONENTS);
+fn write_current_dir(writer: &mut impl Write, relative_to: Option<impl AsRef<Path>>, shell: Shell) {
+    let home = PathBuf::from(var_os("HOME").expect("$HOME is set"));
+    let physical = current_physical_directory();
+    let logical = current_logical_directory();
 
-    write_bytes!(
-        writer,
-        shell.fg_normal(),
-        previous_components.unwrap_or_default(),
-        shell.fg_bold(),
-        final_component,
-        shell.reset(),
-        b" "
-    );
+    if physical == logical {
+        let stripped = relative_to
+            .and_then(|base| logical.strip_prefix(base).ok())
+            .unwrap_or(&logical);
+        let tilded = replace_home_with_tilde(stripped, &home);
+        let (previous_components, final_component) = if let Some(tilded) = &tilded {
+            path_split_last(tilded)
+        } else {
+            path_split_last(stripped)
+        };
+
+        write_bytes!(
+            writer,
+            shell.fg_normal(),
+            previous_components.unwrap_or_default(),
+            shell.fg_bold(),
+            final_component
+        );
+    } else {
+        let logical_tilded = replace_home_with_tilde(&logical, &home).unwrap_or(logical);
+        let (previous_components, final_component) = path_split_last(&logical_tilded);
+        let physical_tilded = replace_home_with_tilde(&physical, &home).unwrap_or(physical);
+        write_bytes!(
+            writer,
+            shell.fg_normal(),
+            previous_components.unwrap_or_default(),
+            shell.fg_bold(),
+            final_component,
+            shell.reset(),
+            shell.fg_dim(),
+            b"(",
+            physical_tilded.as_os_str().as_bytes(),
+            b")"
+        );
+    }
+    write_bytes!(writer, shell.reset(), b" ");
 }
 
 pub fn directory(writer: &mut impl Write, shell: Shell) -> Option<Repository> {
-    let wd = current_logical_directory();
+    let cwd = current_physical_directory();
 
-    if wd == Path::new("/") {
-        fmt_dir(writer, "/", shell);
+    if cwd == Path::new("/") {
+        write_current_dir(writer, None::<&'static Path>, shell);
         return None;
     }
 
-    match Repository::discover(&wd) {
+    match Repository::discover(&cwd) {
         Ok(repo) => {
-            let git_root = repo.workdir().unwrap_or(&wd);
-
-            let rel_to_git_root = wd
-                .strip_prefix(
-                    git_root
-                        .parent()
-                        .expect("Every git repository has a parent"),
-                )
-                .expect("cwd is (a subdir of) git_root");
-
-            fmt_dir(writer, rel_to_git_root, shell);
+            let git_root_parent = repo
+                .workdir()
+                .unwrap_or(&cwd)
+                .parent()
+                .expect("Has parent because / is already handled");
+            write_current_dir(writer, Some(git_root_parent), shell);
             Some(repo)
         }
         Err(_) => {
-            let rel_to_home = wd.strip_prefix(var_os("HOME").expect("$HOME is set")).ok();
-
-            let dir = match rel_to_home {
-                Some(rel_to_home) => Path::new("~").join(rel_to_home),
-                None => wd,
-            };
-
-            fmt_dir(writer, dir, shell);
+            write_current_dir(writer, None::<&'static Path>, shell);
             None
         }
     }
