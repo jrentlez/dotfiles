@@ -28,12 +28,13 @@ local function ensure_valid_buffer()
 		end,
 	})
 end
-local function open_buffer_in_window()
+local function show_buffer()
+	assert(not window or not vim.api.nvim_win_is_valid(window), "window is not shown")
 	window = vim.api.nvim_open_win(assert(buffer), true, { vertical = vim.o.lines * 2.5 <= vim.o.columns })
 	vim.wo[window].winfixbuf = true
 end
 local function enter_terminal()
-	if not vim.bo[buffer].buftype ~= "terminal" then
+	if vim.bo[buffer].buftype ~= "terminal" then
 		vim.fn.jobstart("zsh", { term = true })
 	end
 	vim.cmd.startinsert()
@@ -45,9 +46,9 @@ local function toggle_terminal()
 		vim.api.nvim_win_hide(window)
 	else
 		ensure_valid_buffer()
-		open_buffer_in_window()
+		show_buffer()
 		enter_terminal()
 	end
 end -- }}}
 
-vim.keymap.set({ "n", "t" }, "<C-Space>", toggle_terminal, { desc = "Terminal in vertical split" })
+vim.keymap.set({ "n", "t" }, "<C-Space>", toggle_terminal, { desc = "Toggle terminal" })
