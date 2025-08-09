@@ -31,10 +31,20 @@ alias vim="nvim --noplugin"
 alias diffed='$EDITOR $(git diff --name-only --relative)'
 alias pacdiff='DIFFPROG="nvim -d" pacdiff -b -3 -s'
 
-# Load completions
-autoload -U compinit && compinit
+# Completions
+zstyle ':completion:*' auto-description 'specify: %d'
+zstyle ':completion:*' completer _expand _complete _ignored _correct _approximate
+zstyle ':completion:*:*:*:*:descriptions' format '%F{green}-- %d --%f'
+zstyle ':completion:*:*:*:*:corrections' format '%F{yellow}!- %d (errors: %e) -!%f'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' insert-unambiguous true
+zstyle ':completion:*' original false
+zstyle ':completion:*' verbose true
+autoload -Uz compinit bashcompinit
+compinit
+bashcompinit
 
-#### SKIM ####
+# Skim
 export SKIM_DEFAULT_OPTIONS="--ansi --color=bw"
 source "/usr/share/skim/key-bindings.zsh"
 function skim-homedir-widget() {
@@ -64,13 +74,4 @@ function skim-homedir-widget() {
 }
 zle -N skim-homedir-widget
 bindkey '^F' skim-homedir-widget
-
-#### FZF-TAB ####
-export FZF_DEFAULT_OPTS="$SKIM_DEFAULT_OPTIONS --style=minimal"
-source "/usr/share/zsh/plugins/fzf-tab-git/fzf-tab.zsh"
-# Force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
-zstyle ':completion:*' menu no
-# To make fzf-tab follow FZF_DEFAULT_OPTS.
-# NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
-zstyle ':fzf-tab:*' use-fzf-default-opts yes
 
