@@ -15,7 +15,7 @@ clipboard-read = allow
 clipboard-write = allow
 
 
-# TODO: Reenable this once ghostty 1.2.0 releases
+# TODO: Reenable this once ghostty 1.2.0 releases + enable lsp progress (see `:h LspProgress`)
 
 # env = EDITOR=nvim
 #
