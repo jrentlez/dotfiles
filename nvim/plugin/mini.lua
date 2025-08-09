@@ -4,16 +4,15 @@ vim.pack.add({ "https://github.com/echasnovski/mini.nvim" })
 require("mini.notify").setup()
 vim.notify = MiniNotify.make_notify() -- }}}
 -- {{{ mini.files
-require("mini.files").setup({ content = { prefix = function() end } }) -- }}}
+require("mini.files").setup({ content = { prefix = function() end } })
+vim.keymap.set("n", "<leader>f", function()
+	MiniFiles.open(vim.api.nvim_buf_get_name(0))
+end, { desc = "Open file explorer" }) -- }}}
 
 vim.schedule(function()
 	local function nmap(lhs, rhs, desc)
 		vim.keymap.set("n", lhs, rhs, { desc = desc })
 	end
-	-- {{{ mini.files
-	nmap("<leader>f", function()
-		MiniFiles.open(vim.api.nvim_buf_get_name(0))
-	end, "Open file explorer") -- }}}
 	-- {{{ mini.bufremove
 	require("mini.bufremove").setup()
 	nmap("<leader>q", MiniBufremove.delete, "Delete buffer") -- }}}
