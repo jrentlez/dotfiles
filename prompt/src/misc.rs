@@ -10,8 +10,7 @@ use libc::{geteuid, gethostname};
 use crate::{ansi::Shell, write_bytes};
 
 fn is_root() -> bool {
-    let euid = unsafe { geteuid() };
-    euid == 0
+    unsafe { geteuid() }.eq(&0)
 }
 
 fn hostname() -> Option<Vec<u8>> {

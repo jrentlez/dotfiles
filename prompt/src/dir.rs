@@ -71,22 +71,20 @@ fn replace_home_with_tilde(path: &Path, home: &Path) -> Option<PathBuf> {
     }
 }
 
-fn write_current_dir(writer: &mut impl Write, relative_to: Option<impl AsRef<Path>>, shell: Shell) {
+fn write_current_dir(writer: &mut impl Write, shell: Shell, relative_to: Option<&Path>) {
     let home = PathBuf::from(var_os("HOME").expect("$HOME is set"));
     let physical = current_physical_directory();
     let logical = current_logical_directory();
 
     if physical == logical {
         let stripped = relative_to
-            .and_then(|base| logical.strip_prefix(base).ok())
+            .and_then(|relative_to| logical.strip_prefix(relative_to).ok())
             .unwrap_or(&logical);
         let tilded = replace_home_with_tilde(stripped, &home);
-        let (previous_components, final_component) = if let Some(tilded) = &tilded {
-            path_split_last(tilded)
-        } else {
-            path_split_last(stripped)
+        let (previous_components, final_component) = match &tilded {
+            Some(tilded) => path_split_last(tilded),
+            None => path_split_last(stripped),
         };
-
         write_bytes!(
             writer,
             shell.fg_normal(),
@@ -117,23 +115,14 @@ fn write_current_dir(writer: &mut impl Write, relative_to: Option<impl AsRef<Pat
 pub fn directory(writer: &mut impl Write, shell: Shell) -> Option<Repository> {
     let cwd = current_physical_directory();
 
-    if cwd == Path::new("/") {
-        write_current_dir(writer, None::<&'static Path>, shell);
-        return None;
-    }
-
     match Repository::discover(&cwd) {
         Ok(repo) => {
-            let git_root_parent = repo
-                .workdir()
-                .unwrap_or(&cwd)
-                .parent()
-                .expect("Has parent because / is already handled");
-            write_current_dir(writer, Some(git_root_parent), shell);
+            let git_root_parent = repo.workdir().unwrap_or(&cwd).parent();
+            write_current_dir(writer, shell, git_root_parent);
             Some(repo)
         }
         Err(_) => {
-            write_current_dir(writer, None::<&'static Path>, shell);
+            write_current_dir(writer, shell, None);
             None
         }
     }
