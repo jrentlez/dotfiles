@@ -172,9 +172,9 @@ pub fn git(writer: &mut impl Write, repo: &Repository, shell: Shell) {
                     assert_eq!(slash, Some(&b'/'));
 
                     if local_name == upstream_branch_name {
-                        write_bytes!(writer, upstream_branch_name);
+                        write_bytes!(writer, upstream_name_with_remote);
                     } else {
-                        write_bytes!(writer, local_name, b":", upstream_branch_name);
+                        write_bytes!(writer, local_name, b":", upstream_name_with_remote);
                     }
                     Some(ahead_behind)
                 }

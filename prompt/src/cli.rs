@@ -3,7 +3,7 @@ use std::{
     os::unix::ffi::OsStrExt,
 };
 
-use crate::{ansi::Shell, section::Section};
+use crate::{ansi::Shell, section::Section, split_bytes_once};
 
 #[derive(Debug, Default)]
 struct ArgsBuilder {
@@ -67,15 +67,12 @@ impl FromIterator<OsString> for Args {
         iter.into_iter()
             .fold(ArgsBuilder::default(), |mut builder, arg| {
                 let arg_bytes = arg.as_bytes();
-                let key_value = arg_bytes.iter().position(|b| *b == b'=').map(|idx| {
-                    let (key, mut value) = arg_bytes.split_at(idx);
-                    let equals = value.split_off_first();
-                    assert_eq!(equals, Some(&b'='));
-                    (OsStr::from_bytes(key), OsStr::from_bytes(value))
-                });
-                let Some((key, value)) = key_value else {
+                let Some((key, value)) = split_bytes_once(arg_bytes, b'=') else {
                     return builder;
                 };
+                let key = OsStr::from_bytes(key);
+                let value = OsStr::from_bytes(value);
+
                 if key == "print" {
                     builder.section =
                         Some(Section::try_from(value).expect("Unsupported print value"));
