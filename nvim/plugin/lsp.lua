@@ -5,6 +5,7 @@
 local function on_lsp_attach(event)
 	local client = assert(vim.lsp.get_client_by_id(event.data.client_id))
 	local lsp_augroup = vim.api.nvim_create_augroup("custom-lsp-autocmds", { clear = false })
+	local methods = vim.lsp.protocol.Methods ---@type vim.lsp.protocol.Methods
 
 	-- {{{ Keymaps (see `:help lsp-defaults` for already existing keymaps)
 
@@ -17,18 +18,13 @@ local function on_lsp_attach(event)
 			vim.keymap.set("n", lhs, rhs, { desc = desc, buffer = event.buf })
 		end
 	end
-	lsp_map(vim.lsp.protocol.Methods.textDocument_definition, "gd", vim.lsp.buf.definition, "vim.lsp.buf.definition()")
-	lsp_map(
-		vim.lsp.protocol.Methods.textDocument_declaration,
-		"gD",
-		vim.lsp.buf.declaration,
-		"vim.lsp.buf.definition()"
-	)
-	lsp_map(vim.lsp.protocol.Methods.textDocument_workspace_symbol, "grw", function()
+	lsp_map(methods.textDocument_definition, "gd", vim.lsp.buf.definition, "vim.lsp.buf.definition()")
+	lsp_map(methods.textDocument_declaration, "gD", vim.lsp.buf.declaration, "vim.lsp.buf.definition()")
+	lsp_map(methods.workspace_symbol, "grw", function()
 		vim.lsp.buf.workspace_symbol()
 	end, "vim.lsp.buf.workspace_symbol()") -- }}}
 	-- {{{ Enable folds
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_foldingRange, event.buf) then
+	if client:supports_method(methods.textDocument_foldingRange, event.buf) then
 		---@param option string
 		---@param value any
 		local function set_if_unset(option, value)
@@ -43,12 +39,12 @@ local function on_lsp_attach(event)
 		set_if_unset("foldlevelstart", 99)
 	end -- }}}
 	-- {{{ Enable completion
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_completion, event.buf) then
+	if client:supports_method(methods.textDocument_completion, event.buf) then
 		vim.lsp.completion.enable(true, client.id, event.buf)
 		vim.bo[event.buf].complete = "o"
 	end -- }}}
 	-- {{{ Enable document highlight
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
+	if client:supports_method(methods.textDocument_documentHighlight, event.buf) then
 		vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 			buffer = event.buf,
 			group = lsp_augroup,
@@ -61,15 +57,15 @@ local function on_lsp_attach(event)
 		})
 	end -- }}}
 	-- {{{ Enable inlay hints
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
+	if client:supports_method(methods.textDocument_inlayHint, event.buf) then
 		vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
 	end -- }}}
 	-- {{{ Enable linked editing ranges
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_linkedEditingRange, event.buf) then
+	if client:supports_method(methods.textDocument_linkedEditingRange, event.buf) then
 		vim.lsp.linked_editing_range.enable(true, { client_id = client.id })
 	end -- }}}
 	-- {{{ Enable codelens
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_codeLens, event.buf) then
+	if client:supports_method(methods.textDocument_codeLens, event.buf) then
 		vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave", "BufWritePost" }, {
 			group = lsp_augroup,
 			buffer = event.buf,
@@ -92,7 +88,7 @@ local function on_lsp_attach(event)
 			end,
 		}) -- }}}
 	-- {{{ HACK: Disable lsp comment highlighting so the treesitter comment parser can highlight TODO, FIXME, etc.
-	if client:supports_method(vim.lsp.protocol.Methods.textDocument_semanticTokens_full, event.buf) then
+	if client:supports_method(methods.textDocument_semanticTokens_full, event.buf) then
 		vim.api.nvim_set_hl(0, "@lsp.type.comment", {})
 
 		vim.api.nvim_create_autocmd("ColorScheme", {
