@@ -11,48 +11,66 @@ local function get_buf_name(bufnr)
 end
 
 ---@param bufnr integer
----@return boolean ok
+---@return boolean continue
+---@return boolean add_to_noformat_list
 local function check_buffer_has_one_format_autocmd(bufnr)
-	local fmt_autocmd_id = vim.b[bufnr].lsp_format_on_save_autocmd --[[@as integer?]]
-	if not fmt_autocmd_id then
-		if vim.tbl_isempty(vim.lsp.get_clients({ bufnr = bufnr })) then
-			vim.health.info("No language servers attached")
-		else
-			vim.health.error(
-				"No format-on-save autocommand",
-				"The autocommand should be created on every `LspAttach` event"
-			)
-		end
-		return false
+	local format_autocmds = vim.api.nvim_get_autocmds({
+		buffer = bufnr,
+		event = "BufWritePre",
+		group = vim.api.nvim_create_augroup("format-on-save", { clear = false }),
+	})
+	if #format_autocmds == 0 and vim.tbl_isempty(vim.lsp.get_clients({ bufnr = bufnr })) then
+		return false, true
 	end
-	local fmt_autocmds = vim.api.nvim_get_autocmds({ id = fmt_autocmd_id, buffer = bufnr })
-	assert(#fmt_autocmds == 1)
-	return true
+
+	vim.health.start(get_buf_name(bufnr))
+	if #format_autocmds == 0 then
+		vim.health.error("No format-on-save autocmd", "The autocmd should be created on every `LspAttach` event")
+		return false, false
+	elseif #format_autocmds > 1 then
+		vim.health.error(
+			"This buffer has " .. #format_autocmds .. " format-on-save autocmds",
+			"The autocmd should be created once per buffer"
+		)
+	end
+	return true, false
 end
 
----@param bufnr integer
+---@param bufnr? integer
 ---@return boolean ok
 local function check_formatlsp_valid(bufnr)
-	local formatlsp = vim.b[bufnr].formatlsp
-	if formatlsp == "" then
-		vim.health.info('Formatting on save disabled (`vim.b.formatlsp = ""`)')
-		return false
-	elseif formatlsp == nil then
-		vim.health.info("No specific formatting language server set (`vim.b.formatlsp = nil`)")
+	local formatlsp
+	if bufnr then
+		formatlsp = vim.b[bufnr].formatlsp
+	else
+		formatlsp = vim.g.formatlsp
+	end
+	local scope = bufnr and "b" or "g"
+	if formatlsp == nil then
+		if scope == "b" then
+			vim.health.info("`vim.b.formatlsp = nil`: Using global fallback")
+		else
+			vim.health.info("`vim.g.formatlsp = nil`: Formatting with any attached language server(s)")
+		end
 		return true
+	elseif formatlsp == "" then
+		vim.health.info("`vim." .. scope .. '.formatlsp = ""`: Formatting on save disabled')
+		return false
 	elseif type(formatlsp) == "string" then
-		vim.health.info(('`vim.b.formatlsp = "%s"`'):format(formatlsp))
+		vim.health.info(('`vim.%s.formatlsp = "%s"`'):format(scope, formatlsp))
 		return true
 	else
-		vim.health.error("`vim.b.formatlsp` is expected to be either a string or nil")
+		vim.health.error("`vim." .. scope .. ".formatlsp` is expected to be either a string or nil")
 		return false
 	end
 end
 
 ---@param bufnr integer
----@return boolean ok
 local function check_formatting_clients_attached(bufnr)
-	local formatlsp = vim.b[bufnr].formatlsp --[[@as string?]]
+	local formatlsp = vim.b[bufnr].formatlsp or vim.g.formatlsp --[[@as string?]]
+	if formatlsp == "" then
+		return
+	end
 	local formatting_clients = vim.lsp.get_clients({
 		name = formatlsp,
 		bufnr = bufnr,
@@ -73,18 +91,30 @@ local function check_formatting_clients_attached(bufnr)
 end -- }}}
 
 ---@param bufnr integer
+---@return boolean add_to_nobuffer
 local function check_buffer(bufnr)
 	if not vim.bo[bufnr].buflisted or vim.bo[bufnr].buftype ~= "" then
-		return
+		return false
 	end
 
-	vim.health.start("Formatting language server(s) for " .. get_buf_name(bufnr))
-	local _ok = check_buffer_has_one_format_autocmd(bufnr)
-		and check_formatlsp_valid(bufnr)
-		and check_formatting_clients_attached(bufnr)
+	local continue, add_to_noformat = check_buffer_has_one_format_autocmd(bufnr)
+	local _ok = continue and check_formatlsp_valid(bufnr) and check_formatting_clients_attached(bufnr)
+	return add_to_noformat
 end -- }}}
 
 function M.check()
-	vim.iter(vim.api.nvim_list_bufs()):each(check_buffer)
+	check_formatlsp_valid()
+	local noformat = vim.iter(vim.api.nvim_list_bufs())
+		:filter(function(bufnr)
+			return check_buffer(bufnr)
+		end)
+		:totable() ---@type integer[]
+	if vim.tbl_isempty(noformat) then
+		return
+	end
+	vim.health.start("Buffers without attached language servers")
+	for _, bufnr in ipairs(noformat) do
+		vim.health.info(get_buf_name(bufnr))
+	end
 end
 return M

@@ -66,18 +66,17 @@ local function on_lsp_attach(event)
 		vim.keymap.set("n", "grl", vim.lsp.codelens.run, { desc = "vim.lsp.codelens.run()", buffer = event.buf })
 	end -- }}}
 	-- {{{ Enable format on save
-	vim.b[event.buf].lsp_format_on_save_autocmd = vim.b[event.buf].lsp_format_on_save_autocmd
-		or vim.api.nvim_create_autocmd("BufWritePre", {
-			desc = "Attempt to format with language server(s)",
-			buffer = event.buf,
-			group = lsp_augroup,
-			callback = function(args)
-				local formatlsp = vim.b[args.buf].formatlsp
-				if formatlsp ~= "" then
-					vim.lsp.buf.format({ bufnr = args.buf, name = formatlsp })
-				end
-			end,
-		}) -- }}}
+	vim.api.nvim_create_autocmd("BufWritePre", {
+		desc = "Attempt to format with language server(s)",
+		buffer = event.buf,
+		group = vim.api.nvim_create_augroup("format-on-save", { clear = false }),
+		callback = function(args)
+			local formatlsp = vim.b[args.buf].formatlsp or vim.g.formatlsp
+			if formatlsp ~= "" then
+				vim.lsp.buf.format({ bufnr = args.buf, name = formatlsp })
+			end
+		end,
+	}) -- }}}
 	-- {{{ HACK: Disable lsp comment highlighting so the treesitter comment parser can highlight TODO, FIXME, etc.
 	if client:supports_method(methods.textDocument_semanticTokens_full, event.buf) then
 		vim.api.nvim_set_hl(0, "@lsp.type.comment", {})
