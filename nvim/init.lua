@@ -45,18 +45,11 @@ nmap("<Esc>", "<cmd>nohlsearch<cr>", "Clear highlights on search when pressing <
 
 nmap("<leader>q", "<cmd>bdelete<cr>", "Delete buffer")
 
-nmap("gb", "<cmd>bnext<cr>", "Go to next buffer")
-nmap("gB", "<cmd>bprevious<cr>", "Go to pevious buffer")
-
 nmap("gqo", "<cmd>copen<cr>", ":copen")
 nmap("gqc", "<cmd>cclose<cr>", ":cclose")
-nmap("gqn", "<cmd>cnext<cr>", ":cnext")
-nmap("gqp", "<cmd>cprevious<cr>", ":cprevious")
 nmap("gqd", vim.diagnostic.setqflist, "vim.diagnostic.setqflist()")
 
 nmap("glo", "<cmd>lopen<cr>", ":lopen")
-nmap("glc", "<cmd>lclose<cr>", ":lclose")
-nmap("gln", "<cmd>lnext<cr>", ":lnext")
 nmap("glp", "<cmd>lprevious<cr>", ":lprevious")
 nmap("gld", vim.diagnostic.setloclist, "vim.diagnostic.setloclist()")
 
