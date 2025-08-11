@@ -8,21 +8,12 @@ local function on_lsp_attach(event)
 	local methods = vim.lsp.protocol.Methods ---@type vim.lsp.protocol.Methods
 
 	-- {{{ Keymaps (see `:help lsp-defaults` for already existing keymaps)
-
-	---@param method vim.lsp.protocol.Method.ClientToServer
-	---@param lhs string
-	---@param rhs fun()
-	---@param desc string
-	local function lsp_map(method, lhs, rhs, desc)
-		if client:supports_method(method, event.buf) then
-			vim.keymap.set("n", lhs, rhs, { desc = desc, buffer = event.buf })
-		end
+	if client:supports_method(methods.textDocument_definition, event.buf) then
+		vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition()", buffer = event.buf })
 	end
-	lsp_map(methods.textDocument_definition, "gd", vim.lsp.buf.definition, "vim.lsp.buf.definition()")
-	lsp_map(methods.textDocument_declaration, "gD", vim.lsp.buf.declaration, "vim.lsp.buf.definition()")
-	lsp_map(methods.workspace_symbol, "grw", function()
-		vim.lsp.buf.workspace_symbol()
-	end, "vim.lsp.buf.workspace_symbol()") -- }}}
+	if client:supports_method(methods.textDocument_declaration, event.buf) then
+		vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "vim.lsp.buf.declaration()", buffer = event.buf })
+	end -- }}}
 	-- {{{ Enable folds
 	if client:supports_method(methods.textDocument_foldingRange, event.buf) then
 		---@param option string
