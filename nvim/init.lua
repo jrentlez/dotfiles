@@ -18,7 +18,7 @@ vim.o.mouse = "a"
 vim.o.number = true
 vim.o.pumheight = 10
 vim.o.relativenumber = true
-vim.o.scrolloff = 10
+vim.o.scrolloff = 5
 vim.o.signcolumn = "yes"
 vim.o.smartcase = true
 vim.o.smartindent = true
@@ -68,16 +68,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 		vim.hl.on_yank()
 	end,
 	desc = "Highlight yanked text",
-})
-
-vim.api.nvim_create_autocmd("BufRead", {
-	group = vim.api.nvim_create_augroup("ro_nomodifiable", { clear = true }),
-	callback = function(args)
-		if vim.bo[args.buf].readonly then
-			vim.bo[args.buf].modifiable = false
-		end
-	end,
-	desc = "Make readonly buffers nomodifiable",
 }) -- }}}
 -- {{{ User commands
 vim.api.nvim_create_user_command("PackUpdate", function()
