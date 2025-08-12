@@ -1,5 +1,3 @@
-local M = {}
-
 -- {{{ check_buffer and helpers
 -- {{{ Helpers
 
@@ -11,29 +9,30 @@ local function get_buf_name(bufnr)
 end
 
 ---@param bufnr integer
----@return boolean continue
----@return boolean add_to_noformat_list
-local function check_buffer_has_one_format_autocmd(bufnr)
-	local format_autocmds = vim.api.nvim_get_autocmds({
+---@return vim.api.keyset.get_autocmds.ret[]
+local function get_format_autocmds(bufnr)
+	return vim.api.nvim_get_autocmds({
+		id = vim.b[bufnr].format_on_save_autocmd_id,
 		buffer = bufnr,
 		event = "BufWritePre",
-		group = vim.api.nvim_create_augroup("format-on-save", { clear = false }),
+		group = vim.api.nvim_create_augroup("custom-lsp-autocmds", { clear = false }),
 	})
-	if #format_autocmds == 0 and vim.tbl_isempty(vim.lsp.get_clients({ bufnr = bufnr })) then
-		return false, true
-	end
+end
 
-	vim.health.start(get_buf_name(bufnr))
-	if #format_autocmds == 0 then
-		vim.health.error("No format-on-save autocmd", "The autocmd should be created on every `LspAttach` event")
-		return false, false
-	elseif #format_autocmds > 1 then
-		vim.health.error(
-			"This buffer has " .. #format_autocmds .. " format-on-save autocmds",
-			"The autocmd should be created once per buffer"
+---@param bufnr integer
+---@return boolean has_format_autocmd
+local function check_buffer_has_one_format_autocmd(bufnr)
+	local num_format_autocmds = vim.tbl_count(get_format_autocmds(bufnr))
+	assert(num_format_autocmds <= 1, "There is, at most, one format-on-save autocmd per buffer")
+
+	if num_format_autocmds == 0 then
+		assert(
+			vim.tbl_isempty(vim.lsp.get_clients({ bufnr = bufnr })),
+			"The autocmd is created on every `LspAttach` event"
 		)
+		return false
 	end
-	return true, false
+	return true
 end
 
 ---@param bufnr? integer
@@ -71,49 +70,64 @@ local function check_formatting_clients_attached(bufnr)
 	if formatlsp == "" then
 		return
 	end
-	local formatting_clients = vim.lsp.get_clients({
+	local clients = vim.lsp.get_clients({
 		name = formatlsp,
 		bufnr = bufnr,
-		method = vim.lsp.protocol.Methods.textDocument_formatting,
 	})
-	if not vim.tbl_isempty(formatting_clients) then
-		for _, client in ipairs(formatting_clients) do
-			vim.health.ok(("Formatting with `%s` (id: %d)"):format(client.name, client.id))
+	if vim.tbl_isempty(clients) then
+		if formatlsp then
+			vim.health.warn("`" .. formatlsp .. "` is not attached to this buffer")
+		else
+			vim.health.error(
+				"No clients attached to this buffer",
+				"The format-on-save autocommand is not cleaned up properly"
+			)
 		end
-	elseif formatlsp then
-		vim.health.error(("`%s` cannot format the buffer"):format(formatlsp), {
-			("`%s` may not be attached to the buffer"):format(formatlsp),
-			('`%s` may not support `"%s"`'):format(formatlsp, vim.lsp.protocol.Methods.textDocument_formatting),
-		})
-	else
-		vim.health.warn("No language server with formatting capabilities attached to buffer")
+		return
+	end
+
+	local textDocument_formatting = vim.lsp.protocol.Methods.texDocument_formatting ---@type vim.lsp.protocol.Method.ClientToServer
+	local found_formatter = false
+	for _, client in ipairs(clients) do
+		if client:supports_method(textDocument_formatting, bufnr) then
+			vim.health.ok(("Formatting with `%s` (id: %d)"):format(client.name, client.id))
+			found_formatter = true
+		else
+			vim.health.warn(
+				"`" .. client.name .. '` does not support `"' .. textDocument_formatting .. '"` in this buffer'
+			)
+		end
+	end
+	if not found_formatter then
+		vim.health.warn("No language server with formatting capabilities attached to this buffer")
 	end
 end -- }}}
 
 ---@param bufnr integer
----@return boolean add_to_nobuffer
+---@return boolean add_to_noformat
 local function check_buffer(bufnr)
-	if not vim.bo[bufnr].buflisted or vim.bo[bufnr].buftype ~= "" then
+	if (not vim.bo[bufnr].buflisted) or vim.bo[bufnr].buftype ~= "" then
 		return false
 	end
-
-	local continue, add_to_noformat = check_buffer_has_one_format_autocmd(bufnr)
-	local _ok = continue and check_formatlsp_valid(bufnr) and check_formatting_clients_attached(bufnr)
-	return add_to_noformat
+	if not check_buffer_has_one_format_autocmd(bufnr) then
+		return true
+	end
+	vim.health.start(get_buf_name(bufnr))
+	if check_formatlsp_valid(bufnr) then
+		check_formatting_clients_attached(bufnr)
+	end
+	return false
 end -- }}}
 
+local M = {}
 function M.check()
 	check_formatlsp_valid()
-	local noformat = vim.iter(vim.api.nvim_list_bufs())
-		:filter(function(bufnr)
-			return check_buffer(bufnr)
-		end)
-		:totable() ---@type integer[]
-	if vim.tbl_isempty(noformat) then
+	local no_format_autocmd = vim.tbl_filter(check_buffer, vim.api.nvim_list_bufs())
+	if vim.tbl_isempty(no_format_autocmd) then
 		return
 	end
-	vim.health.start("Buffers without attached language servers")
-	for _, bufnr in ipairs(noformat) do
+	vim.health.start("Buffers without a format-on-save autocmd")
+	for _, bufnr in ipairs(no_format_autocmd) do
 		vim.health.info(get_buf_name(bufnr))
 	end
 end

@@ -1,10 +1,6 @@
----Prints the appropriate error message if a program is (not) executable
----@param name string The program's name
----@param cmd? string The actual command to check
-local function print_executable_message(name, cmd)
-	vim.validate("name", name, "string", false)
-	vim.validate("cmd", cmd, "string", true)
-
+---@param name string
+---@param cmd? string
+local function check_executable(name, cmd)
 	if vim.fn.executable(cmd or name) == 1 then
 		if not cmd or name == cmd then
 			vim.health.ok(("`%s` is executable"):format(name))
@@ -34,10 +30,10 @@ function M.check()
 	end
 
 	vim.health.start("Formatters")
-	print_executable_message("stylua")
-	print_executable_message("shfmt")
+	check_executable("stylua")
+	check_executable("shfmt")
 
 	vim.health.start("Linters")
-	print_executable_message("shellcheck")
+	check_executable("shellcheck")
 end
 return M
