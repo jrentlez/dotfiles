@@ -33,10 +33,11 @@ vim.schedule(function()
 	-- {{{ mini.pick
 	local pick = require("mini.pick")
 	pick.setup({ source = { show = pick.default_show } })
+	require("mini.extra").setup()
 	vim.ui.select = MiniPick.ui_select
 
 	local builtin = MiniPick.builtin
-	local extra = require("mini.extra").pickers
+	local extra = MiniExtra.pickers
 	nmap("<leader>/", function()
 		return extra.buf_lines({ scope = "current" }, {})
 	end, "Search buffer (fuzzy)")
@@ -48,18 +49,6 @@ vim.schedule(function()
 	nmap("<leader>sh", function()
 		return builtin.help({ default_split = "vertical" })
 	end, "Search help")
-	nmap("<leader>sp", function()
-		local all = vim.tbl_extend("error", builtin, extra)
-		MiniPick.start({
-			source = {
-				items = vim.tbl_keys(all),
-				name = "Pickers",
-				choose = function(picker)
-					all[picker]()
-				end,
-			},
-		})
-	end, "Search pickers")
 	nmap("<leader>sr", extra.oldfiles, "Search recent files") -- }}}
 	-- {{{ mini.hipatterns
 	require("mini.hipatterns").setup({
