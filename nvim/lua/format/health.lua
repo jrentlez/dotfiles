@@ -56,7 +56,7 @@ local function check_formatlsp_valid(bufnr)
 		vim.health.info("`vim." .. scope .. '.formatlsp = ""`: Formatting on save disabled')
 		return false
 	elseif type(formatlsp) == "string" then
-		vim.health.info(('`vim.%s.formatlsp = "%s"`'):format(scope, formatlsp))
+		vim.health.info("`vim." .. scope .. '.formatlsp = "' .. formatlsp .. '"`')
 		return true
 	else
 		vim.health.error("`vim." .. scope .. ".formatlsp` is expected to be either a string or nil")
@@ -90,7 +90,7 @@ local function check_formatting_clients_attached(bufnr)
 	local found_formatter = false
 	for _, client in ipairs(clients) do
 		if client:supports_method(textDocument_formatting, bufnr) then
-			vim.health.ok(("Formatting with `%s` (id: %d)"):format(client.name, client.id))
+			vim.health.ok("Formatting with `" .. client.name .. "` (id: " .. client.id .. ")")
 			found_formatter = true
 		else
 			vim.health.warn(

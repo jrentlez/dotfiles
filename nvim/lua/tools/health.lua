@@ -3,12 +3,12 @@
 local function check_executable(name, cmd)
 	if vim.fn.executable(cmd or name) == 1 then
 		if not cmd or name == cmd then
-			vim.health.ok(("`%s` is executable"):format(name))
+			vim.health.ok("`" .. name .. "` is executable")
 		else
-			vim.health.ok(("`%s`: `%s` is executable"):format(name, cmd))
+			vim.health.ok("`" .. name .. "`: `" .. cmd .. "` is executable")
 		end
 	else
-		vim.health.warn(("`%s` is not executable"):format(cmd or name), ("`%s` may not be installed"):format(name))
+		vim.health.warn("`" .. cmd or name .. "` is not executable", "`" .. name .. "` may not be installed")
 	end
 end
 
@@ -20,10 +20,10 @@ function M.check()
 		local config = v.resolved_config
 		if config and type(config.cmd) == "function" then
 			vim.health.warn(
-				("`:checkhealth vim.lsp` cannot tell whether this is executable or not"):format(config.name or name),
+				"`:checkhealth vim.lsp` cannot tell whether " .. config.name or name .. " is executable or not",
 				{
 					"The configuration's `cmd` field is a function",
-					("see `:help lspconfig-all`"):format(config.name or name),
+					"see `:help lspconfig-all`",
 				}
 			)
 		end
