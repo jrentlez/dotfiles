@@ -1,13 +1,16 @@
 command = zsh
 
 font-family = Adwaita Mono
-font-size = 16
+font-size = 18
 
 theme = dark:Adwaita Dark,light:Adwaita
 
-window-padding-balance = true
-maximize = true
-gtk-titlebar-hide-when-maximized = true
+window-width = 125
+window-height = 47
+window-padding-x = 15
+window-padding-y = 10,0
+
+gtk-titlebar = false
 
 keybind = ctrl+shift+l=new_split:right
 
