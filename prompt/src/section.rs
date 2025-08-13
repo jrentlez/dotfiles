@@ -17,7 +17,7 @@ pub enum Section {
 }
 impl Section {
     fn pre_cmd(writer: &mut impl Write, shell: Shell) {
-        write_bytes!(writer, b"\n", shell.fg_normal());
+        write_bytes!(writer, shell.fg_normal());
         userhost(writer, shell);
         if let Some(repo) = directory(writer, shell) {
             git(writer, &repo, shell);

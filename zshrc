@@ -19,6 +19,8 @@ setopt hist_ignore_dups
 setopt hist_find_no_dups
 
 # Prompt
+precmd() { precmd() { print "" } }  # Print blank line before each prompt but the first
+alias clear="precmd() {precmd() {echo }} && clear"  # Prevent clear from inserting a prompt
 zmodload zsh/parameter  # Needed to access jobstates variable
 setopt promptsubst
 PS1='$(prompt jobs="${#jobstates}" laststatus="$?" shell=zsh)'
