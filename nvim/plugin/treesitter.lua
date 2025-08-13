@@ -16,8 +16,8 @@ vim.pack.add({ {
 } })
 
 -- {{{ Auto install missing parsers
----@param bufnr integer The buffer to check
----@param on_installed fun() Called once the parser is installed. If there is no appropriate parser for the buffer, `on_installed` is never called.
+---@param bufnr integer
+---@param on_installed fun()
 local function ensure_installed(bufnr, on_installed)
 	local language = vim.treesitter.language.get_lang(vim.bo[bufnr].filetype)
 	if vim.list_contains(require("nvim-treesitter").get_installed(), language) then

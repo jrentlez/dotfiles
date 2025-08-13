@@ -30,7 +30,7 @@ local function ensure_valid_buffer()
 end
 local function show_buffer()
 	assert(not window or not vim.api.nvim_win_is_valid(window), "window is not shown")
-	window = vim.api.nvim_open_win(assert(buffer), true, { vertical = vim.o.lines * 2.5 <= vim.o.columns })
+	window = vim.api.nvim_open_win(assert(buffer), true, { vertical = vim.o.columns > 130 })
 	vim.wo[window].winfixbuf = true
 end
 local function enter_terminal()

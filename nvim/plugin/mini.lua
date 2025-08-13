@@ -43,9 +43,7 @@ vim.schedule(function()
 	nmap("<leader>s/", extra.buf_lines, "Search open buffers (fuzzy)")
 	nmap("<leader>sf", builtin.files, "Search files")
 	nmap("<leader>sg", builtin.grep_live, "Search by grep")
-	nmap("<leader>sh", function()
-		return builtin.help({ default_split = "vertical" })
-	end, "Search help")
+	nmap("<leader>sh", builtin.help, "Search help")
 	nmap("<leader>sr", extra.oldfiles, "Search recent files") -- }}}
 	-- {{{ mini.hipatterns
 	require("mini.hipatterns").setup({

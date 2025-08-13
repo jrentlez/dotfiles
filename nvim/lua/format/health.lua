@@ -86,7 +86,7 @@ local function check_formatting_clients_attached(bufnr)
 		return
 	end
 
-	local textDocument_formatting = vim.lsp.protocol.Methods.texDocument_formatting ---@type vim.lsp.protocol.Method.ClientToServer
+	local textDocument_formatting = vim.lsp.protocol.Methods.textDocument_formatting
 	local found_formatter = false
 	for _, client in ipairs(clients) do
 		if client:supports_method(textDocument_formatting, bufnr) then
