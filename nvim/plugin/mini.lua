@@ -1,8 +1,5 @@
 vim.pack.add({ "https://github.com/echasnovski/mini.nvim" })
 
--- {{{ mini.notify
-require("mini.notify").setup()
-vim.notify = MiniNotify.make_notify() -- }}}
 -- {{{ mini.files
 require("mini.files").setup({ content = { prefix = function() end } })
 vim.keymap.set("n", "<leader>f", function()
