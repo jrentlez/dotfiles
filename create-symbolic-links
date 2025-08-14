@@ -22,7 +22,7 @@ function dotfile_link() {
 dotfile_link	.bash_profile 				bash/bash_profile
 dotfile_link	.bashrc 				bash/bashrc
 dotfile_link	.config/bat/config			batconfig
-dotfile_link	.config/ghostty 			ghostty
+dotfile_link	.config/ghostty/config 			ghosttyconfig
 dotfile_link	.config/nvim 				nvim
 dotfile_link	.config/xdg-terminals.list 		xdg-terminals.list
 dotfile_link	.gitconfig 				gitconfig

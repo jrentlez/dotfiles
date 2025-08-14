@@ -5,7 +5,7 @@ font-size = 18
 
 theme = dark:Adwaita Dark,light:Adwaita
 
-window-width = 125
+window-width = 130
 window-height = 47
 window-padding-x = 15
 window-padding-y = 10,0
@@ -17,9 +17,11 @@ keybind = ctrl+shift+l=new_split:right
 clipboard-read = allow
 clipboard-write = allow
 
+# vim: filetype=ghostty
 
 # TODO: Reenable this once ghostty 1.2.0 releases + enable lsp progress (see `:h LspProgress`)
 
 # env = EDITOR=nvim
 #
 # shell-integration-features = ssh-env,ssh-terminfo
+
