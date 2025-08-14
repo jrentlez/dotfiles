@@ -1,10 +1,10 @@
-#!/bin/env bash
+#!/bin/env sh
 
 style=$(gsettings get org.gnome.desktop.interface color-scheme | xargs)
 
-if [[ $style == "default" || $style == "prefer-light" ]]; then
+if [ "$style" = "default" ] || [ "$style" = "prefer-light" ]; then
 	gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
-elif [[ $style == "prefer-dark" ]]; then
+elif [ "$style" = "prefer-dark" ]; then
 	gsettings set org.gnome.desktop.interface color-scheme "default"
 else
 	printf "Unexpected style: %b\n" "$style" >&2

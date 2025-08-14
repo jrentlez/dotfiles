@@ -1,8 +1,8 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 first=true
 
-function section() {
+section() {
 	if [ $first = true ]; then
 		first=false
 		printf "\e[2m---* %s *---\e[0m\n" "$1"

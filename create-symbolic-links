@@ -1,22 +1,22 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
-if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
+if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
 	echo "Create symlinks for the dotfiles in this repository.
 	-f	Remove existing destination files
 	-i	Prompt whether to remove destinations"
 	exit 0
 fi
 
-script_file="$(realpath --canonicalize-existing --logical "${BASH_SOURCE[0]}")"
-if [[ ! -f "$script_file" ]]; then
+script_file="$(realpath --canonicalize-existing --logical "$0")"
+if [ ! -f "$script_file" ]; then
 	echo "'script_file' does not exist: $script_file" >&2
 	exit 1
 fi
 
 script_dir="$(dirname "$script_file")"
-ln_args=("$@")
-function dotfile_link() {
-	ln "${ln_args[@]}" -s -T "$(realpath "$script_dir/$2")" "$HOME/$1"
+arg="$1"
+dotfile_link() {
+	ln "$arg" -s -T "$(realpath "$script_dir/$2")" "$HOME/$1"
 }
 
 dotfile_link	.bash_profile 				bash/bash_profile
