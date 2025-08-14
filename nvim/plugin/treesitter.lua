@@ -48,8 +48,9 @@ vim.api.nvim_create_autocmd("FileType", {
 }) -- }}}
 
 vim.schedule(function()
-	local installed = require("nvim-treesitter").get_installed()
-	local required_parsers = vim.iter({
+	local required_parsers = vim.tbl_filter(function(parser)
+		return not vim.list_contains(require("nvim-treesitter").get_installed(), parser)
+	end, {
 		"c",
 		"lua",
 		"markdown",
@@ -60,9 +61,7 @@ vim.schedule(function()
 		"comment",
 		"diff",
 	})
-		:filter(function(parser)
-			return not vim.list_contains(installed, parser)
-		end)
-		:totable()
-	require("nvim-treesitter").install(required_parsers, { summary = true })
+	if not vim.tbl_isempty(required_parsers) then
+		require("nvim-treesitter").install(required_parsers, { summary = true })
+	end
 end)
