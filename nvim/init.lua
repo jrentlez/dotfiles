@@ -4,7 +4,6 @@ vim.g.clipboard = "osc52" -- }}}
 -- {{{ Options
 vim.o.autocomplete = true
 vim.o.breakindent = true
-vim.o.clipboard = "unnamedplus"
 vim.o.completeopt = "menuone,fuzzy,noinsert,popup"
 vim.o.cursorline = true
 vim.o.exrc = true
