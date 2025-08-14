@@ -45,10 +45,4 @@ vim.schedule(function()
 	nmap("<leader>sg", builtin.grep_live, "Search by grep")
 	nmap("<leader>sh", builtin.help, "Search help")
 	nmap("<leader>sr", extra.oldfiles, "Search recent files") -- }}}
-	-- {{{ mini.hipatterns
-	require("mini.hipatterns").setup({
-		highlighters = {
-			hex_color = require("mini.hipatterns").gen_highlighter.hex_color(),
-		},
-	}) -- }}}
 end)
