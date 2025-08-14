@@ -38,8 +38,6 @@ local function nmap(lhs, rhs, desc)
 	vim.keymap.set("n", lhs, rhs, { desc = desc })
 end
 
-nmap("<Esc>", "<cmd>nohlsearch<cr>", "Clear highlights on search when pressing <Esc> in normal mode (:h hlsearch)")
-
 nmap("<leader>q", "<cmd>bdelete<cr>", "Delete buffer")
 
 nmap("gqo", "<cmd>copen<cr>", ":copen")
@@ -56,10 +54,10 @@ vim.keymap.del({ "i", "s" }, "<S-Tab>")
 vim.keymap.del({ "i", "s" }, "<Tab>")
 vim.keymap.set({ "i", "s" }, "<C-h>", function()
 	vim.snippet.jump(-1)
-end)
+end, { desc = "Jump to previous snippet insertion" })
 vim.keymap.set({ "i", "s" }, "<C-l>", function()
 	vim.snippet.jump(1)
-end)
+end, { desc = "Jump to next snippet insertion" })
 
 vim.keymap.set("n", "gC", function()
 	local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
