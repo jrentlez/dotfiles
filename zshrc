@@ -51,9 +51,11 @@ export SKIM_DEFAULT_OPTIONS="--ansi --color=bw"
 source "/usr/share/skim/key-bindings.zsh"
 function skim-homedir-widget() {
 	local fd_excludes
-	fd_excludes=("--exclude=Steam" "--exclude=.steam" "--exclude=Games" "--exclude=.wine" "--exclude=.cache" "--exclude=.git" "--exclude=node_modules")
+	fd_excludes=("--exclude=.cache" "--exclude=.git" "--exclude=node_modules" "--exclude=target")
+	local dirs_to_search
+	dirs_to_search=("~/Code" "~/.dotfiles" "~/.local/share/nvim ~/.config")
 	local cmd
-	cmd="fd --type d --hidden --maxdepth 8 --follow ${fd_excludes[*]} . ~"
+	cmd="fd --type d --hidden --maxdepth 8 --follow ${fd_excludes[*]} . ${dirs_to_search[*]}"
 	setopt localoptions pipefail no_aliases 2> /dev/null
 	local dir
 	dir="$(eval "$cmd" | sk --no-multi --tiebreak=length)"
