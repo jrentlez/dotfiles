@@ -1,4 +1,4 @@
-vim.pack.add({ "https://github.com/jvalue/jayvee.nvim.git" })
+vim.pack.add({ "https://github.com/jvalue/jayvee.nvim.git" }, { load = true })
 
 -- {{{ function `goto_next_conflict_marker`
 
