@@ -10,23 +10,16 @@ vim.schedule(function()
 	local function nmap(lhs, rhs, desc)
 		vim.keymap.set("n", lhs, rhs, { desc = desc })
 	end
+	-- {{{ mini.diff
+	require("mini.diff").setup() -- }}}
+	-- {{{ mini.git
+	require("mini.git").setup() -- }}}
 	-- {{{ mini.bufremove
 	require("mini.bufremove").setup()
 	nmap("<leader>q", MiniBufremove.delete, "Delete buffer") -- }}}
 	-- {{{ mini.trailspace
 	require("mini.trailspace").setup()
 	vim.api.nvim_create_user_command("Trim", MiniTrailspace.trim, { desc = "Trim trailing whitespace" }) -- }}}
-	-- {{{ mini.diff
-	require("mini.diff").setup({
-		mappings = {
-			apply = "<leader>ha",
-			reset = "<leader>hr",
-		},
-	})
-	nmap("<leader>ho", MiniDiff.toggle_overlay, "Hunks overlay") -- }}}
-	-- {{{ mini.git
-	require("mini.git").setup()
-	nmap("<leader>hi", MiniGit.show_at_cursor, "Show line history") -- }}}
 	-- {{{ mini.pick
 	local pick = require("mini.pick")
 	pick.setup({ source = { show = pick.default_show } })

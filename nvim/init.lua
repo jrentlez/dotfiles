@@ -48,8 +48,6 @@ nmap("glo", "<cmd>lopen<cr>", ":lopen")
 nmap("glp", "<cmd>lprevious<cr>", ":lprevious")
 nmap("gld", vim.diagnostic.setloclist, "vim.diagnostic.setloclist()")
 
-vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
-
 vim.keymap.del({ "i", "s" }, "<S-Tab>")
 vim.keymap.del({ "i", "s" }, "<Tab>")
 vim.keymap.set({ "i", "s" }, "<C-h>", function()
