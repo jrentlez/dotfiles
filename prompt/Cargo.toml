@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-git2 = { version = "0.20.1", default-features = false }
-libc = "0.2.174"
+git2 = { version = ">=0.20", default-features = false }
+libc = ">=0.2"
 
 [lints.clippy]
 cast_possible_wrap = "deny"
