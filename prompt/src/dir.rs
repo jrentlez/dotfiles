@@ -14,8 +14,8 @@ const MAIN_SEPARATOR_BYTE: u8 = MAIN_SEPARATOR as u8;
 
 // NOTE: Mostly taken from GNU pwd (logical path)
 // See https://github.com/MaiZure/coreutils-8.3/blob/master/src/pwd.c
-fn current_logical_directory() -> PathBuf {
-    let wd = PathBuf::from(var_os("PWD").expect("Can get PWD environment variable"));
+fn current_logical_directory() -> Option<PathBuf> {
+    let wd = PathBuf::from(var_os("PWD")?);
     let mut components = wd.components();
     assert_eq!(
         Some(Component::RootDir),
@@ -32,7 +32,7 @@ fn current_logical_directory() -> PathBuf {
     let wd_ino = wd.metadata().expect("PWD is accessible").st_ino();
     let dot_ino = metadata(".").expect("'.' is accessible").st_ino();
     assert_eq!(wd_ino, dot_ino, "PWD is the same INODE as '.'");
-    wd
+    Some(wd)
 }
 
 fn current_physical_directory() -> PathBuf {
@@ -74,40 +74,41 @@ fn replace_home_with_tilde(path: &Path, home: &Path) -> Option<PathBuf> {
 fn write_current_dir(writer: &mut impl Write, shell: Shell, relative_to: Option<&Path>) {
     let home = PathBuf::from(var_os("HOME").expect("$HOME is set"));
     let physical = current_physical_directory();
-    let logical = current_logical_directory();
-
-    if physical == logical {
-        let stripped = relative_to
-            .and_then(|relative_to| logical.strip_prefix(relative_to).ok())
-            .unwrap_or(&logical);
-        let tilded = replace_home_with_tilde(stripped, &home);
-        let (previous_components, final_component) = match &tilded {
-            Some(tilded) => path_split_last(tilded),
-            None => path_split_last(stripped),
-        };
-        write_bytes!(
-            writer,
-            shell.fg_normal(),
-            previous_components.unwrap_or_default(),
-            shell.fg_bold(),
-            final_component
-        );
-    } else {
-        let logical_tilded = replace_home_with_tilde(&logical, &home).unwrap_or(logical);
-        let (previous_components, final_component) = path_split_last(&logical_tilded);
-        let physical_tilded = replace_home_with_tilde(&physical, &home).unwrap_or(physical);
-        write_bytes!(
-            writer,
-            shell.fg_normal(),
-            previous_components.unwrap_or_default(),
-            shell.fg_bold(),
-            final_component,
-            shell.reset(),
-            shell.fg_dim(),
-            b"(",
-            physical_tilded.as_os_str().as_bytes(),
-            b")"
-        );
+    match current_logical_directory() {
+        Some(logical) if logical != physical => {
+            let logical_tilded = replace_home_with_tilde(&logical, &home).unwrap_or(logical);
+            let (previous_components, final_component) = path_split_last(&logical_tilded);
+            let physical_tilded = replace_home_with_tilde(&physical, &home).unwrap_or(physical);
+            write_bytes!(
+                writer,
+                shell.fg_normal(),
+                previous_components.unwrap_or_default(),
+                shell.fg_bold(),
+                final_component,
+                shell.reset(),
+                shell.fg_dim(),
+                b"(",
+                physical_tilded.as_os_str().as_bytes(),
+                b")"
+            );
+        }
+        None | Some(_) => {
+            let stripped = relative_to
+                .and_then(|relative_to| physical.strip_prefix(relative_to).ok())
+                .unwrap_or(&physical);
+            let tilded = replace_home_with_tilde(stripped, &home);
+            let (previous_components, final_component) = match &tilded {
+                Some(tilded) => path_split_last(tilded),
+                None => path_split_last(stripped),
+            };
+            write_bytes!(
+                writer,
+                shell.fg_normal(),
+                previous_components.unwrap_or_default(),
+                shell.fg_bold(),
+                final_component
+            );
+        }
     }
     write_bytes!(writer, shell.reset(), b" ");
 }
