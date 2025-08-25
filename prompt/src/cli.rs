@@ -11,7 +11,6 @@ struct ArgsBuilder {
     job_count: Option<usize>,
     last_status: Option<u8>,
     shell: Option<Shell>,
-    prompt_suffix: Option<OsString>,
 }
 impl ArgsBuilder {
     fn finish(self) -> Args {
@@ -20,14 +19,12 @@ impl ArgsBuilder {
             job_count,
             last_status,
             shell,
-            prompt_suffix,
         } = self;
         Args {
             section: section.unwrap_or_default(),
             job_count: job_count.unwrap_or_default(),
             last_status: last_status.unwrap_or_default(),
             shell: shell.unwrap_or_default(),
-            prompt_suffix: prompt_suffix.unwrap_or_else(|| OsString::from("$")),
         }
     }
 }
@@ -38,7 +35,6 @@ pub struct Args {
     job_count: usize,
     last_status: u8,
     shell: Shell,
-    prompt_suffix: OsString,
 }
 
 impl Args {
@@ -56,10 +52,6 @@ impl Args {
 
     pub fn shell(&self) -> Shell {
         self.shell
-    }
-
-    pub fn prompt_suffix(&self) -> &OsStr {
-        &self.prompt_suffix
     }
 }
 impl FromIterator<OsString> for Args {
@@ -89,8 +81,6 @@ impl FromIterator<OsString> for Args {
                 } else if key == "shell" {
                     let value = value.to_str().expect("UTF-8");
                     builder.shell = Some(value.parse().expect("Only bash and zsh are supported"));
-                } else if key == "prompt_character" {
-                    builder.prompt_suffix = Some(value.to_os_string());
                 }
                 builder
             })

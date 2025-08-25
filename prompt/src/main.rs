@@ -49,6 +49,5 @@ fn main() {
         args.shell(),
         args.job_count(),
         args.last_status(),
-        args.prompt_suffix(),
     );
 }
