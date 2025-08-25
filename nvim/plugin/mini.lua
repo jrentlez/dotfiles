@@ -20,6 +20,23 @@ vim.schedule(function()
 	-- {{{ mini.trailspace
 	require("mini.trailspace").setup()
 	vim.api.nvim_create_user_command("Trim", MiniTrailspace.trim, { desc = "Trim trailing whitespace" }) -- }}}
+	-- {{{ mini.bracketed
+	require("mini.bracketed").setup({
+		-- Disable every mapping except [x, ]x etc.
+		buffer = { suffix = "" },
+		comment = { suffix = "" },
+		diagnostic = { suffix = "" },
+		file = { suffix = "" },
+		indent = { suffix = "" },
+		jump = { suffix = "" },
+		location = { suffix = "" },
+		oldfile = { suffix = "" },
+		quickfix = { suffix = "" },
+		treesitter = { suffix = "" },
+		undo = { suffix = "" },
+		window = { suffix = "" },
+		yank = { suffix = "" },
+	}) -- }}}
 	-- {{{ mini.pick
 	local pick = require("mini.pick")
 	pick.setup({ source = { show = pick.default_show } })
