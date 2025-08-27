@@ -10,10 +10,11 @@ vim.schedule(function()
 	local function nmap(lhs, rhs, desc)
 		vim.keymap.set("n", lhs, rhs, { desc = desc })
 	end
-	-- {{{ mini.diff
-	require("mini.diff").setup() -- }}}
 	-- {{{ mini.git
 	require("mini.git").setup() -- }}}
+	-- {{{ mini.diff
+	require("mini.diff").setup()
+	nmap("zV", MiniDiff.toggle_overlay, "Toggle diff overlay in buffer") -- }}}
 	-- {{{ mini.bufremove
 	require("mini.bufremove").setup()
 	nmap("<leader>q", MiniBufremove.delete, "Delete buffer") -- }}}
