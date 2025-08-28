@@ -10,13 +10,10 @@ vim.api.nvim_create_autocmd("PackChanged", {
 	end,
 	desc = "Update treesitter parsers",
 }) -- }}}
-vim.pack.add(
-	{ {
-		src = "https://github.com/nvim-treesitter/nvim-treesitter.git",
-		version = "main",
-	} },
-	{ load = true }
-)
+vim.pack.add({ {
+	src = "https://github.com/nvim-treesitter/nvim-treesitter",
+	version = "main",
+} }, { load = true })
 
 -- {{{ Auto install missing parsers
 ---@param bufnr integer

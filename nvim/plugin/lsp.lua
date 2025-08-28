@@ -107,7 +107,7 @@ vim.lsp.config("*", {
 
 vim.schedule(function()
 	vim.pack.add({
-		"https://github.com/neovim/nvim-lspconfig.git",
+		"https://github.com/neovim/nvim-lspconfig",
 	})
 	vim.lsp.enable({
 		"basedpyright",

@@ -1,4 +1,4 @@
-vim.pack.add({ "https://github.com/echasnovski/mini.nvim" })
+vim.pack.add({ "https://github.com/nvim-mini/mini.nvim" })
 
 -- {{{ mini.files
 require("mini.files").setup({ content = { prefix = function() end } })
