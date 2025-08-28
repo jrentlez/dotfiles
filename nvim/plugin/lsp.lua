@@ -36,8 +36,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end -- }}}
 		-- {{{ Completion
 		if client:supports_method(methods.textDocument_completion, event.buf) then
-			vim.lsp.completion.enable(true, client.id, event.buf)
-			vim.bo[event.buf].complete = "o"
+			vim.lsp.completion.enable(true, client.id, event.buf, { autotrigger = true })
 		end -- }}}
 		-- {{{ Document highlight
 		if client:supports_method(methods.textDocument_documentHighlight, event.buf) then

@@ -2,7 +2,6 @@
 vim.g.mapleader = " "
 vim.g.clipboard = "osc52" -- }}}
 -- {{{ Options
-vim.o.autocomplete = true
 vim.o.breakindent = true
 vim.o.completeopt = "menuone,fuzzy,noinsert,popup"
 vim.o.cursorline = true
