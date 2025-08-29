@@ -18,9 +18,6 @@ vim.schedule(function()
 	-- {{{ mini.bufremove
 	require("mini.bufremove").setup()
 	nmap("<leader>q", MiniBufremove.delete, "Delete buffer") -- }}}
-	-- {{{ mini.trailspace
-	require("mini.trailspace").setup()
-	vim.api.nvim_create_user_command("Trim", MiniTrailspace.trim, { desc = "Trim trailing whitespace" }) -- }}}
 	-- {{{ mini.bracketed
 	require("mini.bracketed").setup({
 		-- Disable every mapping except [x, ]x etc.
