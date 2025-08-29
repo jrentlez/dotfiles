@@ -29,14 +29,15 @@ fn current_logical_directory() -> Option<PathBuf> {
             "PWD does not contain '.' components"
         );
     }
-    let wd_ino = wd.metadata().expect("PWD is accessible").st_ino();
-    let dot_ino = metadata(".").expect("'.' is accessible").st_ino();
-    assert_eq!(wd_ino, dot_ino, "PWD is the same INODE as '.'");
+    if let Ok(wd) = wd.metadata() {
+        let dot = metadata(".").expect("wd is accessible so '.' must also be accessible");
+        assert_eq!(wd.st_ino(), dot.st_ino(), "PWD is the same INODE as '.'");
+    }
     Some(wd)
 }
 
-fn current_physical_directory() -> PathBuf {
-    current_dir().expect("Can get current directory")
+fn current_physical_directory() -> Option<PathBuf> {
+    current_dir().ok()
 }
 
 #[inline]
@@ -74,8 +75,15 @@ fn replace_home_with_tilde(path: &Path, home: &Path) -> Option<PathBuf> {
 fn write_current_dir(writer: &mut impl Write, shell: Shell, relative_to: Option<&Path>) {
     let home = PathBuf::from(var_os("HOME").expect("$HOME is set"));
     let physical = current_physical_directory();
-    match current_logical_directory() {
-        Some(logical) if logical != physical => {
+    match (physical, current_logical_directory()) {
+        (None, None) => {
+            write_bytes!(
+                writer,
+                shell.red(),
+                b"Could not determine current directory!"
+            );
+        }
+        (Some(physical), Some(logical)) if logical != physical => {
             let logical_tilded = replace_home_with_tilde(&logical, &home).unwrap_or(logical);
             let (previous_components, final_component) = path_split_last(&logical_tilded);
             let physical_tilded = replace_home_with_tilde(&physical, &home).unwrap_or(physical);
@@ -92,7 +100,25 @@ fn write_current_dir(writer: &mut impl Write, shell: Shell, relative_to: Option<
                 b")"
             );
         }
-        None | Some(_) => {
+        (None, Some(logical)) => {
+            let stripped = relative_to
+                .and_then(|relative_to| logical.strip_prefix(relative_to).ok())
+                .unwrap_or(&logical);
+            let tilded = replace_home_with_tilde(stripped, &home);
+            let (previous_components, final_component) = match &tilded {
+                Some(tilded) => path_split_last(tilded),
+                None => path_split_last(stripped),
+            };
+            write_bytes!(
+                writer,
+                shell.fg_normal(),
+                shell.red(),
+                previous_components.unwrap_or_default(),
+                shell.red_bold(),
+                final_component
+            );
+        }
+        (Some(physical), None | Some(_)) => {
             let stripped = relative_to
                 .and_then(|relative_to| physical.strip_prefix(relative_to).ok())
                 .unwrap_or(&physical);
@@ -114,7 +140,10 @@ fn write_current_dir(writer: &mut impl Write, shell: Shell, relative_to: Option<
 }
 
 pub fn directory(writer: &mut impl Write, shell: Shell) -> Option<Repository> {
-    let cwd = current_physical_directory();
+    let cwd = current_dir()
+        .ok()
+        .or_else(current_logical_directory)
+        .unwrap_or_else(|| PathBuf::from("NON_EXISTENT"));
 
     match Repository::discover(&cwd) {
         Ok(repo) => {
