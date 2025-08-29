@@ -38,19 +38,13 @@ vim.schedule(function()
 	-- {{{ mini.pick
 	local pick = require("mini.pick")
 	pick.setup({ source = { show = pick.default_show } })
-	require("mini.extra").setup()
 	vim.ui.select = MiniPick.ui_select
-
-	local builtin = MiniPick.builtin
-	local extra = MiniExtra.pickers
-	nmap("<leader>/", function()
-		return extra.buf_lines({ scope = "current" }, {})
-	end, "Search buffer (fuzzy)")
-	nmap("<leader><leader>", builtin.buffers, "Search open buffers")
-	nmap("<leader>s.", builtin.resume, "Resume previous picker")
-	nmap("<leader>s/", extra.buf_lines, "Search open buffers (fuzzy)")
-	nmap("<leader>sf", builtin.files, "Search files")
-	nmap("<leader>sg", builtin.grep_live, "Search by grep")
-	nmap("<leader>sh", builtin.help, "Search help")
-	nmap("<leader>sr", extra.oldfiles, "Search recent files") -- }}}
+	nmap("<leader><leader>", MiniPick.builtin.buffers, "Search open buffers")
+	nmap("<leader>s.", MiniPick.builtin.resume, "Resume previous picker")
+	nmap("<leader>sf", MiniPick.builtin.files, "Search files")
+	nmap("<leader>sg", MiniPick.builtin.grep_live, "Search by grep")
+	nmap("<leader>sh", MiniPick.builtin.help, "Search help")
+	nmap("<leader>sr", function()
+		pick.start({ souce = { items = vim.v.oldfiles, name = "v:oldfiles" } })
+	end, "Search oldfiles") -- }}}
 end)
