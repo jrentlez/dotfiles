@@ -1,10 +1,9 @@
 -- {{{ function `toggle_terminal`, helpers and state
 -- {{{ state
 
----@type integer | nil
-local buffer = nil
----@type integer | nil
-local window = nil -- }}}
+local buffer = nil ---@type integer | nil
+local window = nil ---@type integer | nil
+local enter_terminal_mode = true ---@type boolean -- }}}
 -- {{{ helpers
 
 local function ensure_valid_buffer()
@@ -17,6 +16,7 @@ local function ensure_valid_buffer()
 		group = vim.api.nvim_create_augroup("autoclose-toggleterm", { clear = true }),
 		buffer = buffer,
 		callback = function(args)
+			enter_terminal_mode = true
 			if window and vim.api.nvim_win_is_valid(window) then
 				vim.api.nvim_win_close(window, false)
 				window = nil
@@ -37,12 +37,15 @@ local function enter_terminal()
 	if vim.bo[buffer].buftype ~= "terminal" then
 		vim.fn.jobstart("zsh", { term = true })
 	end
-	vim.cmd.startinsert()
+	if enter_terminal_mode then
+		vim.cmd.startinsert()
+	end
 end -- }}}
 
 local function toggle_terminal()
 	if window and vim.api.nvim_win_is_valid(window) then
 		assert(buffer and vim.api.nvim_buf_is_valid(buffer))
+		enter_terminal_mode = vim.fn.mode():sub(1, 1) == "t"
 		vim.api.nvim_win_hide(window)
 	else
 		ensure_valid_buffer()
