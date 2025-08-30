@@ -31,7 +31,7 @@ local function show_buffer()
 end
 local function enter_terminal()
 	if vim.bo[buffer].buftype ~= "terminal" then
-		vim.fn.jobstart("zsh", { term = true })
+		vim.fn.jobstart(vim.env.NVIM_SHELL or vim.env.SHELL, { term = true })
 	end
 	if enter_terminal_mode then
 		vim.cmd.startinsert()
