@@ -79,9 +79,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
 				group = lsp_augroup,
 				callback = function(args)
 					local formatlsp = vim.b[args.buf].formatlsp or vim.g.formatlsp
-					if formatlsp ~= "" then
-						vim.lsp.buf.format({ bufnr = args.buf, name = formatlsp })
+					if formatlsp == false then
+						return
+					elseif formatlsp == true then
+						formatlsp = nil
 					end
+					vim.lsp.buf.format({ bufnr = args.buf, name = formatlsp })
 				end,
 			}) -- }}}
 	end,

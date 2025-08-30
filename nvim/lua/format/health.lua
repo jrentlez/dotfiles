@@ -45,21 +45,27 @@ local function check_formatlsp_valid(bufnr)
 		formatlsp = vim.g.formatlsp
 	end
 	local scope = bufnr and "b" or "g"
+
 	if formatlsp == nil then
 		if scope == "b" then
-			vim.health.info("`vim.b.formatlsp = nil`: Using global fallback")
+			vim.health.info("`b:formatlsp = nil`: Using global fallback")
 		else
-			vim.health.info("`vim.g.formatlsp = nil`: Formatting with any attached language server(s)")
+			vim.health.info("`g:formatlsp = nil`: Format with any attached language server(s)")
 		end
 		return true
-	elseif formatlsp == "" then
-		vim.health.info("`vim." .. scope .. '.formatlsp = ""`: Formatting on save disabled')
+	elseif formatlsp == true then
+		vim.health.info("`" .. scope .. ":formatlsp = v:true`: Format with any attached language server(s)")
+		return true
+	elseif formatlsp == false then
+		vim.health.info("`" .. scope .. ":formatlsp = v:false`: Format on save disabled")
 		return false
 	elseif type(formatlsp) == "string" then
-		vim.health.info("`vim." .. scope .. '.formatlsp = "' .. formatlsp .. '"`')
+		vim.health.info("`" .. scope .. ':formatlsp = "' .. formatlsp .. '"`')
 		return true
 	else
-		vim.health.error("`vim." .. scope .. ".formatlsp` is expected to be either a string or nil")
+		local ok, err = pcall(vim.validate, scope .. ":formatlsp", formatlsp, { "boolean", "string" }, true)
+		assert(ok == false)
+		vim.health.error(assert(err))
 		return false
 	end
 end
@@ -67,8 +73,10 @@ end
 ---@param bufnr integer
 local function check_formatting_clients_attached(bufnr)
 	local formatlsp = vim.b[bufnr].formatlsp or vim.g.formatlsp --[[@as string?]]
-	if formatlsp == "" then
+	if formatlsp == false then
 		return
+	elseif formatlsp == true then
+		formatlsp = nil
 	end
 	local clients = vim.lsp.get_clients({
 		name = formatlsp,
