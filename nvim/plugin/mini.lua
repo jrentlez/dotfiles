@@ -3,7 +3,11 @@ vim.pack.add({ "https://github.com/nvim-mini/mini.nvim" })
 -- {{{ mini.files
 require("mini.files").setup({ content = { prefix = function() end } })
 vim.keymap.set("n", "<leader>f", function()
-	MiniFiles.open(vim.api.nvim_buf_get_name(0))
+	local ok, err = pcall(MiniFiles.open, vim.api.nvim_buf_get_name(0))
+	if not ok then
+		vim.notify(assert(err), vim.log.levels.WARN)
+		MiniFiles.open()
+	end
 end, { desc = "Open file explorer" }) -- }}}
 
 vim.schedule(function()
