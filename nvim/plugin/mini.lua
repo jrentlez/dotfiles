@@ -1,6 +1,5 @@
 vim.pack.add({ "https://github.com/nvim-mini/mini.nvim" })
 
--- {{{ mini.files
 require("mini.files").setup({ content = { prefix = function() end } })
 vim.keymap.set("n", "<leader>f", function()
 	local ok, err = pcall(MiniFiles.open, vim.api.nvim_buf_get_name(0))
@@ -8,21 +7,17 @@ vim.keymap.set("n", "<leader>f", function()
 		vim.notify(assert(err), vim.log.levels.WARN)
 		MiniFiles.open()
 	end
-end, { desc = "Open file explorer" }) -- }}}
+end)
 
 vim.schedule(function()
-	local function nmap(lhs, rhs, desc)
-		vim.keymap.set("n", lhs, rhs, { desc = desc })
-	end
-	-- {{{ mini.git
-	require("mini.git").setup() -- }}}
-	-- {{{ mini.diff
+	require("mini.git").setup()
+
 	require("mini.diff").setup()
-	nmap("zV", MiniDiff.toggle_overlay, "Toggle diff overlay in buffer") -- }}}
-	-- {{{ mini.bufremove
+	vim.keymap.set("n", "zV", MiniDiff.toggle_overlay)
+
 	require("mini.bufremove").setup()
-	nmap("<leader>q", MiniBufremove.delete, "Delete buffer") -- }}}
-	-- {{{ mini.bracketed
+	vim.keymap.set("n", "<leader>q", MiniBufremove.delete)
+
 	require("mini.bracketed").setup({
 		-- Disable every mapping except [x, ]x etc.
 		buffer = { suffix = "" },
@@ -38,17 +33,17 @@ vim.schedule(function()
 		undo = { suffix = "" },
 		window = { suffix = "" },
 		yank = { suffix = "" },
-	}) -- }}}
-	-- {{{ mini.pick
+	})
+
 	local pick = require("mini.pick")
 	pick.setup({ source = { show = pick.default_show } })
 	vim.ui.select = MiniPick.ui_select
-	nmap("<leader><leader>", MiniPick.builtin.buffers, "Search open buffers")
-	nmap("<leader>s.", MiniPick.builtin.resume, "Resume previous picker")
-	nmap("<leader>sf", MiniPick.builtin.files, "Search files")
-	nmap("<leader>sg", MiniPick.builtin.grep_live, "Search by grep")
-	nmap("<leader>sh", MiniPick.builtin.help, "Search help")
-	nmap("<leader>sr", function()
-		pick.start({ souce = { items = vim.v.oldfiles, name = "v:oldfiles" } })
-	end, "Search oldfiles") -- }}}
+	vim.keymap.set("n", "<leader><leader>", MiniPick.builtin.buffers)
+	vim.keymap.set("n", "<leader>s.", MiniPick.builtin.resume)
+	vim.keymap.set("n", "<leader>sf", MiniPick.builtin.files)
+	vim.keymap.set("n", "<leader>sg", MiniPick.builtin.grep_live)
+	vim.keymap.set("n", "<leader>sh", MiniPick.builtin.help)
+	vim.keymap.set("n", "<leader>sr", function()
+		pick.start({ source = { items = vim.v.oldfiles, name = "v:oldfiles" } })
+	end)
 end)

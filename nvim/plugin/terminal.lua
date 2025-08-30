@@ -1,10 +1,6 @@
--- {{{ function `toggle_terminal`, helpers and state
--- {{{ state
-
-local buffer = nil ---@type integer | nil
-local window = nil ---@type integer | nil
-local enter_terminal_mode = true ---@type boolean -- }}}
--- {{{ helpers
+local buffer ---@type integer?
+local window ---@type integer?
+local enter_terminal_mode = true ---@type boolean
 
 local function ensure_valid_buffer()
 	if buffer and vim.api.nvim_buf_is_valid(buffer) then
@@ -12,17 +8,17 @@ local function ensure_valid_buffer()
 	end
 	buffer = vim.api.nvim_create_buf(false, false)
 	vim.api.nvim_create_autocmd("TermClose", {
-		desc = "Autoclose buffer on exit",
 		group = vim.api.nvim_create_augroup("autoclose-toggleterm", { clear = true }),
 		buffer = buffer,
 		callback = function(args)
+			assert(buffer == args.buf)
 			enter_terminal_mode = true
 			if window and vim.api.nvim_win_is_valid(window) then
 				vim.api.nvim_win_close(window, false)
 				window = nil
 			end
-			if vim.api.nvim_buf_is_valid(args.buf) then
-				vim.api.nvim_buf_delete(args.buf, {})
+			if vim.api.nvim_buf_is_valid(buffer) then
+				vim.api.nvim_buf_delete(buffer, {})
 				buffer = nil
 			end
 		end,
@@ -40,7 +36,7 @@ local function enter_terminal()
 	if enter_terminal_mode then
 		vim.cmd.startinsert()
 	end
-end -- }}}
+end
 
 local function toggle_terminal()
 	if window and vim.api.nvim_win_is_valid(window) then
@@ -52,6 +48,6 @@ local function toggle_terminal()
 		show_buffer()
 		enter_terminal()
 	end
-end -- }}}
+end
 
-vim.keymap.set({ "n", "t" }, "<C-Space>", toggle_terminal, { desc = "Toggle terminal" })
+vim.keymap.set({ "n", "t" }, "<C-Space>", toggle_terminal)

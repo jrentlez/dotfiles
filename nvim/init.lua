@@ -1,7 +1,6 @@
--- {{{ Global Variables
 vim.g.mapleader = " "
-vim.g.clipboard = "osc52" -- }}}
--- {{{ Options
+vim.g.clipboard = "osc52"
+
 vim.o.breakindent = true
 vim.o.completeopt = "menuone,fuzzy,noinsert,popup"
 vim.o.cursorline = true
@@ -23,40 +22,32 @@ vim.o.smartindent = true
 vim.o.splitright = true
 vim.o.undofile = true
 vim.o.virtualedit = "block"
-vim.o.wrap = true -- }}}
--- {{{ Colorscheme
-vim.cmd.colorscheme("terminal") -- }}}
--- {{{ Keymaps
+vim.o.wrap = true
+
+vim.cmd.colorscheme("terminal")
+
+vim.keymap.set("n", "<leader>q", "<cmd>bdelete<cr>")
+
+vim.keymap.set("n", "gqc", "<cmd>cclose<cr>")
+vim.keymap.set("n", "gqd", vim.diagnostic.setqflist)
+vim.keymap.set("n", "glc", "<cmd>lclose<cr>")
+vim.keymap.set("n", "gld", vim.diagnostic.setloclist)
+
 vim.keymap.set({ "n", "x" }, "j", [[v:count == 0 ? 'gj' : 'j']], { expr = true })
 vim.keymap.set({ "n", "x" }, "k", [[v:count == 0 ? 'gk' : 'k']], { expr = true })
-
----@param lhs string
----@param rhs string | function
----@param desc string
-local function nmap(lhs, rhs, desc)
-	vim.keymap.set("n", lhs, rhs, { desc = desc })
-end
-
-nmap("<leader>q", "<cmd>bdelete<cr>", "Delete buffer")
-
-nmap("gqc", "<cmd>cclose<cr>", ":cclose")
-nmap("gqd", vim.diagnostic.setqflist, "vim.diagnostic.setqflist()")
-nmap("glc", "<cmd>lclose<cr>", ":lclose")
-nmap("gld", vim.diagnostic.setloclist, "vim.diagnostic.setloclist()")
 
 vim.keymap.del({ "i", "s" }, "<S-Tab>")
 vim.keymap.del({ "i", "s" }, "<Tab>")
 vim.keymap.set({ "i", "s" }, "<C-h>", function()
 	vim.snippet.jump(-1)
-end, { desc = "Jump to previous snippet insertion" })
+end)
 vim.keymap.set({ "i", "s" }, "<C-l>", function()
 	vim.snippet.jump(1)
-end, { desc = "Jump to next snippet insertion" }) -- }}}
--- {{{ Autocommands
+end)
+
 vim.api.nvim_create_autocmd("TextYankPost", {
 	group = vim.api.nvim_create_augroup("hl_on_yank", { clear = true }),
 	callback = function()
 		vim.hl.on_yank()
 	end,
-	desc = "Highlight yanked text",
-}) -- }}}
+})

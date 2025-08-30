@@ -1,4 +1,3 @@
--- {{{ check_buffer and helpers
 -- {{{ Helpers
 
 ---@param bufnr integer
@@ -125,7 +124,7 @@ local function check_buffer(bufnr)
 		check_formatting_clients_attached(bufnr)
 	end
 	return false
-end -- }}}
+end
 
 local M = {}
 function M.check()
@@ -140,3 +139,5 @@ function M.check()
 	end
 end
 return M
+
+-- vim: foldmethod=marker
