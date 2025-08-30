@@ -39,12 +39,9 @@ end
 
 nmap("<leader>q", "<cmd>bdelete<cr>", "Delete buffer")
 
-nmap("gqo", "<cmd>copen<cr>", ":copen")
 nmap("gqc", "<cmd>cclose<cr>", ":cclose")
 nmap("gqd", vim.diagnostic.setqflist, "vim.diagnostic.setqflist()")
-
-nmap("glo", "<cmd>lopen<cr>", ":lopen")
-nmap("glp", "<cmd>lprevious<cr>", ":lprevious")
+nmap("glc", "<cmd>lclose<cr>", ":lclose")
 nmap("gld", vim.diagnostic.setloclist, "vim.diagnostic.setloclist()")
 
 vim.keymap.del({ "i", "s" }, "<S-Tab>")
