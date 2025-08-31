@@ -1,0 +1,114 @@
+*configuration.txt*                 Config with as many defaults as convenient
+
+Authors:
+  Jonas Zeltner <jonas.zeltner@posteo.de>
+
+                                       Type |gO| to see the table of contents.
+
+==============================================================================
+PLUGINS                                                *configuration-plugins*
+
+This configuration uses the following plugins:
+- nvim-lspconfig		|lspconfig.txt|
+- nvim-treesitter		|nvim-treesitter-intro|
+- split-term.nvim		|split-term.txt|
+- formatlsp.nvim		|formatlsp-intro|
+
+- Modules from |mini.nvim|:
+	- |mini.files|
+	- |mini.git|
+	- |mini.diff|
+	- |mini.bufremove|
+	- |mini.bracketed|
+	- |mini.pick|
+
+==============================================================================
+ADDITIONAL KEYMAPS                           *configuation-additional-keymaps*
+
+                                                             *gqc*
+gqc			Close the quickfix window. See |:cclose|.
+
+                                                             *gqd*
+gqd			Add all diagnostics to the quickfix list. See
+			|vim.diagnostic.setqflist()|.
+
+                                                             *glc*
+glc			Close the location list. See |:lclose|.
+
+                                                             *gld*
+gld			Add buffer diagnostics to the location list. See
+			|vim.diagnostic.setloclist()|.
+
+                                                             *i_CTRL-H*
+i_CTRL-H		In insert mode, jump to the previous placeholder. See
+			|vim.snipped.jump()|.
+
+                                                             *i_CTRL-L*
+i_CTRL-L		In insert mode, jump to the next placeholder. See
+			|vim.snipped.jump()|.
+
+                                                             *gd*
+gd			Go to definition using LSP. See
+			|vim.lsp.buf.definition()|.
+
+                                                             *gD*
+gD			Go to declaration using LSP. See
+			|vim.lsp.buf.declaration()|.
+
+                                                             *grl*
+grl			Run the code lens available on the current line. See
+			|lsp-codelens|.
+
+                                                             *zI*
+zI			Toggles inlay hints. See |lsp-inlay-hint|.
+
+                                                             *<leader>f*
+leader-f		Open the file explorer at the current file. See
+			|MiniFiles.open()|
+
+                                                             *zV*
+zV			Toggles the diff overlay. See
+			|MiniDiff.toggle_overlay().|
+
+                                                             *leader-q*
+leader-q		Delete the current buffer while preserving window
+			layout. See |MiniBufremove.delete()|.
+
+                                                             *leader-leader*
+leader-leader		Pick from open buffers. See
+			|MiniPick.builtin.buffers()|.
+
+                                                             *leader-s.*
+leader-s.		Resume previous picker. See
+			|MiniPick.builtin.resume()|.
+
+                                                             *leader-sf*
+leader-sf		Pick between from files in the current directory. See
+			|MiniPick.builtin.files()|.
+
+                                                             *leader-sg*
+leader-sg		Live grep in the current directory. See
+			|MiniPick.builtin.grep_live()|.
+
+                                                             *leader-sh*
+leader-sh		Pick from help tags. See
+			|MiniPick.builtin.help()|.
+
+                                                             *leader-sr*
+leader-sr		Pick from recent files. Uses |v:oldfiles|.
+
+                                                             *CTRL-Space*
+CTRL-Space		Toggle the split terminal. See
+			|<Plug>SplitTerminalToggle|.
+
+==============================================================================
+TREESITTER AUTOINSTALL                 *configuration-tree-sitter-autoinstall*
+
+This configuration will attempt to install a tree sitter parser for any file
+you open (plugin/treesitter.lua:19).
+
+To see installed parers run `:checkhealth nvim-treesitter`.
+
+Some parsers will always be installed (plugin/treesitter.lua:19).
+
+vim:tw=78:ts=8:noet:ft=help:norl:
