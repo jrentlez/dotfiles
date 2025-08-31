@@ -58,22 +58,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 				callback = vim.lsp.codelens.refresh,
 			})
 			vim.keymap.set("n", "grl", vim.lsp.codelens.run, { buffer = event.buf })
-		end
-
-		vim.b[event.buf].format_on_save_autocmd_id = vim.b[event.buf].format_on_save_autocmd_id
-			or vim.api.nvim_create_autocmd("BufWritePre", {
-				buffer = event.buf,
-				group = lsp_augroup,
-				callback = function(args)
-					local formatlsp = vim.b[args.buf].formatlsp or vim.g.formatlsp
-					if formatlsp == false then
-						return
-					elseif formatlsp == true then
-						formatlsp = nil
-					end
-					vim.lsp.buf.format({ bufnr = args.buf, name = formatlsp })
-				end,
-			}) -- }}}
+		end -- }}}
 	end,
 })
 
@@ -95,6 +80,7 @@ vim.lsp.config("*", {
 vim.schedule(function()
 	vim.pack.add({
 		"https://github.com/neovim/nvim-lspconfig",
+		"https://github.com/TungstnBallon/formatlsp.nvim",
 	})
 	vim.lsp.enable({
 		"basedpyright",
