@@ -1,19 +1,6 @@
-use std::{env::var_os, io::Write, os::unix::ffi::OsStrExt};
+use std::{env::var_os, io::Write};
 
 use crate::{ansi::Shell, write_bytes};
-
-pub fn venv(writer: &mut impl Write, shell: Shell) {
-    let Some(venv_prompt) = var_os("VIRTUAL_ENV_PROMPT") else {
-        return;
-    };
-    write_bytes!(
-        writer,
-        shell.fg_italic(),
-        b"(",
-        venv_prompt.as_bytes(),
-        b")"
-    );
-}
 
 fn is_root() -> bool {
     unsafe { libc::geteuid() }.eq(&0)

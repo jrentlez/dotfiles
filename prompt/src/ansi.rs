@@ -44,4 +44,3 @@ ansi_sequence!(magenta, "\x1b[35m");
 ansi_sequence!(fg_normal, "\x1b[0;39m");
 ansi_sequence!(fg_bold, "\x1b[1;39m");
 ansi_sequence!(fg_dim, "\x1b[2;39m");
-ansi_sequence!(fg_italic, "\x1b[3;39m");

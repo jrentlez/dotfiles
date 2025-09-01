@@ -1,12 +1,6 @@
 use std::{ffi::OsStr, io::Write};
 
-use crate::{
-    ansi::Shell,
-    dir::directory,
-    git::git,
-    misc::{colored_prompt_character, venv},
-    write_bytes,
-};
+use crate::{ansi::Shell, dir::directory, git::git, misc::colored_prompt_character, write_bytes};
 
 #[derive(Default, Debug, Clone, Copy)]
 pub enum Section {
@@ -21,7 +15,6 @@ impl Section {
         if let Some(repo) = directory(writer, shell) {
             git(writer, &repo, shell);
         }
-        venv(writer, shell);
     }
 
     fn last_line(writer: &mut impl Write, job_count: usize, last_status: u8, shell: Shell) {
