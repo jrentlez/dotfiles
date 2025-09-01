@@ -29,6 +29,16 @@ This configuration uses the following plugins:
 	- |mini.pick|
 
 ==============================================================================
+COLORSCHEME                                         *configuation-colorscheme*
+
+The colorscheme is set at init.lua:24. The colorscheme file is
+colors/terminal.lua
+
+The colorscheme is neovim's default colorscheme (|news-0.10|), except,
+that the |hl-Normal| group is reset to use the terminal's foreground and
+background colors.
+
+==============================================================================
 ADDITIONAL KEYMAPS                           *configuation-additional-keymaps*
 
                                                              *gqc*
