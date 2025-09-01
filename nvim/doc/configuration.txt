@@ -39,6 +39,27 @@ that the |hl-Normal| group is reset to use the terminal's foreground and
 background colors.
 
 ==============================================================================
+REMAPPED KEYS                                     *configuation-remapped-keys*
+
+                                                             *j-remap*
+j			Remapped to go down one DISPLAY line.
+
+                                                             *k-remap*
+k			Remapped to go up one DISPLAY line.
+
+                                                             *gd-remap*
+gd			If a language server supports
+			`textDocument/definition`, gd is mapped to
+			|vim.lsp.buf.definition()|. Otherwise it's the same as
+			|gd|
+
+                                                             *gD-remap*
+gD			If a language server supports
+			`textDocument/declaration`, gD is mapped to
+			|vim.lsp.buf.declaration()|. Otherwise it's the same
+			as |gD|
+
+==============================================================================
 ADDITIONAL KEYMAPS                           *configuation-additional-keymaps*
 
                                                              *gqc*
@@ -62,14 +83,6 @@ i_CTRL-H		In insert mode, jump to the previous placeholder. See
                                                              *i_CTRL-L*
 i_CTRL-L		In insert mode, jump to the next placeholder. See
 			|vim.snipped.jump()|.
-
-                                                             *gd*
-gd			Go to definition using LSP. See
-			|vim.lsp.buf.definition()|.
-
-                                                             *gD*
-gD			Go to declaration using LSP. See
-			|vim.lsp.buf.declaration()|.
 
                                                              *grl*
 grl			Run the code lens available on the current line. See
