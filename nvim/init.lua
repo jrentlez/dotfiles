@@ -43,8 +43,21 @@ vim.keymap.set({ "i", "s" }, "<C-l>", function()
 end)
 
 vim.api.nvim_create_autocmd("TextYankPost", {
-	group = vim.api.nvim_create_augroup("hl_on_yank", { clear = true }),
+	group = vim.api.nvim_create_augroup("hl-on-yank", { clear = true }),
 	callback = function()
 		vim.hl.on_yank()
+	end,
+})
+
+vim.api.nvim_create_autocmd("OptionSet", {
+	pattern = { "textwidth" },
+	group = vim.api.nvim_create_augroup("colorcolumn-on-textwidth", { clear = true }),
+	callback = function()
+		if vim.bo.buftype ~= "" then
+			return
+		end
+		local value = vim.v.option_new ---@type integer
+		vim.validate("v:option_new", value, "number")
+		vim.wo.colorcolumn = tostring(value)
 	end,
 })
