@@ -41,16 +41,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			})
 		end
 
-		if client:supports_method(methods.textDocument_inlayHint, event.buf) then
-			vim.keymap.set("n", "zI", function()
-				vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-			end, { buffer = event.buf })
-		end
-
-		if client:supports_method(methods.textDocument_linkedEditingRange, event.buf) then
-			vim.lsp.linked_editing_range.enable(true, { client_id = client.id })
-		end
-
 		if client:supports_method(methods.textDocument_codeLens, event.buf) then
 			vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave", "BufWritePost" }, {
 				group = lsp_augroup,
@@ -82,6 +72,11 @@ vim.schedule(function()
 		"https://github.com/neovim/nvim-lspconfig",
 		"https://github.com/TungstnBallon/formatlsp.nvim",
 	})
+	vim.lsp.on_type_formatting.enable()
+	vim.lsp.linked_editing_range.enable()
+	vim.keymap.set("n", "zI", function()
+		vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+	end)
 	vim.lsp.enable({
 		"basedpyright",
 		"bashls",
