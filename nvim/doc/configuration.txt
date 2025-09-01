@@ -6,6 +6,12 @@ Authors:
                                        Type |gO| to see the table of contents.
 
 ==============================================================================
+READ THE SOURCE                                    *configuration-read-source*
+
+This help file is best effort, but not comprehensive and could countain
+outdated information. If you need to know something for sure, read the source.
+
+==============================================================================
 PLUGINS                                                *configuration-plugins*
 
 This configuration uses the following plugins:
