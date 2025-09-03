@@ -87,7 +87,7 @@ vim.schedule(function()
 		"emmylua_ls",
 		"ruff",
 		"rust_analyzer",
-		"stylua3p_ls",
+		"stylua",
 		"tinymist",
 		"vtsls",
 		"yamlls",

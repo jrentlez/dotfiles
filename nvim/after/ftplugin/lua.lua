@@ -1,1 +1,1 @@
-vim.b.formatlsp = "stylua3p_ls"
+vim.b.formatlsp = "stylua"
