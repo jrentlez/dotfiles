@@ -59,7 +59,10 @@ vim.lsp.config("*", {
 			-- {{{ Notify when a language server registers a capability
 			local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
 			for _, registration in ipairs(params.registrations) do
-				vim.notify("[" .. client.name .. "] Register capability: " .. registration.method, vim.log.levels.INFO)
+				vim.notify(
+					"[" .. client.name .. "] Register capability: " .. registration.method,
+					vim.log.levels.INFO
+				)
 			end
 			return vim.lsp.handlers[vim.lsp.protocol.Methods.client_registerCapability](err, params, ctx) -- }}}
 		end,

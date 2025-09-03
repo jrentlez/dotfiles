@@ -20,7 +20,9 @@ function M.check()
 		local config = v.resolved_config
 		if config and type(config.cmd) == "function" then
 			vim.health.warn(
-				"`:checkhealth vim.lsp` cannot tell whether " .. (config.name or name) .. " is executable or not",
+				"`:checkhealth vim.lsp` cannot tell whether "
+					.. (config.name or name)
+					.. " is executable or not",
 				{
 					"The configuration's `cmd` field is a function",
 					"see `:help lspconfig-all`",
