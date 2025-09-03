@@ -13,6 +13,7 @@ glc	configuration.txt	/*glc*
 gld	configuration.txt	/*gld*
 gqc	configuration.txt	/*gqc*
 gqd	configuration.txt	/*gqd*
+grh	configuration.txt	/*grh*
 grl	configuration.txt	/*grl*
 i_CTRL-H	configuration.txt	/*i_CTRL-H*
 i_CTRL-L	configuration.txt	/*i_CTRL-L*
@@ -25,5 +26,4 @@ leader-sf	configuration.txt	/*leader-sf*
 leader-sg	configuration.txt	/*leader-sg*
 leader-sh	configuration.txt	/*leader-sh*
 leader-sr	configuration.txt	/*leader-sr*
-zI	configuration.txt	/*zI*
 zV	configuration.txt	/*zV*

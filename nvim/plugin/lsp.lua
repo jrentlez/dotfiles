@@ -47,7 +47,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 				buffer = event.buf,
 				callback = vim.lsp.codelens.refresh,
 			})
-			vim.keymap.set("n", "grl", vim.lsp.codelens.run, { buffer = event.buf })
 		end -- }}}
 	end,
 })
@@ -74,9 +73,10 @@ vim.schedule(function()
 	})
 	vim.lsp.on_type_formatting.enable()
 	vim.lsp.linked_editing_range.enable()
-	vim.keymap.set("n", "zI", function()
+	vim.keymap.set("n", "grh", function()
 		vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
 	end)
+	vim.keymap.set("n", "grl", vim.lsp.codelens.run)
 	vim.lsp.enable({
 		"basedpyright",
 		"bashls",

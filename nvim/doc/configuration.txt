@@ -88,8 +88,8 @@ i_CTRL-L		In insert mode, jump to the next placeholder. See
 grl			Run the code lens available on the current line. See
 			|lsp-codelens|.
 
-                                                             *zI*
-zI			Toggles inlay hints. See |lsp-inlay-hint|.
+                                                             *grh*
+grh			Toggles inlay hints. See |lsp-inlay-hint|.
 
                                                              *<leader>f*
 leader-f		Open the file explorer at the current file. See
