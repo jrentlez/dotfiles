@@ -15,9 +15,6 @@ vim.schedule(function()
 	require("mini.diff").setup()
 	vim.keymap.set("n", "zV", MiniDiff.toggle_overlay)
 
-	require("mini.bufremove").setup()
-	vim.keymap.set("n", "<leader>q", MiniBufremove.delete)
-
 	require("mini.bracketed").setup({
 		-- Disable every mapping except [x, ]x etc.
 		buffer = { suffix = "" },
