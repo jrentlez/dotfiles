@@ -15,21 +15,20 @@ outdated information. If you need to know something for sure, read the source.
 PLUGINS                                                *configuration-plugins*
 
 This configuration uses the following plugins:
-- nvim-lspconfig		|lspconfig.txt|
-- nvim-treesitter		|nvim-treesitter-intro|
-- split-term.nvim		|split-term.txt|
-- formatlsp.nvim		|formatlsp-intro|
+- nvim-lspconfig                |lspconfig|
+- nvim-treesitter               |nvim-treesitter-intro|
+- split-term.nvim               |split-term-intro|
+- formatlsp.nvim                |formatlsp-intro|
 
 - Modules from |mini.nvim|:
 	- |mini.files|
 	- |mini.git|
 	- |mini.diff|
-	- |mini.bufremove|
 	- |mini.bracketed|
 	- |mini.pick|
 
 ==============================================================================
-COLORSCHEME                                         *configuation-colorscheme*
+COLORSCHEME                                        *configuration-colorscheme*
 
 The colorscheme is set at init.lua:24. The colorscheme file is
 colors/terminal.lua
@@ -39,7 +38,7 @@ that the |hl-Normal| group is reset to use the terminal's foreground and
 background colors.
 
 ==============================================================================
-REMAPPED KEYS                                     *configuation-remapped-keys*
+REMAPPED KEYS                                    *configuration-remapped-keys*
 
                                                              *j-remap*
 j			Remapped to go down one DISPLAY line.
@@ -60,7 +59,11 @@ gD			If a language server supports
 			as |gD|
 
 ==============================================================================
-ADDITIONAL KEYMAPS                           *configuation-additional-keymaps*
+ADDITIONAL KEYMAPS                          *configuration-additional-keymaps*
+
+                                                             *leader-q*
+leader-q		Delete the current buffer and close windows showing
+			it. See |:bdelete|.
 
                                                              *gqc*
 gqc			Close the quickfix window. See |:cclose|.
@@ -98,10 +101,6 @@ leader-f		Open the file explorer at the current file. See
                                                              *zV*
 zV			Toggles the diff overlay. See
 			|MiniDiff.toggle_overlay().|
-
-                                                             *leader-q*
-leader-q		Delete the current buffer while preserving window
-			layout. See |MiniBufremove.delete()|.
 
                                                              *leader-leader*
 leader-leader		Pick from open buffers. See

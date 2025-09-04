@@ -1,10 +1,10 @@
 <leader>f	configuration.txt	/*<leader>f*
 CTRL-Space	configuration.txt	/*CTRL-Space*
-configuation-additional-keymaps	configuration.txt	/*configuation-additional-keymaps*
-configuation-colorscheme	configuration.txt	/*configuation-colorscheme*
-configuation-remapped-keys	configuration.txt	/*configuation-remapped-keys*
+configuration-additional-keymaps	configuration.txt	/*configuration-additional-keymaps*
+configuration-colorscheme	configuration.txt	/*configuration-colorscheme*
 configuration-plugins	configuration.txt	/*configuration-plugins*
 configuration-read-source	configuration.txt	/*configuration-read-source*
+configuration-remapped-keys	configuration.txt	/*configuration-remapped-keys*
 configuration-tree-sitter-autoinstall	configuration.txt	/*configuration-tree-sitter-autoinstall*
 configuration.txt	configuration.txt	/*configuration.txt*
 gD-remap	configuration.txt	/*gD-remap*
