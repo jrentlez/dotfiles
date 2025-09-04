@@ -19,9 +19,9 @@ setopt hist_ignore_dups
 setopt hist_find_no_dups
 
 # Prompt
-precmd() { precmd() { print "" } }  # Print blank line before each prompt but the first
+precmd() { precmd() { print "" } }                  # Print blank line before each prompt but the first
 alias clear="precmd() {precmd() {echo }} && clear"  # Prevent clear from inserting a prompt
-zmodload zsh/parameter  # Needed to access jobstates variable
+zmodload zsh/parameter                              # Needed to access jobstates variable
 setopt promptsubst
 PS1='$(prompt jobs="${#jobstates}" laststatus="$?" shell=zsh)'
 
@@ -54,10 +54,10 @@ function skim-homedir-widget() {
 	fd_excludes=("--exclude=.cache" "--exclude=.git" "--exclude=node_modules" "--exclude=target")
 	local dirs_
 	dirs_=("$HOME" "$HOME/.dotfiles" "$HOME/.local/share/nvim" "$HOME/.config")
-	local cmd
-	cmd="fd --type d --maxdepth 8 --follow ${fd_excludes[*]} . ${dirs_[*]}"
 	local dir
-	dir="$({eval "$cmd" && echo "${(j:\n:)dirs_}" } | sk --no-multi --tiebreak=length)"
+	dir="$(fd --type d --maxdepth 8 --follow ${fd_excludes[@]} . ${dirs_[@]} \
+		| { printf "${(j:\n:)dirs_}\n$(cat -)" } \
+		| sk --no-multi --tiebreak=length)"
 	if [[ -z "$dir" ]]; then
 		zle redisplay
 		return 0
