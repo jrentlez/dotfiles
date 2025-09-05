@@ -57,7 +57,7 @@ function skim-homedir-widget() {
 	local dir
 	dir="$(fd --type d --maxdepth 8 --follow ${fd_excludes[@]} . ${dirs_[@]} \
 		| { printf "${(j:\n:)dirs_}\n$(cat -)" } \
-		| sk --no-multi --tiebreak=length)"
+		| sk --no-multi)"
 	if [[ -z "$dir" ]]; then
 		zle redisplay
 		return 0
