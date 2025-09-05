@@ -53,7 +53,7 @@ function skim-homedir-widget() {
 	local fd_excludes
 	fd_excludes=("--exclude=.cache" "--exclude=.git" "--exclude=node_modules" "--exclude=target")
 	local dirs_
-	dirs_=("$HOME" "$HOME/.dotfiles" "$HOME/.local/share/nvim" "$HOME/.config")
+	dirs_=("$HOME" "$HOME/.dotfiles" "$HOME/.local/state/nvim" "$HOME/.local/share/nvim" "$HOME/.config")
 	local dir
 	dir="$(fd --type d --maxdepth 8 --follow ${fd_excludes[@]} . ${dirs_[@]} \
 		| { printf "${(j:\n:)dirs_}\n$(cat -)" } \
