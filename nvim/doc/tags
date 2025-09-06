@@ -17,8 +17,6 @@ grh	configuration.txt	/*grh*
 grl	configuration.txt	/*grl*
 i_CTRL-H	configuration.txt	/*i_CTRL-H*
 i_CTRL-L	configuration.txt	/*i_CTRL-L*
-j-remap	configuration.txt	/*j-remap*
-k-remap	configuration.txt	/*k-remap*
 leader-leader	configuration.txt	/*leader-leader*
 leader-q	configuration.txt	/*leader-q*
 leader-s.	configuration.txt	/*leader-s.*

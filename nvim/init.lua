@@ -30,9 +30,6 @@ vim.keymap.set("n", "gqd", vim.diagnostic.setqflist)
 vim.keymap.set("n", "glc", "<cmd>lclose<cr>")
 vim.keymap.set("n", "gld", vim.diagnostic.setloclist)
 
-vim.keymap.set({ "n", "x" }, "j", [[v:count == 0 ? 'gj' : 'j']], { expr = true })
-vim.keymap.set({ "n", "x" }, "k", [[v:count == 0 ? 'gk' : 'k']], { expr = true })
-
 vim.keymap.del({ "i", "s" }, "<S-Tab>")
 vim.keymap.del({ "i", "s" }, "<Tab>")
 vim.keymap.set({ "i", "s" }, "<C-h>", function()

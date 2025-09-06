@@ -40,12 +40,6 @@ background colors.
 ==============================================================================
 REMAPPED KEYS                                    *configuration-remapped-keys*
 
-                                                             *j-remap*
-j			Remapped to go down one DISPLAY line.
-
-                                                             *k-remap*
-k			Remapped to go up one DISPLAY line.
-
                                                              *gd-remap*
 gd			If a language server supports
 			`textDocument/definition`, gd is mapped to
