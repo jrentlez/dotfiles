@@ -28,6 +28,7 @@ dotfile_link	.bashrc 				bash/bashrc
 dotfile_link	.config/bat/config			batconfig
 dotfile_link	.config/ghostty/config 			ghosttyconfig
 dotfile_link	.config/nvim 				nvim
+dotfile_link	.config/ripgrep/ripgreprc 		ripgreprc
 dotfile_link	.config/xdg-terminals.list 		xdg-terminals.list
 dotfile_link	.gitconfig 				gitconfig
 dotfile_link	.local/bin/fullup 			bin/fullup
