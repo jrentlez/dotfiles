@@ -16,7 +16,11 @@ fi
 script_dir="$(dirname "$script_file")"
 arg="$1"
 dotfile_link() {
-	ln "$arg" -s -T "$(realpath "$script_dir/$2")" "$HOME/$1"
+	if [ "$arg" = "" ]; then
+		ln -s -T "$(realpath "$script_dir/$2")" "$HOME/$1"
+	else
+		ln "$arg" -s -T "$(realpath "$script_dir/$2")" "$HOME/$1"
+	fi
 }
 
 dotfile_link	.bash_profile 				bash/bash_profile
