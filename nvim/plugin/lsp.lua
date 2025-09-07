@@ -1,7 +1,6 @@
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("default-lsp-attach", { clear = true }),
 	callback = function(event)
-		-- {{{ Set up LSP features not enabled by default
 		local client = assert(vim.lsp.get_client_by_id(event.data.client_id))
 		local lsp_augroup = vim.api.nvim_create_augroup("custom-lsp-autocmds", { clear = false })
 		local methods = vim.lsp.protocol.Methods ---@type vim.lsp.protocol.Methods
@@ -47,7 +46,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 				buffer = event.buf,
 				callback = vim.lsp.codelens.refresh,
 			})
-		end -- }}}
+		end
 	end,
 })
 
@@ -56,7 +55,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 vim.lsp.config("*", {
 	handlers = {
 		[vim.lsp.protocol.Methods.client_registerCapability] = function(err, params, ctx)
-			-- {{{ Notify when a language server registers a capability
 			local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
 			for _, registration in ipairs(params.registrations) do
 				vim.notify(
@@ -64,7 +62,7 @@ vim.lsp.config("*", {
 					vim.log.levels.INFO
 				)
 			end
-			return vim.lsp.handlers[vim.lsp.protocol.Methods.client_registerCapability](err, params, ctx) -- }}}
+			return vim.lsp.handlers[vim.lsp.protocol.Methods.client_registerCapability](err, params, ctx)
 		end,
 	},
 })
@@ -97,5 +95,3 @@ vim.schedule(function()
 		"html",
 	})
 end)
-
--- vim: foldmethod=marker

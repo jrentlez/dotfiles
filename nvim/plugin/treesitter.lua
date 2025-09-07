@@ -16,7 +16,6 @@ vim.pack.add({ {
 vim.api.nvim_create_autocmd("FileType", {
 	group = vim.api.nvim_create_augroup("nvim-treesitter-buffer-setup", { clear = true }),
 	callback = function(args)
-		-- {{{ Ensure parser is installed and start it
 		local language = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
 		if vim.list_contains(require("nvim-treesitter").get_installed(), language) then
 			vim.treesitter.start(args.buf)
@@ -30,7 +29,7 @@ vim.api.nvim_create_autocmd("FileType", {
 					vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 				end
 			end)
-		end -- }}}
+		end
 	end,
 })
 
@@ -52,5 +51,3 @@ vim.schedule(function()
 		require("nvim-treesitter").install(required_parsers, { summary = true })
 	end
 end)
-
--- vim: foldmethod=marker
