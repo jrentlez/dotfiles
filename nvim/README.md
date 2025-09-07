@@ -1,6 +1,6 @@
 # Neovim configuration
 
-See `:help configuration.txt`
+See [`:help configuration.txt`](doc/configuration.txt)
 
 > [!Warning]
 > This configuration changes frequently, with breaking changes!
