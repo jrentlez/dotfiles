@@ -1,5 +1,9 @@
 <leader>f	configuration.txt	/*<leader>f*
 CTRL-Space	configuration.txt	/*CTRL-Space*
+[X	configuration.txt	/*[X*
+[x	configuration.txt	/*[x*
+]X	configuration.txt	/*]X*
+]x	configuration.txt	/*]x*
 configuration-additional-keymaps	configuration.txt	/*configuration-additional-keymaps*
 configuration-colorscheme	configuration.txt	/*configuration-colorscheme*
 configuration-plugins	configuration.txt	/*configuration-plugins*

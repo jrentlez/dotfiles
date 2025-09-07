@@ -81,6 +81,22 @@ i_CTRL-H		In insert mode, jump to the previous placeholder. See
 i_CTRL-L		In insert mode, jump to the next placeholder. See
 			|vim.snipped.jump()|.
 
+                                                             *[X*
+[X			Go to the first conflict marker. See
+			|MiniBracketed.conflict()|
+
+                                                             *]X*
+]X			Go to the last conflict marker. See
+			|MiniBracketed.conflict()|
+
+                                                             *[x*
+[x			Go to the backward to the next conflict marker. See
+			|MiniBracketed.conflict()|
+
+                                                             *]x*
+]x			Go to the forward to the next conflict marker. See
+			|MiniBracketed.conflict()|
+
                                                              *grl*
 grl			Run the code lens available on the current line. See
 			|lsp-codelens|.
