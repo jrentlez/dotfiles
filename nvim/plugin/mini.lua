@@ -1,4 +1,4 @@
-vim.pack.add({ "https://github.com/nvim-mini/mini.nvim" })
+vim.pack.add({ "https://github.com/nvim-mini/mini.nvim" }, { load = true })
 
 require("mini.files").setup({ content = { prefix = function() end } })
 vim.keymap.set("n", "<leader>f", function()
@@ -15,22 +15,13 @@ vim.schedule(function()
 	require("mini.diff").setup()
 	vim.keymap.set("n", "zV", MiniDiff.toggle_overlay)
 
-	require("mini.bracketed").setup({
-		-- Disable every mapping except [x, ]x etc.
-		buffer = { suffix = "" },
-		comment = { suffix = "" },
-		diagnostic = { suffix = "" },
-		file = { suffix = "" },
-		indent = { suffix = "" },
-		jump = { suffix = "" },
-		location = { suffix = "" },
-		oldfile = { suffix = "" },
-		quickfix = { suffix = "" },
-		treesitter = { suffix = "" },
-		undo = { suffix = "" },
-		window = { suffix = "" },
-		yank = { suffix = "" },
-	})
+	local goto_conflict = require("mini.bracketed").conflict
+	--stylua: ignore start
+	vim.keymap.set({ "n", "x", "o" }, "[X", function() goto_conflict("first") end)
+	vim.keymap.set({ "n", "x", "o" }, "]X", function() goto_conflict("last") end)
+	vim.keymap.set({ "n", "x", "o" }, "[x", function() goto_conflict("backward") end)
+	vim.keymap.set({ "n", "x", "o" }, "]x", function() goto_conflict("forwards") end)
+	--stylua: ignore end
 
 	local pick = require("mini.pick")
 	pick.setup({ source = { show = pick.default_show } })
