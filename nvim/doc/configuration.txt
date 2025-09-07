@@ -75,11 +75,11 @@ gld			Add buffer diagnostics to the location list. See
 
                                                              *i_CTRL-H*
 i_CTRL-H		In insert mode, jump to the previous placeholder. See
-			|vim.snipped.jump()|.
+			|vim.snippet.jump()|.
 
                                                              *i_CTRL-L*
 i_CTRL-L		In insert mode, jump to the next placeholder. See
-			|vim.snipped.jump()|.
+			|vim.snippet.jump()|.
 
                                                              *[X*
 [X			Go to the first conflict marker. See
