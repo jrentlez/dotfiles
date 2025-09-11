@@ -40,3 +40,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	group = vim.api.nvim_create_augroup("hl-on-yank", { clear = true }),
 	callback = function() vim.hl.on_yank() end,
 })
+-- stylua: ignore end
+
+--- See `:help package-nohlsearch`
+vim.cmd.packadd({ "nohlsearch", bang = true })

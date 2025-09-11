@@ -15,6 +15,7 @@ outdated information. If you need to know something for sure, read the source.
 PLUGINS                                                *configuration-plugins*
 
 This configuration uses the following plugins:
+- nohlsearch                    |package-nohlsearch|
 - nvim-lspconfig                |lspconfig|
 - nvim-treesitter               |nvim-treesitter-intro|
 - split-term.nvim               |split-term-intro|
