@@ -23,8 +23,7 @@ vim.schedule(function()
 	vim.keymap.set({ "n", "x", "o" }, "]x", function() goto_conflict("forwards") end)
 	--stylua: ignore end
 
-	local pick = require("mini.pick")
-	pick.setup({ source = { show = pick.default_show } })
+	require("mini.pick").setup({ source = { show = require("mini.pick").default_show } })
 	vim.ui.select = MiniPick.ui_select
 	vim.keymap.set("n", "<leader><leader>", MiniPick.builtin.buffers)
 	vim.keymap.set("n", "<leader>s.", MiniPick.builtin.resume)
@@ -32,6 +31,6 @@ vim.schedule(function()
 	vim.keymap.set("n", "<leader>sg", MiniPick.builtin.grep_live)
 	vim.keymap.set("n", "<leader>sh", MiniPick.builtin.help)
 	vim.keymap.set("n", "<leader>sr", function()
-		pick.start({ source = { items = vim.v.oldfiles, name = "v:oldfiles" } })
+		MiniPick.start({ source = { items = vim.v.oldfiles, name = "v:oldfiles" } })
 	end)
 end)
