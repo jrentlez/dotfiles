@@ -16,15 +16,14 @@ vim.pack.add({ {
 vim.api.nvim_create_autocmd("FileType", {
 	group = vim.api.nvim_create_augroup("nvim-treesitter-buffer-setup", { clear = true }),
 	callback = function(args)
-		local language = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
-		if vim.list_contains(require("nvim-treesitter").get_installed(), language) then
-			vim.treesitter.start(args.buf)
+		if pcall(vim.treesitter.start, args.buf) then
 			vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-		elseif vim.list_contains(require("nvim-treesitter").get_available(), language) then
+		elseif args.match ~= "" then
+			local language = assert(vim.treesitter.language.get_lang(args.match)) ---@type string
 			require("nvim-treesitter").install(language, { summary = true }):await(function(err)
 				if err then
 					error(err, vim.log.levels.ERROR)
-				else
+				elseif pcall(vim.treesitter.start, args.buf) then
 					vim.treesitter.start(args.buf)
 					vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 				end

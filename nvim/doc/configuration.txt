@@ -140,13 +140,21 @@ CTRL-Space		Toggle the split terminal. See
 			|<Plug>SplitTerminalToggle|.
 
 ==============================================================================
-TREESITTER AUTOINSTALL                 *configuration-tree-sitter-autoinstall*
+TREESITTER AUTOINSTALL                  *configuration-treesitter-autoinstall*
 
-This configuration will attempt to install a tree sitter parser for any file
-you open (plugin/treesitter.lua:19).
+This configuration will attempt to install treesitter parser and queries for
+any file you open using |nvim-treesitter.install()|.
 
 To see installed parers run `:checkhealth nvim-treesitter`.
 
-Some parsers will always be installed (plugin/treesitter.lua:19).
+The following parsers will always be installed:
+- c
+- lua
+- markdown
+- markdown_inline
+- vim
+- vimdoc
+- comment
+- diff
 
 vim:tw=78:ts=8:noet:ft=help:norl:

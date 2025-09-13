@@ -9,7 +9,7 @@ configuration-colorscheme	configuration.txt	/*configuration-colorscheme*
 configuration-plugins	configuration.txt	/*configuration-plugins*
 configuration-read-source	configuration.txt	/*configuration-read-source*
 configuration-remapped-keys	configuration.txt	/*configuration-remapped-keys*
-configuration-tree-sitter-autoinstall	configuration.txt	/*configuration-tree-sitter-autoinstall*
+configuration-treesitter-autoinstall	configuration.txt	/*configuration-treesitter-autoinstall*
 configuration.txt	configuration.txt	/*configuration.txt*
 gD-remap	configuration.txt	/*gD-remap*
 gd-remap	configuration.txt	/*gd-remap*
