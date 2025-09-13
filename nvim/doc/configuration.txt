@@ -22,7 +22,6 @@ This configuration uses the following plugins:
 - formatlsp.nvim                |formatlsp-intro|
 
 - Modules from |mini.nvim|:
-	- |mini.files|
 	- |mini.git|
 	- |mini.diff|
 	- |mini.bracketed|
@@ -60,6 +59,10 @@ ADDITIONAL KEYMAPS                          *configuration-additional-keymaps*
 leader-q		Delete the current buffer and close windows showing
 			it. See |:bdelete|.
 
+                                                             *<leader>f*
+leader-f		Open the file explorer in the current file's
+			directory. See |:Explore|.
+
                                                              *gqc*
 gqc			Close the quickfix window. See |:cclose|.
 
@@ -84,19 +87,19 @@ i_CTRL-L		In insert mode, jump to the next placeholder. See
 
                                                              *[X*
 [X			Go to the first conflict marker. See
-			|MiniBracketed.conflict()|
+			|MiniBracketed.conflict()|.
 
                                                              *]X*
 ]X			Go to the last conflict marker. See
-			|MiniBracketed.conflict()|
+			|MiniBracketed.conflict()|.
 
                                                              *[x*
 [x			Go to the backward to the next conflict marker. See
-			|MiniBracketed.conflict()|
+			|MiniBracketed.conflict()|.
 
                                                              *]x*
 ]x			Go to the forward to the next conflict marker. See
-			|MiniBracketed.conflict()|
+			|MiniBracketed.conflict()|.
 
                                                              *grl*
 grl			Run the code lens available on the current line. See
@@ -104,10 +107,6 @@ grl			Run the code lens available on the current line. See
 
                                                              *grh*
 grh			Toggles inlay hints. See |lsp-inlay-hint|.
-
-                                                             *<leader>f*
-leader-f		Open the file explorer at the current file. See
-			|MiniFiles.open()|
 
                                                              *zV*
 zV			Toggles the diff overlay. See

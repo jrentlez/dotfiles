@@ -24,6 +24,7 @@ vim.o.wrap = true
 vim.cmd.colorscheme("terminal")
 
 vim.keymap.set("n", "<leader>q", "<cmd>bdelete<cr>")
+vim.keymap.set("n", "<leader>f", "<cmd>Explore<cr>")
 
 vim.keymap.set("n", "gqc", "<cmd>cclose<cr>")
 vim.keymap.set("n", "gqd", vim.diagnostic.setqflist)
