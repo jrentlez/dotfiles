@@ -1,4 +1,11 @@
-<leader>f	configuration.txt	/*<leader>f*
+<Space>-<Space>	configuration.txt	/*<Space>-<Space>*
+<Space>-f	configuration.txt	/*<Space>-f*
+<Space>-q	configuration.txt	/*<Space>-q*
+<Space>-s.	configuration.txt	/*<Space>-s.*
+<Space>-sf	configuration.txt	/*<Space>-sf*
+<Space>-sg	configuration.txt	/*<Space>-sg*
+<Space>-sh	configuration.txt	/*<Space>-sh*
+<Space>-sr	configuration.txt	/*<Space>-sr*
 CTRL-Space	configuration.txt	/*CTRL-Space*
 [X	configuration.txt	/*[X*
 [x	configuration.txt	/*[x*
@@ -21,11 +28,4 @@ grh	configuration.txt	/*grh*
 grl	configuration.txt	/*grl*
 i_CTRL-H	configuration.txt	/*i_CTRL-H*
 i_CTRL-L	configuration.txt	/*i_CTRL-L*
-leader-leader	configuration.txt	/*leader-leader*
-leader-q	configuration.txt	/*leader-q*
-leader-s.	configuration.txt	/*leader-s.*
-leader-sf	configuration.txt	/*leader-sf*
-leader-sg	configuration.txt	/*leader-sg*
-leader-sh	configuration.txt	/*leader-sh*
-leader-sr	configuration.txt	/*leader-sr*
 zV	configuration.txt	/*zV*

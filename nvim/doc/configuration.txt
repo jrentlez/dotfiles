@@ -55,12 +55,12 @@ gD			If a language server supports
 ==============================================================================
 ADDITIONAL KEYMAPS                          *configuration-additional-keymaps*
 
-                                                             *leader-q*
-leader-q		Delete the current buffer and close windows showing
+                                                             *<Space>-q*
+<Space>-q		Delete the current buffer and close windows showing
 			it. See |:bdelete|.
 
-                                                             *<leader>f*
-leader-f		Open the file explorer in the current file's
+                                                             *<Space>-f*
+<Space>-f		Open the file explorer in the current file's
 			directory. See |:Explore|.
 
                                                              *gqc*
@@ -112,28 +112,28 @@ grh			Toggles inlay hints. See |lsp-inlay-hint|.
 zV			Toggles the diff overlay. See
 			|MiniDiff.toggle_overlay().|
 
-                                                             *leader-leader*
-leader-leader		Pick from open buffers. See
+                                                             *<Space>-<Space>*
+<Space>-<Space>		Pick from open buffers. See
 			|MiniPick.builtin.buffers()|.
 
-                                                             *leader-s.*
-leader-s.		Resume previous picker. See
+                                                             *<Space>-s.*
+<Space>-s.		Resume previous picker. See
 			|MiniPick.builtin.resume()|.
 
-                                                             *leader-sf*
-leader-sf		Pick between from files in the current directory. See
+                                                             *<Space>-sf*
+<Space>-sf		Pick between from files in the current directory. See
 			|MiniPick.builtin.files()|.
 
-                                                             *leader-sg*
-leader-sg		Live grep in the current directory. See
+                                                             *<Space>-sg*
+<Space>-sg		Live grep in the current directory. See
 			|MiniPick.builtin.grep_live()|.
 
-                                                             *leader-sh*
-leader-sh		Pick from help tags. See
+                                                             *<Space>-sh*
+<Space>-sh		Pick from help tags. See
 			|MiniPick.builtin.help()|.
 
-                                                             *leader-sr*
-leader-sr		Pick from recent files. Uses |v:oldfiles|.
+                                                             *<Space>-sr*
+<Space>-sr		Pick from recent files. Uses |v:oldfiles|.
 
                                                              *CTRL-Space*
 CTRL-Space		Toggle the split terminal. See
