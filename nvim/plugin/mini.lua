@@ -11,7 +11,7 @@ vim.schedule(function()
 	vim.keymap.set({ "n", "x", "o" }, "[X", function() goto_conflict("first") end)
 	vim.keymap.set({ "n", "x", "o" }, "]X", function() goto_conflict("last") end)
 	vim.keymap.set({ "n", "x", "o" }, "[x", function() goto_conflict("backward") end)
-	vim.keymap.set({ "n", "x", "o" }, "]x", function() goto_conflict("forwards") end)
+	vim.keymap.set({ "n", "x", "o" }, "]x", function() goto_conflict("forward") end)
 	--stylua: ignore end
 
 	require("mini.pick").setup({ source = { show = require("mini.pick").default_show } })
