@@ -14,8 +14,7 @@ end
 
 local M = {}
 function M.check()
-	vim.health.start("Language servers")
-	vim.health.info("see `:checkhealth vim.lsp`")
+	vim.health.info("For language servers, see `:checkhealth vim.lsp`")
 	for name, v in pairs(vim.lsp._enabled_configs) do
 		local config = v.resolved_config
 		if config and type(config.cmd) == "function" then
@@ -31,11 +30,7 @@ function M.check()
 		end
 	end
 
-	vim.health.start("Formatters")
-	check_executable("stylua")
 	check_executable("shfmt")
-
-	vim.health.start("Linters")
 	check_executable("shellcheck")
 end
 return M
