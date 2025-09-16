@@ -15,7 +15,6 @@ vim.schedule(function()
 	--stylua: ignore end
 
 	require("mini.pick").setup({ source = { show = require("mini.pick").default_show } })
-	vim.ui.select = MiniPick.ui_select
 	vim.keymap.set("n", "<leader><leader>", MiniPick.builtin.buffers)
 	vim.keymap.set("n", "<leader>s.", MiniPick.builtin.resume)
 	vim.keymap.set("n", "<leader>sf", MiniPick.builtin.files)
