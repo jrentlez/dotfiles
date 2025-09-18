@@ -17,10 +17,7 @@ keybind = ctrl+shift+l=new_split:right
 clipboard-read = allow
 clipboard-write = allow
 
-# TODO: Reenable this once ghostty 1.2.0 releases + enable lsp progress (see `:h LspProgress`)
-
-# env = EDITOR=nvim
-#
-# shell-integration-features = ssh-env,ssh-terminfo
+env = EDITOR=nvim
+shell-integration-features = ssh-env,ssh-terminfo
 
 # vim: filetype=ghostty

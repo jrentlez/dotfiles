@@ -67,6 +67,19 @@ vim.lsp.config("*", {
 	},
 })
 
+vim.api.nvim_create_autocmd("LspProgress", {
+	callback = function(event)
+		local value = event.data.params.value
+		if value.kind == "begin" then
+			vim.api.nvim_ui_send("\027]9;4;1;0\027\\")
+		elseif value.kind == "end" then
+			vim.api.nvim_ui_send("\027]9;4;0\027\\")
+		elseif value.kind == "report" then
+			vim.api.nvim_ui_send("\027]9;4;1;" .. (value.percentage or 0) .. "\027\\")
+		end
+	end,
+})
+
 vim.schedule(function()
 	vim.pack.add({
 		"https://github.com/neovim/nvim-lspconfig",
