@@ -1,3 +1,4 @@
+$NVIM_SHELL	configuration.txt	/*$NVIM_SHELL*
 <Space>-<Space>	configuration.txt	/*<Space>-<Space>*
 <Space>-f	configuration.txt	/*<Space>-f*
 <Space>-q	configuration.txt	/*<Space>-q*
@@ -6,7 +7,7 @@
 <Space>-sg	configuration.txt	/*<Space>-sg*
 <Space>-sh	configuration.txt	/*<Space>-sh*
 <Space>-sr	configuration.txt	/*<Space>-sr*
-CTRL-Space	configuration.txt	/*CTRL-Space*
+CTRL-<Space>	configuration.txt	/*CTRL-<Space>*
 [X	configuration.txt	/*[X*
 [x	configuration.txt	/*[x*
 ]X	configuration.txt	/*]X*
@@ -19,9 +20,12 @@ configuration-format-on-save-defaults	configuration.txt	/*configuration-format-o
 configuration-plugins	configuration.txt	/*configuration-plugins*
 configuration-read-source	configuration.txt	/*configuration-read-source*
 configuration-remapped-keys	configuration.txt	/*configuration-remapped-keys*
+configuration-toggle-terminal	configuration.txt	/*configuration-toggle-terminal*
 configuration-treesitter-autoinstall	configuration.txt	/*configuration-treesitter-autoinstall*
 configuration.txt	configuration.txt	/*configuration.txt*
 g:formatlsp	configuration.txt	/*g:formatlsp*
+g:splitterm_shell	configuration.txt	/*g:splitterm_shell*
+g:splitterm_vertical	configuration.txt	/*g:splitterm_vertical*
 gD-remap	configuration.txt	/*gD-remap*
 gd-remap	configuration.txt	/*gd-remap*
 glc	configuration.txt	/*glc*

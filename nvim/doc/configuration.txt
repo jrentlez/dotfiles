@@ -135,9 +135,9 @@ zV			Toggles the diff overlay. See
                                                              *<Space>-sr*
 <Space>-sr		Pick from recent files. Uses |v:oldfiles|.
 
-                                                             *CTRL-Space*
-CTRL-Space		Toggle the split terminal. See
-			|<Plug>SplitTerminalToggle|.
+                                                             *CTRL-<Space>*
+CTRL-Space		Toggle the split terminal. Configure with
+			|g:splitterm_shell| and |g:splitterm_vertical|.
 
 ==============================================================================
 TREESITTER AUTOINSTALL                  *configuration-treesitter-autoinstall*
@@ -182,4 +182,20 @@ By default, `b:formatlsp` is set to...
 - `stylua` for `lua` filetype
 - `ruff` for `python` filetype
 
+==============================================================================
+TOGGLE PERSISTENT SPLIT TERMINAL               *configuration-toggle-terminal*
+
+                                             *g:splitterm_shell* *$NVIM_SHELL*
+The terminal's shell will be determined in this order:
+1. The global variable `g:splitterm_shell`
+2. The environment variable `$NVIM_SHELL`
+3. The |'shell'| option.
+
+                                                        *g:splitterm_vertical*
+By default, the terminal is shown in a horizontal split. You can open the
+ terminal in a vertical split: >vim
+	let g:splitterm_vertical = v:true
+< or decide orientation based on the terminals width: >lua
+	vim.g.splitterm_vertical = function() return vim.o.columns > 130 end
+<
 vim:tw=78:ts=8:noet:ft=help:norl:
