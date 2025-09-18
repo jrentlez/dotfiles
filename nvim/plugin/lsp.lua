@@ -51,6 +51,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	end,
 })
 
+vim.api.nvim_create_autocmd("VimLeave", {
+	group = lsp_augroup,
+	callback = function()
+		vim.api.nvim_ui_send("\027]9;4;0\027\\")
+	end,
+})
 vim.api.nvim_create_autocmd("LspProgress", {
 	group = lsp_augroup,
 	callback = function(event)
