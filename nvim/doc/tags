@@ -11,13 +11,17 @@ CTRL-Space	configuration.txt	/*CTRL-Space*
 [x	configuration.txt	/*[x*
 ]X	configuration.txt	/*]X*
 ]x	configuration.txt	/*]x*
+b:formatlsp	configuration.txt	/*b:formatlsp*
 configuration-additional-keymaps	configuration.txt	/*configuration-additional-keymaps*
 configuration-colorscheme	configuration.txt	/*configuration-colorscheme*
+configuration-format-on-save	configuration.txt	/*configuration-format-on-save*
+configuration-format-on-save-defaults	configuration.txt	/*configuration-format-on-save-defaults*
 configuration-plugins	configuration.txt	/*configuration-plugins*
 configuration-read-source	configuration.txt	/*configuration-read-source*
 configuration-remapped-keys	configuration.txt	/*configuration-remapped-keys*
 configuration-treesitter-autoinstall	configuration.txt	/*configuration-treesitter-autoinstall*
 configuration.txt	configuration.txt	/*configuration.txt*
+g:formatlsp	configuration.txt	/*g:formatlsp*
 gD-remap	configuration.txt	/*gD-remap*
 gd-remap	configuration.txt	/*gd-remap*
 glc	configuration.txt	/*glc*

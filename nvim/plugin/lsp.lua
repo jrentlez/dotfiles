@@ -1,8 +1,9 @@
+local lsp_augroup = vim.api.nvim_create_augroup("lsp-augroup", { clear = true })
+
 vim.api.nvim_create_autocmd("LspAttach", {
-	group = vim.api.nvim_create_augroup("default-lsp-attach", { clear = true }),
+	group = lsp_augroup,
 	callback = function(event)
 		local client = assert(vim.lsp.get_client_by_id(event.data.client_id))
-		local lsp_augroup = vim.api.nvim_create_augroup("custom-lsp-autocmds", { clear = false })
 		local methods = vim.lsp.protocol.Methods ---@type vim.lsp.protocol.Methods
 
 		if client:supports_method(methods.textDocument_definition, event.buf) then
@@ -50,6 +51,46 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	end,
 })
 
+vim.api.nvim_create_autocmd("LspProgress", {
+	group = lsp_augroup,
+	callback = function(event)
+		local value = event.data.params.value
+		if value.kind == "begin" then
+			vim.api.nvim_ui_send("\027]9;4;1;0\027\\")
+		elseif value.kind == "end" then
+			vim.api.nvim_ui_send("\027]9;4;0\027\\")
+		elseif value.kind == "report" then
+			vim.api.nvim_ui_send("\027]9;4;1;" .. (value.percentage or 0) .. "\027\\")
+		end
+	end,
+})
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+	group = lsp_augroup,
+	callback = function(event)
+		local formatlsp = vim.b[event.buf].formatlsp ---@type (string | boolean)?
+		if formatlsp == nil then
+			formatlsp = vim.g.formatlsp ---@type (string | boolean)?
+		end
+
+		if formatlsp == true then
+			formatlsp = nil
+		elseif formatlsp == false then
+			return
+		end
+		---@cast formatlsp string?
+
+		local formatting_clients = vim.lsp.get_clients({
+			bufnr = event.buf,
+			name = formatlsp,
+			method = vim.lsp.protocol.Methods.textDocument_formatting,
+		})
+		if not vim.tbl_isempty(formatting_clients) then
+			vim.lsp.buf.format({ bufnr = event.buf, name = formatlsp })
+		end
+	end,
+})
+
 ---HACK: according to `emmylua_ls` the `cfg` parameter is missing a `cmd` field, which is not actually required
 ---@diagnostic disable-next-line: param-type-not-match
 vim.lsp.config("*", {
@@ -67,24 +108,9 @@ vim.lsp.config("*", {
 	},
 })
 
-vim.api.nvim_create_autocmd("LspProgress", {
-	callback = function(event)
-		local value = event.data.params.value
-		if value.kind == "begin" then
-			vim.api.nvim_ui_send("\027]9;4;1;0\027\\")
-		elseif value.kind == "end" then
-			vim.api.nvim_ui_send("\027]9;4;0\027\\")
-		elseif value.kind == "report" then
-			vim.api.nvim_ui_send("\027]9;4;1;" .. (value.percentage or 0) .. "\027\\")
-		end
-	end,
-})
-
 vim.schedule(function()
-	vim.pack.add({
-		"https://github.com/neovim/nvim-lspconfig",
-		"https://github.com/TungstnBallon/formatlsp.nvim",
-	})
+	vim.pack.add({ "https://github.com/neovim/nvim-lspconfig" })
+
 	vim.lsp.on_type_formatting.enable()
 	vim.lsp.linked_editing_range.enable()
 	vim.keymap.set("n", "grh", function()

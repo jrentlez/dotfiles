@@ -157,4 +157,29 @@ The following parsers will always be installed:
 - comment
 - diff
 
+==============================================================================
+FORMAT ON SAVE                                  *configuration-format-on-save*
+
+This configuration will attempt to format using the language-server protocol.
+The |global-local| variable `formatlsp` determines the language server that
+should format a buffer.
+
+                                                   *g:formatlsp* *b:formatlsp*
+If `b:formatlsp` is unset, `g:formatlsp` will be used. If `g:formatlsp` is
+unset, use all attached language servers to format the buffer.
+
+To use a specific language server: >lua
+	vim.g.formatlsp = "your-language-server"
+< or per buffer: >lua
+	vim.b.formatlsp = false  -- Disables format on save for the current
+                                 -- buffer
+< with vimscript: >vim
+	let b:formatlsp = v:true  " Format with all attached language servers
+<
+
+                                       *configuration-format-on-save-defaults*
+By default, `b:formatlsp` is set to...
+- `stylua` for `lua` filetype
+- `ruff` for `python` filetype
+
 vim:tw=78:ts=8:noet:ft=help:norl:
