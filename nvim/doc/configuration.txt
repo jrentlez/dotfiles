@@ -54,7 +54,8 @@ ADDITIONAL KEYMAPS                          *configuration-additional-keymaps*
 
                                                              *<Space>-f*
 <Space>-f		Open the file explorer in the current file's
-			directory. See |:Explore|.
+			directory. If the explorer is already open, return.
+			See |:Explore| and |:Rexplore|.
 
                                                              *gqc*
 gqc			Close the quickfix window. See |:cclose|.
