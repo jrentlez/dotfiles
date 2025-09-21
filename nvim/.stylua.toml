@@ -1,2 +1,3 @@
 syntax = "LuaJIT"
+collapse_simple_statement = "FunctionOnly"
 

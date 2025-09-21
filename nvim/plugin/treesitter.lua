@@ -33,6 +33,7 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.schedule(function()
+	--stylua: ignore start
 	local required_parsers = vim.tbl_filter(function(parser)
 		return not vim.list_contains(require("nvim-treesitter").get_installed(), parser)
 	end, {
@@ -46,6 +47,7 @@ vim.schedule(function()
 		"comment",
 		"diff",
 	})
+	--stylua: ignore start
 	if not vim.tbl_isempty(required_parsers) then
 		require("nvim-treesitter").install(required_parsers, { summary = true })
 	end

@@ -32,16 +32,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 				buffer = event.buf,
 				group = lsp_augroup,
-				callback = function()
-					vim.lsp.buf.document_highlight()
-				end,
+				callback = function() vim.lsp.buf.document_highlight() end,
 			})
 			vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
 				buffer = event.buf,
 				group = lsp_augroup,
-				callback = function()
-					vim.lsp.buf.clear_references()
-				end,
+				callback = function() vim.lsp.buf.clear_references() end,
 			})
 		end
 	end,
@@ -49,9 +45,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 vim.api.nvim_create_autocmd("VimLeave", {
 	group = lsp_augroup,
-	callback = function()
-		vim.api.nvim_ui_send("\027]9;4;0\027\\")
-	end,
+	callback = function() vim.api.nvim_ui_send("\027]9;4;0\027\\") end,
 })
 vim.api.nvim_create_autocmd("LspProgress", {
 	group = lsp_augroup,
@@ -115,9 +109,7 @@ vim.schedule(function()
 
 	vim.lsp.on_type_formatting.enable()
 	vim.lsp.linked_editing_range.enable()
-	vim.keymap.set("n", "grh", function()
-		vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-	end)
+	vim.keymap.set("n", "grh", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end)
 	vim.lsp.enable({
 		"basedpyright",
 		"bashls",
