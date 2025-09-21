@@ -95,10 +95,6 @@ i_CTRL-L		In insert mode, jump to the next placeholder. See
 ]x			Go to the forward to the next conflict marker. See
 			|MiniBracketed.conflict()|.
 
-                                                             *grl*
-grl			Run the code lens available on the current line. See
-			|lsp-codelens|.
-
                                                              *grh*
 grh			Toggles inlay hints. See |lsp-inlay-hint|.
 
