@@ -50,14 +50,19 @@ vim.api.nvim_create_autocmd("VimLeave", {
 vim.api.nvim_create_autocmd("LspProgress", {
 	group = lsp_augroup,
 	callback = function(event)
-		local value = event.data.params.value
-		if value.kind == "begin" then
-			vim.api.nvim_ui_send("\027]9;4;1;0\027\\")
-		elseif value.kind == "end" then
-			vim.api.nvim_ui_send("\027]9;4;0\027\\")
-		elseif value.kind == "report" then
-			vim.api.nvim_ui_send("\027]9;4;1;" .. (value.percentage or 0) .. "\027\\")
-		end
+		local token = event.data.params.token ---@type string | integer
+		local message = event.data.params.value.message or "done" ---@type string
+		local title = event.data.params.value.title ---@type string
+		local running = event.data.params.value.kind ~= "end" ---@type boolean
+		local percent = running and (event.data.params.value.percentage or 0) or nil
+		vim.api.nvim_echo({ { message } }, true, {
+			id = token,
+			title = title,
+			kind = "progress",
+			status = running and "running" or "success",
+			percent = percent,
+		})
+		vim.api.nvim_ui_send("\027]9;4;" .. (running and ("1;" .. percent) or 0) .. "\027\\")
 	end,
 })
 
