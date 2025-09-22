@@ -1,3 +1,4 @@
+---@type vim.lsp.Config
 return {
 	settings = {
 		typescript = {
@@ -10,12 +11,6 @@ return {
 				enumMemberValues = { enabled = true },
 			},
 		},
-		vtsls = {
-			experimental = {
-				completion = {
-					enableServerSideFuzzyMatch = true,
-				},
-			},
-		},
+		vtsls = { experimental = { completion = { enableServerSideFuzzyMatch = true } } },
 	},
-} ---@type vim.lsp.Config
+}

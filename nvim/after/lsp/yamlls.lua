@@ -1,1 +1,2 @@
-return { settings = { yaml = { format = { enable = true } } } } ---@type vim.lsp.Config
+---@type vim.lsp.Config
+return { settings = { yaml = { format = { enable = true } } } }

@@ -4,7 +4,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	group = lsp_augroup,
 	callback = function(event)
 		local client = assert(vim.lsp.get_client_by_id(event.data.client_id))
-		local methods = vim.lsp.protocol.Methods ---@type vim.lsp.protocol.Methods
+		local methods = vim.lsp.protocol.Methods
 
 		if client:supports_method(methods.textDocument_definition, event.buf) then
 			vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = event.buf })
@@ -87,8 +87,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 	end,
 })
 
----HACK: according to `emmylua_ls` the `cfg` parameter is missing a `cmd` field, which is not actually required
----@diagnostic disable-next-line: param-type-not-match
 vim.lsp.config("*", {
 	handlers = {
 		[vim.lsp.protocol.Methods.client_registerCapability] = function(err, params, ctx)
@@ -117,7 +115,7 @@ vim.schedule(function()
 		"eslint",
 		"glsl_analyzer",
 		"jsonls",
-		"emmylua_ls",
+		"lua_ls",
 		"ruff",
 		"rust_analyzer",
 		"stylua",

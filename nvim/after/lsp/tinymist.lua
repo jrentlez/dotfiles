@@ -1,7 +1,2 @@
-return {
-	settings = {
-		exportPdf = "onSave",
-		outputPath = "$root/$name",
-		formatterMode = "typstyle",
-	},
-} ---@type vim.lsp.Config
+---@type vim.lsp.Config
+return { settings = { exportPdf = "onSave", outputPath = "$root/$name", formatterMode = "typstyle" } }
