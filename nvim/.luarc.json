@@ -3,7 +3,11 @@
 	"workspace": {
 		"library": [
 			"$VIMRUNTIME",
-			"$HOME/.local/share/nvim/site/pack/core/opt"
+			"$HOME/.local/share/nvim/site/pack/core/opt/nvim-treesitter",
+			"$HOME/.local/share/nvim/site/pack/core/opt/mini.diff",
+			"$HOME/.local/share/nvim/site/pack/core/opt/mini-git",
+			"$HOME/.local/share/nvim/site/pack/core/opt/mini.bracketed",
+			"$HOME/.local/share/nvim/site/pack/core/opt/mini.pick"
 		],
 		"checkThirdParty": "false"
 	},

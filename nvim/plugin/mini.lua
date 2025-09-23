@@ -1,5 +1,10 @@
 vim.schedule(function()
-	vim.pack.add({ "https://github.com/nvim-mini/mini.nvim" })
+	vim.pack.add({
+		"https://github.com/nvim-mini/mini.diff",
+		"https://github.com/nvim-mini/mini-git",
+		"https://github.com/nvim-mini/mini.bracketed",
+		"https://github.com/nvim-mini/mini.pick",
+	})
 
 	require("mini.git").setup()
 
