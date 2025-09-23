@@ -12,20 +12,20 @@ vim.schedule(function()
 	vim.keymap.set("n", "zV", MiniDiff.toggle_overlay)
 
 	local goto_conflict = require("mini.bracketed").conflict
+	--stylua: ignore start
 	vim.keymap.set({ "n", "x", "o" }, "[X", function() goto_conflict("first") end)
 	vim.keymap.set({ "n", "x", "o" }, "]X", function() goto_conflict("last") end)
 	vim.keymap.set({ "n", "x", "o" }, "[x", function() goto_conflict("backward") end)
 	vim.keymap.set({ "n", "x", "o" }, "]x", function() goto_conflict("forward") end)
 
 	require("mini.pick").setup({ source = { show = require("mini.pick").default_show } })
-	vim.keymap.set("n", "<leader><leader>", MiniPick.builtin.buffers)
-	vim.keymap.set("n", "<leader>s.", MiniPick.builtin.resume)
-	vim.keymap.set("n", "<leader>sf", MiniPick.builtin.files)
-	vim.keymap.set("n", "<leader>sg", MiniPick.builtin.grep_live)
-	vim.keymap.set("n", "<leader>sh", MiniPick.builtin.help)
-	--stylua: ignore start
+	vim.keymap.set("n", "<leader><leader>", function() MiniPick.builtin.buffers() end)
+	vim.keymap.set("n", "<leader>s.", function() MiniPick.builtin.resume() end)
+	vim.keymap.set("n", "<leader>sf", function() MiniPick.builtin.files() end)
+	vim.keymap.set("n", "<leader>sg", function() MiniPick.builtin.grep_live() end)
+	vim.keymap.set("n", "<leader>sh", function() MiniPick.builtin.help() end)
+	--stylua: ignore end
 	vim.keymap.set("n", "<leader>sr", function()
 		MiniPick.start({ source = { items = vim.v.oldfiles, name = "v:oldfiles" } })
 	end)
-	--stylua: ignore end
 end)

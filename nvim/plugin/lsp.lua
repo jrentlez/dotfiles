@@ -7,10 +7,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		local methods = vim.lsp.protocol.Methods
 
 		if client:supports_method(methods.textDocument_definition, event.buf) then
-			vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = event.buf })
+			--stylua: ignore
+			vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, { buffer = event.buf })
 		end
 		if client:supports_method(methods.textDocument_declaration, event.buf) then
-			vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { buffer = event.buf })
+			--stylua: ignore
+			vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, { buffer = event.buf })
 		end
 
 		if
@@ -32,11 +34,13 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 				buffer = event.buf,
 				group = lsp_augroup,
+				--stylua: ignore
 				callback = function() vim.lsp.buf.document_highlight() end,
 			})
 			vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
 				buffer = event.buf,
 				group = lsp_augroup,
+				--stylua: ignore
 				callback = function() vim.lsp.buf.clear_references() end,
 			})
 		end
@@ -45,6 +49,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 vim.api.nvim_create_autocmd("VimLeave", {
 	group = lsp_augroup,
+	--stylua: ignore
 	callback = function() vim.api.nvim_ui_send("\027]9;4;0\027\\") end,
 })
 vim.api.nvim_create_autocmd("LspProgress", {
@@ -112,7 +117,9 @@ vim.schedule(function()
 
 	vim.lsp.on_type_formatting.enable()
 	vim.lsp.linked_editing_range.enable()
-	vim.keymap.set("n", "grh", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end)
+	vim.keymap.set("n", "grh", function()
+		vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+	end)
 	vim.lsp.enable({
 		"basedpyright",
 		"bashls",
