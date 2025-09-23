@@ -20,4 +20,7 @@ clipboard-write = allow
 env = EDITOR=nvim
 shell-integration-features = ssh-env,ssh-terminfo
 
+cursor-color=cell-foreground
+cursor-text=cell-background
+
 # vim: filetype=ghostty
