@@ -1,11 +1,11 @@
 [package]
 name = "prompt"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2024"
 
 [dependencies]
-git2 = { version = ">=0.20", default-features = false }
-libc = ">=0.2"
+git2 = { version = "0.20.2", default-features = false }
+libc = { version = "0.2.176", default-features = false }
 
 [lints.clippy]
 cast_possible_wrap = "deny"
