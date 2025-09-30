@@ -29,10 +29,7 @@ section Dotfiles
 git -C "$HOME/dotfiles" pull
 
 section Prompt
-(
-	cd "$HOME/dotfiles/prompt" &&
-		cargo install --path .
-)
+cargo install --git https://gitlab.com/TungstnBallon/dotfiles.git
 
 # HACK: For now, vim.pack.update() is async but cannot be waited for.
 # As a workaround, open the neovim ui and manually confirm the update
