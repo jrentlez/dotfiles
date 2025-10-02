@@ -6,6 +6,7 @@ export PATH="$HOME/.local/bin/:$HOME/.bin:$HOME/.cargo/bin:$HOME/.local/share/np
 [[ ! -v EDITOR ]] && export EDITOR='nvim'
 export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
 export npm_config_prefix="$HOME/.local/share/npm"
+export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/ripgrep/ripgreprc"
 
 # History (see `man bash`)
 export HISTCONTROL="ignoreboth:erasedups"
@@ -14,12 +15,18 @@ export HISTFILESIZE=5000
 shopt -s histappend
 
 # Set vim mode
-set -o vi
+if [[ $EDITOR == "nvim" || $EDITOR == "vim" || $EDITOR == "vi" ]]; then
+	set -o vi
+fi
 
 # Aliases
-alias ls='ls --color --classify'
-alias tree='tree -C -F'
-alias te='$EDITOR'
+alias ls='ls --color'
+alias tree='tree -C'
+alias te="$EDITOR"
 alias vim="nvim --noplugin"
 alias diffed='$EDITOR $(git diff --name-only --relative)'
 alias pacdiff='DIFFPROG="nvim -d" pacdiff -b -3 -s'
+
+# Skim
+export SKIM_DEFAULT_OPTIONS="--ansi --color=bw"
+source "/usr/share/skim/key-bindings.bash"
