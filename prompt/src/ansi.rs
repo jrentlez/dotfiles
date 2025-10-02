@@ -24,8 +24,8 @@ macro_rules! ansi_sequence {
             // NOTE: See https://github.com/starship/starship/issues/110
             pub const fn $name(self) -> &'static [u8] {
                 match self {
-                    // Wrap whith \[ \]
-                    Self::Bash => concat!("\u{5c}\u{5b}", $sequence, "\u{5c}\u{5d}"),
+                    // Wrap whith \001 \002 (see https://wiki.archlinux.org/title/Bash/Prompt_customization#Embedding_commands)
+                    Self::Bash => concat!("\x01", $sequence, "\x02"),
                     // Wrap whith %{ %}
                     Self::Zsh => concat!("\u{25}\u{7b}", $sequence, "\u{25}\u{7d}"),
                 }
