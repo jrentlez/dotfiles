@@ -20,11 +20,72 @@ setopt hist_ignore_dups
 setopt hist_find_no_dups
 
 # Prompt
-precmd() { precmd() { print "" } }                  # Print blank line before each prompt but the first
-alias clear="precmd() {precmd() {echo }} && clear"  # Prevent clear from inserting a prompt
-zmodload zsh/parameter                              # Needed to access jobstates variable
+source /usr/share/git/git-prompt.sh
+precmd() { precmd() { print "" } } # Print blank line before each prompt but the first
+alias clear="precmd() {precmd() {echo }} && clear" # Prevent clear from inserting a prompt
 setopt promptsubst
-PS1='$(prompt jobs="${#jobstates}" laststatus="$?" shell=zsh)'
+function __format_path() {
+	local pth
+	pth="${1/"$HOME"/~}"
+
+	local dir
+	dir="$(dirname "$pth")"
+
+	pth="%B$(basename "$pth")%b"
+	if [[ $dir != "." ]]; then
+		pth="$dir/$pth"
+	fi
+
+	echo "$pth"
+}
+function __prompt_working_directory() {
+	local branch
+	if [[ -L $PWD ]]; then
+		echo "$(__format_path "$PWD")%{\e[39;2m%}($(__format_path "$(pwd -P)"))%{\e[39;0m%}"
+	else
+		local git_root
+		git_root="$(git rev-parse --sq --show-toplevel 2>/dev/null)"
+		if [[ -z $git_root ]]; then
+			__format_path "$PWD"
+		else
+			__format_path "$(basename "${git_root}")/$(git rev-parse --sq --show-prefix)"
+		fi
+	fi
+}
+function __prompt_git() {
+	local out
+	out="$(GIT_PS1_SHOWDIRTYSTATE=true GIT_PS1_SHOWSTASHSTATE=true GIT_PS1_SHOWUNTRACKEDFILES=true GIT_PS1_SHOWUPSTREAM=auto GIT_PS1_SHOWCONFLICTSTATE=yes __git_ps1 %s)"
+	if [[ -z $out ]]; then return; fi
+	out="${out/=/}"
+	out="${out# }"
+
+	local head
+	head="${out%% *}"
+	out="${out##"$head"}"
+	out="${out##* }"
+	local state
+	state="${head##*\|}"
+	if [[ $state != "$head" ]]; then
+		head="$state"
+	fi
+
+	local upstream
+	upstream="$(git branch --format='%(upstream)' --list "$head")"
+	upstream="${upstream##refs/remotes/}"
+	if [[ -n $upstream ]]; then
+		local upstream_name
+		upstream_name="$(basename "$upstream")"
+		if [[ $upstream_name == "$head" ]]; then
+			head="$upstream"
+		else
+			head="$head:$upstream"
+		fi
+	fi
+
+	echo "%{\e[39;2m%}$head%{\e[39;0m%}%F{yellow}$out%f"
+}
+newline=$'\n'
+PS1='$(__prompt_working_directory) $(__prompt_git)${newline}%(0?.%(1j.%F{blue}%#%f.%#).%(1j.%F{magenta}%#%f.%F{red}%#%f)) '
 
 # Aliases
 alias ls='ls --color'
@@ -58,11 +119,11 @@ function skim-homedir-widget() {
 	local dir
 	dir="$(fd --type d --maxdepth 8 --follow ${fd_excludes[@]} . ${dirs_[@]} |
 		sk --no-multi)"
-	if [[ -z "$dir" ]]; then
+	if [[ -z $dir ]]; then
 		zle redisplay
 		return 0
 	fi
-	if [[ -z "$BUFFER" ]]; then
+	if [[ -z $BUFFER ]]; then
 		BUFFER="cd ${(q)dir}"
 		zle accept-line
 	else
@@ -77,4 +138,3 @@ function skim-homedir-widget() {
 }
 zle -N skim-homedir-widget
 bindkey '^F' skim-homedir-widget
-
