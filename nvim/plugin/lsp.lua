@@ -58,7 +58,7 @@ vim.api.nvim_create_autocmd("LspProgress", {
 		local token = event.data.params.token ---@type string | integer
 		local message = event.data.params.value.message or "done" ---@type string
 		local title = event.data.params.value.title ---@type string
-		local running = event.data.params.value.kind ~= "end" ---@type boolean
+		local running = event.data.params.value.kind ~= "end"
 		local percent = running and (event.data.params.value.percentage or 0) or nil
 		vim.api.nvim_echo({ { message } }, true, {
 			id = token,
@@ -67,7 +67,6 @@ vim.api.nvim_create_autocmd("LspProgress", {
 			status = running and "running" or "success",
 			percent = percent,
 		})
-		vim.api.nvim_ui_send("\027]9;4;" .. (running and ("1;" .. percent) or 0) .. "\027\\")
 	end,
 })
 
