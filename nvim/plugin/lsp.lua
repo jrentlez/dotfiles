@@ -4,19 +4,18 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	group = lsp_augroup,
 	callback = function(event)
 		local client = assert(vim.lsp.get_client_by_id(event.data.client_id))
-		local methods = vim.lsp.protocol.Methods
 
-		if client:supports_method(methods.textDocument_definition, event.buf) then
+		if client:supports_method("textDocument/definition", event.buf) then
 			--stylua: ignore
 			vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, { buffer = event.buf })
 		end
-		if client:supports_method(methods.textDocument_declaration, event.buf) then
+		if client:supports_method("textDocument/declaration", event.buf) then
 			--stylua: ignore
 			vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, { buffer = event.buf })
 		end
 
 		if
-			client:supports_method(methods.textDocument_foldingRange, event.buf)
+			client:supports_method("textDocument/foldingRange", event.buf)
 			and not vim.api.nvim_get_option_info2("foldmethod", {}).was_set
 		then
 			vim.o.foldmethod = "expr"
@@ -26,11 +25,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			vim.o.foldlevelstart = 99
 		end
 
-		if client:supports_method(methods.textDocument_completion, event.buf) then
+		if client:supports_method("textDocument/completion", event.buf) then
 			vim.lsp.completion.enable(true, client.id, event.buf, { autotrigger = true })
 		end
 
-		if client:supports_method(methods.textDocument_documentHighlight, event.buf) then
+		if client:supports_method("textDocument/documentHighlight", event.buf) then
 			vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 				buffer = event.buf,
 				group = lsp_augroup,
@@ -88,7 +87,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 		local formatting_clients = vim.lsp.get_clients({
 			bufnr = event.buf,
 			name = formatlsp,
-			method = vim.lsp.protocol.Methods.textDocument_formatting,
+			method = "textDocument/formatting", ---@type vim.lsp.protocol.Method.ClientToServer.Request
 		})
 		if not vim.tbl_isempty(formatting_clients) then
 			vim.lsp.buf.format({ bufnr = event.buf, name = formatlsp })
@@ -98,7 +97,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 
 vim.lsp.config("*", {
 	handlers = {
-		[vim.lsp.protocol.Methods.client_registerCapability] = function(err, params, ctx)
+		["client/registerCapability"] = function(err, params, ctx)
 			local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
 			for _, registration in ipairs(params.registrations) do
 				vim.notify(
@@ -106,7 +105,7 @@ vim.lsp.config("*", {
 					vim.log.levels.INFO
 				)
 			end
-			return vim.lsp.handlers[vim.lsp.protocol.Methods.client_registerCapability](err, params, ctx)
+			return vim.lsp.handlers["client/registerCapability"](err, params, ctx)
 		end,
 	},
 })
