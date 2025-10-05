@@ -1,2 +1,4 @@
 # Spellcheck files
 spell/
+# vim.pack lockfile
+nvim-pack-lock.json

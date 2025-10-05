@@ -31,7 +31,7 @@ git -C "$HOME/dotfiles" pull
 # HACK: For now, vim.pack.update() is async but cannot be waited for.
 # As a workaround, open the neovim ui and manually confirm the update
 section "Neovim plugins"
-nvim "+lua vim.schedule(function() vim.pack.update(vim.tbl_map(function(p) return p.spec.name end, vim.pack.get())) end)"
+nvim "+lua vim.schedule(function() vim.pack.update() end)"
 # logpath="$(nvim --headless "+=vim.fs.joinpath(vim.fn.stdpath('log'), 'nvim-pack.log')" +quit 2>&1 | tr -d '"')"
 # last_update="$(tac "$logpath" | sed '/^========== /q' | tac | tail -n +4)"
 # if [ "$last_update" = "" ]; then
