@@ -24,32 +24,20 @@ source /usr/share/git/git-prompt.sh
 precmd() { precmd() { print "" } } # Print blank line before each prompt but the first
 alias clear="precmd() {precmd() {echo }} && clear" # Prevent clear from inserting a prompt
 setopt promptsubst
-function __format_path() {
-	local pth
-	pth="${1/"$HOME"/~}"
-
-	local dir
-	dir="$(dirname "$pth")"
-
-	pth="%B$(basename "$pth")%b"
-	if [[ $dir != "." ]]; then
-		pth="$dir/$pth"
+function __format_wd() {
+	local wd
+	print -v wd -P %~
+	if [[ $wd == '/' ]]; then
+		echo "%B/%b"
+		return
 	fi
 
-	echo "$pth"
-}
-function __prompt_working_directory() {
-	local branch
-	if [[ -L $PWD ]]; then
-		echo "$(__format_path "$PWD")%{\e[39;2m%}($(__format_path "$(pwd -P)"))%{\e[39;0m%}"
+	local base="${wd##*/}" dir="${wd%/*}"
+
+	if [[ $dir != "$base" ]]; then
+		echo "$dir/%B$base%b"
 	else
-		local git_root
-		git_root="$(git rev-parse --sq --show-toplevel 2>/dev/null)"
-		if [[ -z $git_root ]]; then
-			__format_path "$PWD"
-		else
-			__format_path "$(basename "${git_root}")/$(git rev-parse --sq --show-prefix)"
-		fi
+		echo "%B$base%b"
 	fi
 }
 function __prompt_git() {
@@ -59,12 +47,10 @@ function __prompt_git() {
 	out="${out/=/}"
 	out="${out# }"
 
-	local head
-	head="${out%% *}"
+	local head="${out%% *}"
 	out="${out##"$head"}"
 	out="${out##* }"
-	local state
-	state="${head##*\|}"
+	local state="${head##*\|}"
 	if [[ $state != "$head" ]]; then
 		head="$state"
 	fi
@@ -85,7 +71,7 @@ function __prompt_git() {
 	echo "%{\e[39;2m%}$head%{\e[39;0m%}%F{yellow}$out%f"
 }
 newline=$'\n'
-PS1='$(__prompt_working_directory) $(__prompt_git)${newline}%(0?.%(1j.%F{blue}%#%f.%#).%(1j.%F{magenta}%#%f.%F{red}%#%f)) '
+PS1='$(__format_wd) $(__prompt_git)${newline}%(0?.%(1j.%F{blue}%#%f.%#).%(1j.%F{magenta}%#%f.%F{red}%#%f)) '
 
 # Aliases
 alias ls='ls --color'
@@ -112,10 +98,8 @@ bashcompinit
 export SKIM_DEFAULT_OPTIONS="--ansi --color=bw"
 source "/usr/share/skim/key-bindings.zsh"
 function skim-homedir-widget() {
-	local fd_excludes
-	fd_excludes=("--exclude=.cache" "--exclude=.git" "--exclude=node_modules" "--exclude=target")
-	local dirs_
-	dirs_=("$HOME" "$HOME/.local/state/nvim" "$HOME/.local/share/nvim" "$HOME/.config")
+	local fd_excludes=("--exclude=.cache" "--exclude=.git" "--exclude=node_modules" "--exclude=target")
+	local dirs_=("$HOME" "$HOME/.local/state/nvim" "$HOME/.local/share/nvim" "$HOME/.config")
 	local dir
 	dir="$(fd --type d --maxdepth 8 --follow ${fd_excludes[@]} . ${dirs_[@]} |
 		sk --no-multi)"
