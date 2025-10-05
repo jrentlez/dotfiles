@@ -1,30 +1,31 @@
+clipboard-read = allow
+clipboard-write = allow
+
 command = zsh
+
+cursor-color=cell-foreground
+cursor-text=cell-background
+
+env = EDITOR=nvim
 
 font-family = Adwaita Mono
 font-size = 18
-
-theme = dark:Adwaita Dark,light:Adwaita
-
-
-# BUG: https://github.com/ghostty-org/ghostty/issues/7937
-# window-width = 130
-# window-height = 47
-maximize = true
-
-window-padding-x = 15
-window-padding-y = 10,0
 
 gtk-titlebar = false
 
 keybind = ctrl+shift+l=new_split:right
 
-clipboard-read = allow
-clipboard-write = allow
+maximize = true
 
-env = EDITOR=nvim
 shell-integration-features = ssh-env,ssh-terminfo
 
-cursor-color=cell-foreground
-cursor-text=cell-background
+theme = dark:Nvim Dark,light:Nvim Light
+
+# BUG: https://github.com/ghostty-org/ghostty/issues/7937
+# window-height = 47
+# window-width = 130
+window-padding-x = 15
+window-padding-y = 10,0
+window-theme=ghostty
 
 # vim: filetype=ghostty

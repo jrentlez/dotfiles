@@ -21,7 +21,7 @@ vim.o.undofile = true
 vim.o.virtualedit = "block,onemore"
 vim.o.wrap = true
 
-vim.cmd.colorscheme("terminal")
+vim.cmd.colorscheme("default")
 
 vim.keymap.set("n", "<leader>q", "<cmd>bdelete<cr>")
 vim.keymap.set("n", "<leader>f", function()
