@@ -33,7 +33,7 @@ local function show_buffer()
 	if vertical == nil then
 		vertical = false
 	end
-	window = vim.api.nvim_open_win(assert(buffer), true, { vertical = vertical })
+	window = vim.api.nvim_open_win(assert(buffer), true, { vertical = vertical, win = -1 })
 	vim.wo[window].winfixbuf = true
 end
 local function enter_terminal()
