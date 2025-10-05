@@ -95,21 +95,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 	end,
 })
 
-vim.lsp.config("*", {
-	handlers = {
-		["client/registerCapability"] = function(err, params, ctx)
-			local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
-			for _, registration in ipairs(params.registrations) do
-				vim.notify(
-					"[" .. client.name .. "] Register capability: " .. registration.method,
-					vim.log.levels.INFO
-				)
-			end
-			return vim.lsp.handlers["client/registerCapability"](err, params, ctx)
-		end,
-	},
-})
-
 vim.schedule(function()
 	vim.pack.add({ "https://github.com/neovim/nvim-lspconfig" })
 
