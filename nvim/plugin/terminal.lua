@@ -30,10 +30,11 @@ local function show_buffer()
 	if type(vertical) == "function" then
 		vertical = vertical()
 	end
-	if vertical == nil then
-		vertical = false
-	end
-	window = vim.api.nvim_open_win(assert(buffer), true, { vertical = vertical, win = -1 })
+	window = vim.api.nvim_open_win(assert(buffer), true, {
+		vertical = vertical or false,
+		win = -1,
+		height = vim.o.lines / 2, --BUG: nvim opens the split with one line by default
+	})
 	vim.wo[window].winfixbuf = true
 end
 local function enter_terminal()
