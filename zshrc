@@ -20,7 +20,6 @@ setopt hist_ignore_dups
 setopt hist_find_no_dups
 
 # Prompt
-source /usr/share/git/git-prompt.sh
 precmd() { precmd() { print "" } } # Print blank line before each prompt but the first
 alias clear="precmd() {precmd() {echo }} && clear" # Prevent clear from inserting a prompt
 setopt promptsubst
@@ -40,24 +39,88 @@ function __format_wd() {
 		echo "%B$base%b"
 	fi
 }
-function __prompt_git() {
-	local out
-	out="$(GIT_PS1_SHOWDIRTYSTATE=true GIT_PS1_SHOWSTASHSTATE=true GIT_PS1_SHOWUNTRACKEDFILES=true GIT_PS1_SHOWUPSTREAM=auto GIT_PS1_SHOWCONFLICTSTATE=yes __git_ps1 %s)"
-	if [[ -z $out ]]; then return; fi
-	out="${out/=/}"
-	out="${out# }"
-
-	local head="${out%% *}"
-	out="${out##"$head"}"
-	out="${out##* }"
-	local state="${head##*\|}"
-	if [[ $state != "$head" ]]; then
-		head="$state"
+function __git_path() {
+	git rev-parse --git-path "$1"
+}
+function __git_eread() {
+	local pth
+	pth="$(__git_path "$1")"
+	test -r "$pth" && ifs=$'\r\n' read -r "$2" <"$pth"
+}
+function __git_prompt() {
+	local action="" step="" total="" todo
+	git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
+	if [[ -d "$(__git_path rebase-merge)" ]]; then
+		__git_eread "rebase-merge/msgnum" step
+		__git_eread "rebase-merge/end" total
+		action="rebase"
+	elif [[ -d "$(__git_path rebase-apply)" ]]; then
+		__git_eread "rebase-apply/next" step
+		__git_eread "rebase-apply/last" total
+		if [ -f "$(__git_path rebase-apply/rebasing)" ]; then
+			action="rebase"
+		elif [ -f "$(__git_path rebase-apply/applying)" ]; then
+			action="mailbox"
+		else
+			action="mailbox/rebase"
+		fi
+	elif [[ -f "$(__git_path MERGE_HEAD)" ]]; then
+		action="merging"
+	elif [[ -f "$(__git_path CHERRY_PICK_HEAD)" ]]; then
+		action="cherry-picking"
+	elif __git_eread "sequencer/todo" todo; then
+		case "$todo" in
+		p[\ \	] | pick[\ \	]*)
+			action="cherry-picking"
+			;;
+		revert[\ \	]*)
+			action="reverting"
+			;;
+		esac
+	elif [[ -f "$(__git_path BISECT_LOG)" ]]; then
+		action="bisecting"
 	fi
 
-	local upstream
-	upstream="$(git branch --format='%(upstream)' --list "$head")"
-	upstream="${upstream##refs/remotes/}"
+	local git_status=""
+	if [[ -n "$step" && -n "$total" ]]; then
+		git_status="$step/$total "
+	fi
+
+	git ls-files --others --exclude-standard --directory --no-empty-directory --error-unmatch -- ':/*' >/dev/null 2>/dev/null && git_status+="u"
+	git diff --no-ext-diff --quiet || git_status+="w"
+	git diff --no-ext-diff --cached --quiet || git_status+="i"
+	[[ -n "$(git ls-files --unmerged 2>/dev/null)" ]] && git_status+="C"
+	git rev-parse --verify --quiet refs/stash >/dev/null && git_status+="S"
+
+	local ahead_behind=""
+	case "$(git rev-list --count --left-right @{upstream}...HEAD 2>/dev/null)" in
+	"")
+		:
+		;;
+	"0	0")
+		:
+		;;
+	"0	"*)
+		ahead_behind="A"
+		;;
+	*"	0")
+		ahead_behind="B"
+		;;
+	*)
+		ahead_behind="AB"
+		;;
+	esac
+
+	local head upstream
+	head="$(git rev-parse --abbrev-ref HEAD)"
+
+	if [[ $head == "HEAD" ]]; then
+		head="$(git rev-parse --short HEAD)"
+	else
+		upstream="$(git branch --format='%(upstream)' --list "$head")"
+		upstream="${upstream##refs/remotes/}"
+	fi
+
 	if [[ -n $upstream ]]; then
 		local upstream_name
 		upstream_name="$(basename "$upstream")"
@@ -68,10 +131,10 @@ function __prompt_git() {
 		fi
 	fi
 
-	echo "%{\e[39;2m%}$head%{\e[39;0m%}%F{yellow}$out%f"
+	echo "%{\e[39;2m%}${action:-$head}%{\e[39;0m%}%F{yellow}$git_status%f$ahead_behind"
 }
 newline=$'\n'
-PS1='$(__format_wd) $(__prompt_git)${newline}%(0?.%(1j.%F{blue}%#%f.%#).%(1j.%F{magenta}%#%f.%F{red}%#%f)) '
+PS1='$(__format_wd) $(__git_prompt)${newline}%(0?.%(1j.%F{blue}%#%f.%#).%(1j.%F{magenta}%#%f.%F{red}%#%f)) '
 
 # Aliases
 alias ls='ls --color'
