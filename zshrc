@@ -45,10 +45,10 @@ function __git_path() {
 function __git_eread() {
 	local pth
 	pth="$(__git_path "$1")"
-	test -r "$pth" && ifs=$'\r\n' read -r "$2" <"$pth"
+	test -r "$pth" && IFS=$'\r\n' read -r "$2" <"$pth"
 }
 function __git_prompt() {
-	local action="" step="" total="" todo
+	local action step total todo
 	git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
 	if [[ -d "$(__git_path rebase-merge)" ]]; then
 		__git_eread "rebase-merge/msgnum" step
@@ -81,45 +81,60 @@ function __git_prompt() {
 		action="bisecting"
 	fi
 
-	local git_status=""
+	local git_status
 	if [[ -n "$step" && -n "$total" ]]; then
 		git_status="$step/$total "
 	fi
 
-	git ls-files --others --exclude-standard --directory --no-empty-directory --error-unmatch -- ':/*' >/dev/null 2>/dev/null && git_status+="u"
-	git diff --no-ext-diff --quiet || git_status+="w"
-	git diff --no-ext-diff --cached --quiet || git_status+="i"
-	[[ -n "$(git ls-files --unmerged 2>/dev/null)" ]] && git_status+="C"
-	git rev-parse --verify --quiet refs/stash >/dev/null && git_status+="S"
+	local head upstream ahead behind stash
+	local wt_modified wt_type_change wt_added wt_deleted wt_renamed
+	local i_modified i_type_change i_added i_deleted i_renamed
+	local conflict untracked
 
-	local ahead_behind=""
-	case "$(git rev-list --count --left-right @{upstream}...HEAD 2>/dev/null)" in
-	"")
-		:
-		;;
-	"0	0")
-		:
-		;;
-	"0	"*)
-		ahead_behind="A"
-		;;
-	*"	0")
-		ahead_behind="B"
-		;;
-	*)
-		ahead_behind="AB"
-		;;
-	esac
-
-	local head upstream
-	head="$(git rev-parse --abbrev-ref HEAD)"
-
-	if [[ $head == "HEAD" ]]; then
-		head="$(git rev-parse --short HEAD)"
-	else
-		upstream="$(git branch --format='%(upstream)' --list "$head")"
-		upstream="${upstream##refs/remotes/}"
-	fi
+	local OIFS=$IFS
+	IFS=$'\n'
+	for line in $(git status --porcelain=2 --branch --show-stash); do
+		case "$line" in
+		'# branch.oid '*) ;;
+		'# branch.head '*) head="${line##'# branch.head '}" ;;
+		'# branch.upstream '*) upstream="${line##'# branch.upstream '}" ;;
+		'# branch.ab '*)
+			case "${line##'# branch.ab '}" in
+			'+0 -0') ;;
+			'+0 -'*) behind='B' ;;
+			'+'*' -0') ahead='A' ;;
+			'+'*' -'*) ahead='A'; behind='B' ;;
+			esac
+			;;
+		'# stash '*) stash='S' ;;
+		'1 '* | 'u '*)
+			[[ "${line:0:1}" == u ]] && conflict='C'
+			case "${line:2:1}" in
+			.) ;;
+			M) i_modified='M' ;;
+			T) i_type_change='T' ;;
+			A) i_added='A' ;;
+			D) i_deleted='D' ;;
+			R | C) i_renamed='R' ;;
+			U) conflict='C' ;;
+			esac
+			case "${line:3:1}" in
+			.) ;;
+			M) wt_modified='m' ;;
+			T) wt_type_change='t' ;;
+			A) wt_added='a' ;;
+			D) wt_deleted='d' ;;
+			R | C) wt_renamed='r' ;;
+			U) conflict='C' ;;
+			esac
+			;;
+		'? '*) untracked='?' ;;
+		'! '*) ;;
+		*) echo "Unexpected git porcelain: $line" 1>&2 ;;
+		esac
+	done
+	IFS=$OIFS
+	git_status+="$untracked$wt_added$wt_renamed$wt_type_change$wt_modified$wt_deleted$i_added$i_renamed$i_type_change$i_modified$i_deleted$conflict$stash"
 
 	if [[ -n $upstream ]]; then
 		local upstream_name
@@ -131,7 +146,7 @@ function __git_prompt() {
 		fi
 	fi
 
-	echo "%{\e[39;2m%}${action:-$head}%{\e[39;0m%}%F{yellow}$git_status%f$ahead_behind"
+	echo "%{\e[39;2m%}${action:-$head}%{\e[39;0m%}%F{yellow}$git_status%f$ahead$behind"
 }
 newline=$'\n'
 PS1='$(__format_wd) $(__git_prompt)${newline}%(0?.%(1j.%F{blue}%#%f.%#).%(1j.%F{magenta}%#%f.%F{red}%#%f)) '
