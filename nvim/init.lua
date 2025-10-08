@@ -19,7 +19,6 @@ vim.o.smartcase = true
 vim.o.splitright = true
 vim.o.undofile = true
 vim.o.virtualedit = "block,onemore"
-vim.o.wrap = true
 
 vim.cmd.colorscheme("default")
 
