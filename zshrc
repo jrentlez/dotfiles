@@ -145,10 +145,10 @@ function __git_prompt() {
 		fi
 	fi
 
-	echo "%{\e[39;2m%}${action:-$head}%{\e[39;0m%}%F{yellow}$git_status%f$ahead$behind"
+	echo " %{\e[39;2m%}${action:-$head}%{\e[39;0m%}%F{yellow}$git_status%f$ahead$behind"
 }
 newline=$'\n'
-PS1='$(__format_wd) $(__git_prompt)${newline}%(0?.%(1j.%F{blue}%#%f.%#).%(1j.%F{magenta}%#%f.%F{red}%#%f)) '
+PS1='$(__format_wd)$(__git_prompt)${newline}%(0?.%(1j.%F{blue}%#%f.%#).%(1j.%F{magenta}%#%f.%F{red}%#%f)) '
 
 # Aliases
 alias ls='ls --color'
@@ -178,7 +178,7 @@ function skim-homedir-widget() {
 	local fd_excludes=("--exclude=.cache" "--exclude=.git" "--exclude=node_modules" "--exclude=target")
 	local dirs_=("$HOME" "$HOME/.local/state/nvim" "$HOME/.local/share/nvim" "$HOME/.config")
 	local dir
-	dir="$(fd --type d --maxdepth 8 --follow ${fd_excludes[@]} . ${dirs_[@]} |
+	dir="$(fd --type d --maxdepth 5 --follow ${fd_excludes[@]} . ${dirs_[@]} |
 		sk --no-multi)"
 	if [[ -z $dir ]]; then
 		zle redisplay
