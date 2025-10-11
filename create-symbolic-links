@@ -2,7 +2,7 @@
 
 if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
 	echo "Create symlinks for the dotfiles in this repository.
-	-f	Remove existing destination files
+	-f	Overwrite existing destination files
 	-i	Prompt whether to remove destinations"
 	exit 0
 fi
@@ -25,7 +25,6 @@ dotfile_link() {
 
 dotfile_link	.bash_profile 				bash/bash_profile
 dotfile_link	.bashrc 				bash/bashrc
-dotfile_link	.config/bat/config			batconfig
 dotfile_link	.config/ghostty/config 			ghosttyconfig
 dotfile_link	.config/nvim 				nvim
 dotfile_link	.config/ripgrep/ripgreprc 		ripgreprc
