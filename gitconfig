@@ -1,6 +1,3 @@
-[core]
-pager = delta --diff-highlight
-
 [user]
 email = jonas.zeltner@posteo.de
 name = Jonas Zeltner
@@ -37,10 +34,5 @@ missingCommitsCheck = warn
 
 [log]
 abbrevCommit = true
-
-[delta]
-keep-plus-minus-markers = true
-navigate = true
-navigate-regex = "^(commit|diff --git|(@@ -\\d+,\\d+ \\+\\d+,\\d+ @@))"
 
 ; vim: filetype=gitconfig
