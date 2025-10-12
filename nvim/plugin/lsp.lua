@@ -55,11 +55,11 @@ vim.api.nvim_create_autocmd("LspProgress", {
 	group = lsp_augroup,
 	callback = function(event)
 		local token = event.data.params.token ---@type string | integer
-		local message = event.data.params.value.message or "done" ---@type string
+		local message = event.data.params.value.message ---@type string?
 		local title = event.data.params.value.title ---@type string
 		local running = event.data.params.value.kind ~= "end"
 		local percent = running and (event.data.params.value.percentage or 0) or nil
-		vim.api.nvim_echo({ { message } }, true, {
+		vim.api.nvim_echo({ message and { message } or nil }, true, {
 			id = token,
 			title = title,
 			kind = "progress",
