@@ -11,22 +11,12 @@ section() {
 	fi
 }
 
-section "System packages"
-sudo pacman -Syu --noconfirm
-
-section "AUR packages"
-rua upgrade
-
-section Flatpak
-flatpak update -y
-flatpak remove --unused -y
-flatpak remove --delete-data -y
-
-section Rust
-rustup update
+section Neovim
+bob update
 
 section Dotfiles
-git -C "$HOME/dotfiles" pull
+git -C "$HOME/dotfiles" fetch
+git -C "$HOME/dotfiles" rebase origin/main
 
 # HACK: For now, vim.pack.update() is async but cannot be waited for.
 # As a workaround, open the neovim ui and manually confirm the update
