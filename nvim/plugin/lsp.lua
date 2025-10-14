@@ -108,7 +108,6 @@ vim.schedule(function()
 		"bashls",
 		"clangd",
 		"eslint",
-		"glsl_analyzer",
 		"jsonls",
 		"lua_ls",
 		"ruff",
