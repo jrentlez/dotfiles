@@ -3,7 +3,7 @@ vim.g.clipboard = "osc52"
 
 vim.o.breakindent = true
 vim.o.completeopt = "menuone,fuzzy,noinsert,popup"
-vim.o.colorcolumn = "+1"
+vim.o.colorcolumn = "+0"
 vim.o.cursorlineopt = "number"
 vim.o.cursorline = true
 vim.o.exrc = true
