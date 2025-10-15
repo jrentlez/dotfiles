@@ -15,15 +15,13 @@ gtk-titlebar = false
 
 keybind = ctrl+shift+l=new_split:right
 
-maximize = true
-
 shell-integration-features = ssh-env,ssh-terminfo
 
 theme = dark:Nvim Dark,light:Nvim Light
 
 # BUG: https://github.com/ghostty-org/ghostty/issues/7937
-# window-height = 47
-# window-width = 130
+window-height = 47
+window-width = 130
 window-padding-x = 15
 window-padding-y = 10,0
 window-theme=ghostty
