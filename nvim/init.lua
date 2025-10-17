@@ -38,13 +38,16 @@ vim.keymap.set("n", "gld", function()
 	vim.diagnostic.setloclist({ severity = { min = vim.diagnostic.severity.INFO } })
 end)
 
---stylua: ignore
-vim.keymap.set({ "i", "s" }, "<C-h>", function() vim.snippet.jump(-1) end)
---stylua: ignore
-vim.keymap.set({ "i", "s" }, "<C-l>", function() vim.snippet.jump(1) end)
+vim.keymap.set({ "i", "s" }, "<C-h>", function()
+	vim.snippet.jump(-1)
+end)
+vim.keymap.set({ "i", "s" }, "<C-l>", function()
+	vim.snippet.jump(1)
+end)
 
 vim.api.nvim_create_autocmd("TextYankPost", {
 	group = vim.api.nvim_create_augroup("hl-on-yank", { clear = true }),
-	--stylua: ignore
-	callback = function() vim.hl.on_yank() end,
+	callback = function()
+		vim.hl.on_yank()
+	end,
 })

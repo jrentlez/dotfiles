@@ -9,15 +9,23 @@ vim.schedule(function()
 	require("mini.git").setup()
 
 	require("mini.diff").setup()
-	vim.keymap.set("n", "zV", MiniDiff.toggle_overlay)
+	vim.keymap.set("n", "zV", function()
+		MiniDiff.toggle_overlay(0)
+	end)
 
 	local goto_conflict = require("mini.bracketed").conflict
-	--stylua: ignore start
-	vim.keymap.set({ "n", "x", "o" }, "[X", function() goto_conflict("first") end)
-	vim.keymap.set({ "n", "x", "o" }, "]X", function() goto_conflict("last") end)
-	vim.keymap.set({ "n", "x", "o" }, "[x", function() goto_conflict("backward") end)
-	vim.keymap.set({ "n", "x", "o" }, "]x", function() goto_conflict("forward") end)
-	--stylua: ignore end
+	vim.keymap.set({ "n", "x", "o" }, "[X", function()
+		goto_conflict("first")
+	end)
+	vim.keymap.set({ "n", "x", "o" }, "]X", function()
+		goto_conflict("last")
+	end)
+	vim.keymap.set({ "n", "x", "o" }, "[x", function()
+		goto_conflict("backward")
+	end)
+	vim.keymap.set({ "n", "x", "o" }, "]x", function()
+		goto_conflict("forward")
+	end)
 
 	require("mini.pick").setup({ source = { show = require("mini.pick").default_show } })
 	vim.keymap.set("n", "<leader><leader>", "<cmd>Pick buffers<cr>")

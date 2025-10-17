@@ -6,12 +6,14 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		local client = assert(vim.lsp.get_client_by_id(event.data.client_id))
 
 		if client:supports_method("textDocument/definition", event.buf) then
-			--stylua: ignore
-			vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, { buffer = event.buf })
+			vim.keymap.set("n", "gd", function()
+				vim.lsp.buf.definition()
+			end, { buffer = event.buf })
 		end
 		if client:supports_method("textDocument/declaration", event.buf) then
-			--stylua: ignore
-			vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, { buffer = event.buf })
+			vim.keymap.set("n", "gD", function()
+				vim.lsp.buf.declaration()
+			end, { buffer = event.buf })
 		end
 
 		if
@@ -33,14 +35,16 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 				buffer = event.buf,
 				group = lsp_augroup,
-				--stylua: ignore
-				callback = function() vim.lsp.buf.document_highlight() end,
+				callback = function()
+					vim.lsp.buf.document_highlight()
+				end,
 			})
 			vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
 				buffer = event.buf,
 				group = lsp_augroup,
-				--stylua: ignore
-				callback = function() vim.lsp.buf.clear_references() end,
+				callback = function()
+					vim.lsp.buf.clear_references()
+				end,
 			})
 		end
 	end,
@@ -48,8 +52,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 vim.api.nvim_create_autocmd("VimLeave", {
 	group = lsp_augroup,
-	--stylua: ignore
-	callback = function() vim.api.nvim_ui_send("\027]9;4;0\027\\") end,
+	callback = function()
+		vim.api.nvim_ui_send("\027]9;4;0\027\\")
+	end,
 })
 vim.api.nvim_create_autocmd("LspProgress", {
 	group = lsp_augroup,
