@@ -23,16 +23,17 @@ dotfile_link() {
 	fi
 }
 
-dotfile_link	.bash_profile 				bash/bash_profile
-dotfile_link	.bashrc 				bash/bashrc
-dotfile_link	.config/ghostty/config 			ghosttyconfig
-dotfile_link	.config/nvim 				nvim
-dotfile_link	.config/ripgrep/ripgreprc 		ripgreprc
-dotfile_link	.config/xdg-terminals.list 		xdg-terminals.list
-dotfile_link	.gitconfig 				gitconfig
-dotfile_link	.local/bin/fullup 			bin/fullup
-dotfile_link	.local/bin/gnome-toggle-style		bin/gnome-toggle-style
-dotfile_link	.local/bin/witcher3modmanager		bin/witcher3modmanager
-dotfile_link	.local/bin/witcher3scriptmerger		bin/witcher3scriptmerger
-dotfile_link	.ssh/config 				sshconfig
-dotfile_link	.zshrc 					zshrc
+dotfile_link    .bash_profile                      bash/bash_profile
+dotfile_link    .bashrc                            bash/bashrc
+dotfile_link    .config/ghostty/config             ghosttyconfig
+dotfile_link    .config/nvim                       nvim
+dotfile_link    .config/ripgrep/ripgreprc          ripgreprc
+dotfile_link    .config/tealdeer/config.toml       tealdeerconfig.toml
+dotfile_link    .config/xdg-terminals.list         xdg-terminals.list
+dotfile_link    .gitconfig                         gitconfig
+dotfile_link    .local/bin/fullup                  bin/fullup
+dotfile_link    .local/bin/gnome-toggle-style      bin/gnome-toggle-style
+dotfile_link    .local/bin/witcher3modmanager      bin/witcher3modmanager
+dotfile_link    .local/bin/witcher3scriptmerger    bin/witcher3scriptmerger
+dotfile_link    .ssh/config                        sshconfig
+dotfile_link    .zshrc                             zshrc
