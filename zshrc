@@ -176,19 +176,9 @@ export FZF_DEFAULT_OPTS="--style=minimal --no-unicode --color=bw,input-fg:-1:reg
 source <(fzf --zsh)
 function fzf-homedir-widget() {
 	local ret=$?
-	local oifs=$IFS
-	IFS=$'\n'
-	local config_dirs
-	config_dirs=($(find $HOME/.config -maxdepth 1 -xtype d))
-	IFS=$oifs
-	unset oifs
-
-	local roots=("$HOME" "${config_dirs[@]}" "$HOME/.local/state/nvim" "$HOME/.local/share/nvim")
-	unset config_dirs
 	local dir
-	dir="$(fzf --no-multi --walker=dir,follow --walker-skip=node_modules,target --walker-root ${roots[@]} < /dev/tty)"
-	unset roots
-
+	dir="$(fzf --no-multi --walker=dir,follow --walker-skip=node_modules,target \
+		--walker-root "$HOME" "$HOME/.local/share/nvim" < /dev/tty)"
 	if [[ -z $dir ]]; then
 		zle redisplay
 		return 0
