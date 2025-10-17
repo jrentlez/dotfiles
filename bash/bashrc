@@ -25,7 +25,3 @@ alias te="$EDITOR"
 alias vim="nvim --noplugin"
 alias diffed='$EDITOR $(git diff --name-only --relative)'
 alias pacdiff='DIFFPROG="nvim -d" pacdiff -b -3 -s'
-
-# Skim
-export SKIM_DEFAULT_OPTIONS="--ansi --color=bw"
-source "/usr/share/skim/key-bindings.bash"
