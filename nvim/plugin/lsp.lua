@@ -87,7 +87,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 		local formatting_clients = vim.lsp.get_clients({
 			bufnr = event.buf,
 			name = formatlsp,
-			method = "textDocument/formatting", ---@type vim.lsp.protocol.Method.ClientToServer.Request
+			method = "textDocument/formatting",
 		})
 		if not vim.tbl_isempty(formatting_clients) then
 			vim.lsp.buf.format({ bufnr = event.buf, name = formatlsp })
