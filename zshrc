@@ -1,5 +1,5 @@
 # Environment Variables
-export PATH="$HOME/.local/bin/:$HOME/.bin:$HOME/.cargo/bin:$HOME/.local/share/npm/bin:$PATH"
+export PATH="$HOME/.local/bin/:$HOME/.cargo/bin:$HOME/.local/share/npm/bin:$PATH"
 [[ ! -v EDITOR ]] && export EDITOR='nvim'
 export npm_config_prefix="$HOME/.local/share/npm"
 export NVIM_SHELL="zsh"
