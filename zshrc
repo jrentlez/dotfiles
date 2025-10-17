@@ -171,31 +171,34 @@ autoload -Uz compinit bashcompinit
 compinit
 bashcompinit
 
-# Skim
-export SKIM_DEFAULT_OPTIONS="--ansi --color=bw"
-source "/usr/share/skim/key-bindings.zsh"
-function skim-homedir-widget() {
-	local fd_excludes=("--exclude=.cache" "--exclude=.git" "--exclude=node_modules" "--exclude=target")
-	local dirs_=("$HOME" "$HOME/.local/state/nvim" "$HOME/.local/share/nvim" "$HOME/.config")
+# Fzf
+export FZF_DEFAULT_OPTS="--style=minimal --no-unicode --color=bw,input-fg:-1:regular,prompt:-1:regular,fg+:-1:regular:reverse,bg+:-1:regular,hl+:-1:regular:underline:reverse,pointer:-1:regular"
+source <(fzf --zsh)
+function fzf-homedir-widget() {
+	local ret=$?
+	local oifs=$IFS
+	IFS=$'\n'
+	local config_dirs
+	config_dirs=($(find $HOME/.config -maxdepth 1 -xtype d))
+	IFS=$oifs
+	unset oifs
+
+	local roots=("$HOME" "${config_dirs[@]}" "$HOME/.local/state/nvim" "$HOME/.local/share/nvim")
+	unset config_dirs
 	local dir
-	dir="$(fd --type d --maxdepth 5 --follow ${fd_excludes[@]} . ${dirs_[@]} |
-		sk --no-multi)"
+	dir="$(fzf --no-multi --walker=dir,follow --walker-skip=node_modules,target --walker-root ${roots[@]} < /dev/tty)"
+	unset roots
+
 	if [[ -z $dir ]]; then
 		zle redisplay
 		return 0
 	fi
-	if [[ -z $BUFFER ]]; then
-		BUFFER="cd ${(q)dir}"
-		zle accept-line
-	else
-		print -sr "cd ${(q)dir}"
-		cd "$dir"
-	fi
-	local ret
-	ret=$?
-	zle skim-redraw-prompt
-	tput cnorm
+	zle push-line
+	BUFFER="builtin cd -- ${(q)dir:a}"
+	unset dir
+	zle accept-line
+	zle reset-prompt
 	return $ret
 }
-zle -N skim-homedir-widget
-bindkey '^F' skim-homedir-widget
+zle -N fzf-homedir-widget
+bindkey '^F' fzf-homedir-widget
